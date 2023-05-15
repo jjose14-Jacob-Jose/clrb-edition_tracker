@@ -3,28 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Edition Tracker</title>
+
 </head>
 <body>
-    <h1>Hello World !</h1>
+    <h1>Edition Tracker</h1>
     <form>
         <table>
             <tr>
+                <td><label for="editionsType">Edition types:</label></td>
+                <td><input type="text" id="editionsType" name="editionsType" required placeholder="vol/ser/no" value="vol" ><td>
+            </tr>
+            <tr>
                 <td><label for="yearStarting">Starting Year:</label></td>
-                <td><input type="text" id="yearStarting" name="yearStarting" required><td>
+                <td><input type="number" id="yearStarting" name="yearStarting" required placeholder="Earliest edition in Alma" value="2000" ><td>
             </tr>
             <tr>
                 <td><label for="yearEnding">End Year:</label></td>
-                <td><input type="text" id="yearEnding" name="yearEnding" required></td>
+                <td><input type="number" id="yearEnding" name="yearEnding" required placeholder="Latest edition in Alma or 2020" value="2020" ></td>
             </tr>
             <tr>
                 <td><label for="editionsPerYear">Editions in a year:</label></td>
-                <td><input type="text" id="editionsPerYear" name="editionsPerYear" required></td>
+                <td><input type="number" id="editionsPerYear" name="editionsPerYear" required placeholder="Number of issues in a year" value="12" ></td>
             </tr>
             <tr>
-                <td><input type="submit" value="Submit"><td>
+                <td><button id="btnSubmit">Create Table</button><td>
             </tr>
         </table>
     </form>
 
+    <script src="js/main.js"></script>
+
+    <script>
+        main();
+    </script>
 </body>
 </html>
