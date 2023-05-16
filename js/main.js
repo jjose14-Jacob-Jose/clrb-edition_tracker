@@ -71,9 +71,49 @@ function displayMatrixAsTable(matrix) {
     matrixClear();
 
     const table = document.createElement('matrixTable');
+    let startingYear = yearStarting;
 
     for (let i = 0; i < matrix.length; i++) {
         const row = document.createElement('tr');
+
+        const rowIndexCell = document.createElement('td');
+        // rowIndexCell.textContent = startingYear;
+
+        // Create label for checkbox
+        const label = document.createElement('label');
+        label.textContent = `${startingYear}`;
+
+        // Create checkbox element
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.addEventListener('change', function() {
+            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
+            for (let j = 0; j < checkboxes.length; j++) {
+                checkboxes[j].checked = checkbox.checked;
+            }
+        });
+
+        // Set checkbox value based on matrix item
+        checkbox.checked = false;
+
+
+
+        // Attach change event listener to checkbox
+        checkbox.addEventListener('change', function () {
+            if (this.checked) {
+                // matrix[i][j] = 1; // Set matrix value to 1 if checkbox is checked
+            } else {
+                // matrix[i][j] = 0; // Set matrix value to 0 if checkbox is unchecked
+            }
+            printToConsole(matrix);
+        });
+
+        // Append checkbox to cell
+        row.appendChild(checkbox);
+        row.appendChild(label);
+
+        row.appendChild(rowIndexCell);
+        startingYear++;
 
         for (let j = 0; j < matrix[i].length; j++) {
             const cell = document.createElement('td');
