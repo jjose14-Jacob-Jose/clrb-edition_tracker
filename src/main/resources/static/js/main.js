@@ -64,6 +64,29 @@ function matrixClear() {
 
 }
 
+// Function to ensure that only numbers are accepted in text-fields.
+function restrictToNumbers(event) {
+    // Remove non-numeric characters
+    this.value = this.value.replace(/\D/g, '');
+
+    // Allow only numeric key codes
+    if (event.key !== 'Backspace' && isNaN(parseInt(event.key))) {
+        event.preventDefault();
+    }
+}
+// Function will ensure all input text-fields only accept digits as input.
+function textFieldsTypeTextMakeNumberInputOnly() {
+    // Get all the text fields with type 'text'
+    const textFields = document.querySelectorAll('input[type="text"]');
+
+// Apply the validation function to each text field
+    textFields.forEach(textField => {
+        textField.addEventListener('input', restrictToNumbers);
+        textField.addEventListener('keydown', restrictToNumbers);
+    });
+
+}
+
 // Function to convert a matrix to HTML table. Created by ChatGPT.
 function displayMatrixAsTable(matrix) {
 
@@ -79,9 +102,14 @@ function displayMatrixAsTable(matrix) {
         const rowIndexCell = document.createElement('td');
         // rowIndexCell.textContent = startingYear;
 
-        // Create label for checkbox
-        const label = document.createElement('label');
-        label.textContent = `${startingYear}`;
+        // Create label for text-fields.
+        const textFieldYear = document.createElement('input');
+        textFieldYear.type = 'text'
+        textFieldYear.value = `${startingYear}`;
+
+
+
+
 
         // Create checkbox element
         const checkbox = document.createElement('input');
@@ -110,9 +138,10 @@ function displayMatrixAsTable(matrix) {
 
         // Append checkbox to cell
         row.appendChild(checkbox);
-        row.appendChild(label);
+        row.appendChild(textFieldYear);
 
         row.appendChild(rowIndexCell);
+        printToConsole("hello");
         startingYear++;
 
         for (let j = 0; j < matrix[i].length; j++) {
@@ -158,6 +187,7 @@ function displayMatrixAsTable(matrix) {
 // Function with main logic.
 function main() {
 
+
     printToConsole("Start: main()")
 
     let numberOfYears = yearEnding - yearStarting;
@@ -166,6 +196,7 @@ function main() {
     console.log("Matrix is :", JSON.stringify(matrixYearAndEditions));
 
     displayMatrixAsTable(matrixYearAndEditions);
+    textFieldsTypeTextMakeNumberInputOnly();
 
     printToConsole("End: main()")
 
