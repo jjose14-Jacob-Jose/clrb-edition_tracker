@@ -3,7 +3,7 @@ const INITIAL_VALUE_MATRIX = 0;
 const ID_DIV_MATRIX = "divMatrix";
 
 // Global Variable declarations.
-let editionsType, yearStarting, yearEnding, editionsPerYear;
+let editionsType, yearStarting, yearEnding, volumeStartingYear, editionsPerYear;
 let matrix, div_matrix;
 
 // Function to get input parameters. Created by ChatGPT.
@@ -15,6 +15,7 @@ document.getElementById("btnSubmit").addEventListener("click", function() {
     editionsType = document.getElementById("txtTextEditionsType").value;
     yearStarting = document.getElementById("txtNumberYearStarting").value;
     yearEnding = document.getElementById("txtNumberYearEnding").value;
+    volumeStartingYear = document.getElementById("txtNumberVolumeStartingYear").value;
     editionsPerYear = document.getElementById("txtNumberEditionsPerYear").value;
     div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
 
@@ -105,7 +106,13 @@ function displayMatrixAsTable(matrix) {
         const rowIndexCell = document.createElement('td');
         // rowIndexCell.textContent = startingYear;
 
-        // Create label for text-fields.
+        const labelEditionType = document.createElement('label');
+        labelEditionType.id = 'labelEditionType' + startingYear;
+        labelEditionType.innerHTML = editionsType + ". " + volumeStartingYear;
+
+        volumeStartingYear++;
+
+        // Create text-fields for each year.
         const textFieldYear = document.createElement('input');
         textFieldYear.type = 'text'
         textFieldYear.value = `${startingYear}`;
@@ -138,6 +145,7 @@ function displayMatrixAsTable(matrix) {
         });
 
         // Append checkbox to cell
+        row.appendChild(labelEditionType);
         row.appendChild(checkbox);
         row.appendChild(textFieldYear);
 
