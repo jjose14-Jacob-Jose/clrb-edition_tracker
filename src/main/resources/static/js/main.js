@@ -52,20 +52,15 @@ function createMatrix(rows, columns, initialValue) {
     return matrix;
 }
 
-// Function to clear any existing matrix.
+// Function to clear contents of the div 'divMatrix'. This replaces the table.
 function matrixClear() {
 
+    const divElement = document.getElementById('divMatrix');
 
+    if(matrix.length > 0 | divElement!== null ) {
 
-    if(div_matrix) {
-        while (div_matrix.firstChild) {
-            printToConsole(div_matrix);
-        }
+        divElement.innerHTML = '';
     }
-
-    div_matrix = document.createElement('div');
-    div_matrix.id = ID_DIV_MATRIX;
-    document.body.appendChild(div_matrix);
 
 }
 
@@ -192,8 +187,8 @@ function displayMatrixAsTable(matrix) {
         table.appendChild(row);
     }
 
-
-    div_matrix.appendChild(table);
+    if(div_matrix !== undefined)
+        div_matrix.appendChild(table);
 }
 
 // Function will add edition type (i.e. 'vol. 1') and year (i.e. '2000') to specific column indices.
