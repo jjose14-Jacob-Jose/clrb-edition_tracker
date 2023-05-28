@@ -12,10 +12,10 @@ document.getElementById("btnSubmit").addEventListener("click", function() {
 
     event.preventDefault();
 
-    editionsType = document.getElementById("editionsType").value;
-    yearStarting = document.getElementById("yearStarting").value;
-    yearEnding = document.getElementById("yearEnding").value;
-    editionsPerYear = document.getElementById("editionsPerYear").value;
+    editionsType = document.getElementById("txtTextEditionsType").value;
+    yearStarting = document.getElementById("txtNumberYearStarting").value;
+    yearEnding = document.getElementById("txtNumberYearEnding").value;
+    editionsPerYear = document.getElementById("txtNumberEditionsPerYear").value;
     div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
 
 
@@ -74,15 +74,18 @@ function restrictToNumbers(event) {
         event.preventDefault();
     }
 }
+
 // Function will ensure all input text-fields only accept digits as input.
 function textFieldsTypeTextMakeNumberInputOnly() {
     // Get all the text fields with type 'text'
     const textFields = document.querySelectorAll('input[type="text"]');
 
-// Apply the validation function to each text field
+    // Apply the validation function to text fields with IDs starting with 'txtNumber'.
     textFields.forEach(textField => {
-        textField.addEventListener('input', restrictToNumbers);
-        textField.addEventListener('keydown', restrictToNumbers);
+        if (textField.id.startsWith('txtNumber')) {
+            textField.addEventListener('input', restrictToNumbers);
+            textField.addEventListener('keydown', restrictToNumbers);
+        }
     });
 
 }
@@ -106,9 +109,7 @@ function displayMatrixAsTable(matrix) {
         const textFieldYear = document.createElement('input');
         textFieldYear.type = 'text'
         textFieldYear.value = `${startingYear}`;
-
-
-
+        textFieldYear.id = 'txtNumberYear' + startingYear;
 
 
         // Create checkbox element
@@ -190,7 +191,8 @@ function main() {
 
     printToConsole("Start: main()")
 
-    let numberOfYears = yearEnding - yearStarting;
+    // Adding '+1' to ensure 'ending' year is also included.
+    let numberOfYears = yearEnding - yearStarting + 1;
     let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear, INITIAL_VALUE_MATRIX);
 
     console.log("Matrix is :", JSON.stringify(matrixYearAndEditions));
