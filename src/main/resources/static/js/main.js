@@ -57,7 +57,7 @@ function matrixClear() {
 
     const divElement = document.getElementById('divMatrix');
 
-    if(matrix.length > 0 | divElement!== null ) {
+    if(matrix.length > 0 || divElement!== null ) {
 
         divElement.innerHTML = '';
     }
@@ -76,7 +76,7 @@ function restrictToNumbers(event) {
 }
 
 // Function will ensure all input text-fields only accept digits as input.
-function textFieldsTypeTextMakeNumberInputOnly() {
+function makeTextFieldsOfIdTextNumberAcceptOnlyDigits() {
     // Get all the text fields with type 'text'
     const textFields = document.querySelectorAll('input[type="text"]');
 
@@ -116,6 +116,9 @@ function displayMatrixAsTable(matrix) {
         textFieldYear.type = 'text'
         textFieldYear.value = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR];
         textFieldYear.id = 'txtNumberYear' + startingYear;
+        textFieldYear.addEventListener('input', function(event) {
+            incrementValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR);
+        });
 
 
         // Create a main checkbox for each year (year-checkbox).
@@ -168,9 +171,9 @@ function displayMatrixAsTable(matrix) {
             // Attach change event listener to checkbox
             checkbox.addEventListener('change', function () {
                 if (this.checked) {
-                    matrix[i][j] = 1; // Set matrix value to 1 if checkbox is checked
+                    matrix[i][indexOfMatrixColumn] = 1; // Set matrix value to 1 if checkbox is checked
                 } else {
-                    matrix[i][j] = 0; // Set matrix value to 0 if checkbox is unchecked
+                    matrix[i][indexOfMatrixColumn] = 0; // Set matrix value to 0 if checkbox is unchecked
                 }
                 printToConsole(matrix);
             });
@@ -192,13 +195,29 @@ function displayMatrixAsTable(matrix) {
 }
 
 // Function will add edition type (i.e. 'vol. 1') and year (i.e. '2000') to specific column indices.
-function matrixAddEditionType(matrix) {
+function matrixAddEditionTypeAndYearToEachRow(matrix) {
 
     for(let i=0; i<matrix.length; i++) {
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE] = editionsType + ". " + (volumeYearStarting+ i);
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR] = yearStarting + i;
     }
 
+}
+
+// Function to increment of all cells in column below the specified row.
+function incrementValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn) {
+    printToConsole("incrementValueOfColumnInSubsequentRowsByOne(");
+    printToConsole("indexRow :" + indexRow);
+    printToConsole("indexOfColumn :" + indexOfColumn);
+    printToConsole("matrix.length :" + matrix.length);
+    for(let i=indexRow+1; i<matrix.length; i++) {
+        matrix[indexRow][indexOfColumn]++;
+        printToConsole("i :" + i);
+        printToConsole(" matrix[indexRow][indexOfColumn] :" +  matrix[indexRow][indexOfColumn]);
+    }
+    printToConsole(matrix);
+
+    // displayMatrixAsTable(matrix);
 }
 
 // Function with main logic.
@@ -211,12 +230,12 @@ function main() {
     let numberOfYears = yearEnding - yearStarting + 1;
     // Adding '+2' to number of years to add 'edition number' and 'year' information.
     let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
-    matrixAddEditionType(matrixYearAndEditions);
+    matrixAddEditionTypeAndYearToEachRow(matrixYearAndEditions);
 
     console.log("Matrix is :", JSON.stringify(matrixYearAndEditions));
 
     displayMatrixAsTable(matrixYearAndEditions);
-    textFieldsTypeTextMakeNumberInputOnly();
+    makeTextFieldsOfIdTextNumberAcceptOnlyDigits();
 
     printToConsole("End: main()")
 
