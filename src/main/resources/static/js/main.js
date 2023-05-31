@@ -5,6 +5,7 @@ const MATRIX_COLUMN_INDICES = {
     COLUMN_INDEX_OF_EDITION_TYPE: 0,
     COLUMN_INDEX_OF_YEAR: 1
 };
+const KEY_TO_CONFIRM_YEAR_UPDATE = 'Enter';
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
@@ -87,7 +88,6 @@ function bindEventListenersToTxtNumber() {
             textField.addEventListener('keydown', restrictToNumbers);
         }
     });
-
 }
 
 // Function to convert a matrix to HTML table. Created by ChatGPT.
@@ -116,8 +116,10 @@ function displayMatrixAsHTMLTable() {
         textFieldYear.type = 'text'
         textFieldYear.value = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR];
         textFieldYear.id = 'txtNumberYear' + startingYear;
-        textFieldYear.addEventListener('input', function(event) {
-            incrementValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, textFieldYear.value);
+        textFieldYear.addEventListener('keydown', function(event) {
+            if(event.key.toLowerCase() === KEY_TO_CONFIRM_YEAR_UPDATE.toLowerCase()) {
+                incrementValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, textFieldYear.value);
+            }
         });
 
 
@@ -150,7 +152,7 @@ function displayMatrixAsHTMLTable() {
         row.appendChild(textFieldYear);
 
         row.appendChild(rowIndexCell);
-        printToConsole("hello");
+        // printToConsole("hello");
         startingYear++;
 
         // Creating individual checkbox for each edition of year.
