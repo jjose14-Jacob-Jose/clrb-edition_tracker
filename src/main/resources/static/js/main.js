@@ -7,7 +7,7 @@ const MATRIX_COLUMN_INDICES = {
     COLUMN_INDEX_OF_YEAR: 2
 };
 const KEY_TO_CONFIRM_YEAR_UPDATE = 'Enter';
-const TEXT_LABEL_HEADER_EDITION_TYPE = "Edition Type";
+const TEXT_LABEL_HEADER_EDITION_TYPE = "Volume";
 const TEXT_LABEL_HEADER_EDITION_NUMBER = "Number";
 const TEXT_LABEL_HEADER_EDITION_CHECKBOX = "Checkbox";
 const TEXT_LABEL_HEADER_YEAR = "Year";
@@ -158,6 +158,7 @@ function displayMatrixAsHTMLTable() {
     }
 
     const table = document.createElement('matrixTable');
+    table.id = "matrixTable";
     table.appendChild(thead);
 
     let tbody = document.createElement('tBody');
