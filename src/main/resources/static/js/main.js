@@ -3,9 +3,11 @@ const INITIAL_VALUE_MATRIX = 0;
 const ID_DIV_MATRIX = "divMatrix";
 const MATRIX_COLUMN_INDICES = {
     COLUMN_INDEX_OF_EDITION_TYPE: 0,
-    COLUMN_INDEX_OF_YEAR: 1
+    COLUMN_INDEX_OF_EDITION_NUMBER: 1,
+    COLUMN_INDEX_OF_YEAR: 2
 };
 const KEY_TO_CONFIRM_YEAR_UPDATE = 'Enter';
+const SEPARATOR_FOR_EDITION_TYPE_NUMBER = ".";
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
@@ -76,8 +78,8 @@ function restrictToNumbers(event) {
     }
 }
 
-// Function will ensure all input text-fields only accept digits as input.
-function bindEventListenersToTxtNumber() {
+// Function will add event-listener to all input text-fields with id start 'txtNumber'.
+function addEventListenersToTxtNumber() {
     // Get all the text fields with type 'text'
     const textFields = document.querySelectorAll('input[type="text"]');
 
@@ -89,6 +91,31 @@ function bindEventListenersToTxtNumber() {
         }
     });
 }
+
+// // Function will add event-listener to all input labels with id start 'label'.
+// function addEventListenersToLabels() {
+//     // Get all the text fields with type 'text'
+//     const labels = document.querySelectorAll('label');
+//
+//     // Apply the validation function to text fields with IDs starting with 'txtNumber'.
+//     labels.forEach(label => {
+//         if (label.id.startsWith('label')) {
+//             label.addEventListener('dblclick', updateLabelValue);
+//         }
+//     });
+// }
+//
+// // Event-listener to get change a label value using prompt.
+// function updateLabelValue() {
+//
+//     let userInputValue = prompt('Enter edition type:');
+//     if (userInputValue !== null) {
+//         this.innerHTML = userInputValue;
+//         incrementIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE, userInputValue);
+//     }
+//
+//
+// }
 
 // Function to convert a matrix to HTML table. Created by ChatGPT.
 function displayMatrixAsHTMLTable() {
@@ -108,6 +135,17 @@ function displayMatrixAsHTMLTable() {
         const labelEditionType = document.createElement('label');
         labelEditionType.id = 'labelEditionType' + startingYear;
         labelEditionType.innerHTML = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE];
+        labelEditionType.addEventListener('dblclick', function(event) {
+            let userInputValue = prompt('Enter edition type:');
+            if (userInputValue !== null) {
+                this.innerHTML = userInputValue;
+                updateTextValueOfColumnInSubsequentRows(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE, userInputValue);
+            }
+        });
+
+        const labelEditionNumber = document.createElement('label');
+        labelEditionNumber.id = 'labelEditionNumber' + startingYear;
+        labelEditionNumber.innerHTML = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER];
 
         volumeYearStarting++;
 
@@ -118,7 +156,7 @@ function displayMatrixAsHTMLTable() {
         textFieldYear.id = 'txtNumberYear' + startingYear;
         textFieldYear.addEventListener('keydown', function(event) {
             if(event.key.toLowerCase() === KEY_TO_CONFIRM_YEAR_UPDATE.toLowerCase()) {
-                incrementValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, textFieldYear.value);
+                incrementIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, parseInt(textFieldYear.value));
             }
         });
 
@@ -200,19 +238,36 @@ function displayMatrixAsHTMLTable() {
 function matrixAddEditionTypeAndYearToEachRow() {
 
     for(let i=0; i<matrix.length; i++) {
-        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE] = editionsType + ". " + (volumeYearStarting+ i);
+        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE] = editionsType;
+        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER] = volumeYearStarting;
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR] = yearStarting + i;
     }
 
 }
 
-// Function to increment of all cells in column below the specified row.
-function incrementValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
-    printToConsole("incrementValueOfColumnInSubsequentRowsByOne(");
+// Increment of cells in column below the specified row.
+function updateTextValueOfColumnInSubsequentRows(indexRow, indexOfColumn, updatedValue) {
+    printToConsole("updateTextValueOfColumnInSubsequentRows(");
+    matrix[indexRow][indexOfColumn] = updatedValue;
+    for(let i=indexRow+1; i<matrix.length; i++) {
+        if(i>0) {
+            matrix[i][indexOfColumn] = updatedValue;
+        }
+        printToConsole("i :" + i);
+        printToConsole(" matrix[i][indexOfColumn] :" +  matrix[i][indexOfColumn]);
+    }
+    printToConsole(matrix);
+
+    displayMatrixAsHTMLTable();
+}
+
+// Change text value of cells below current currnt of same column.
+function incrementIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
+    printToConsole("incrementIntegerValueOfColumnInSubsequentRowsByOne(");
     // printToConsole("indexRow :" + indexRow);
     // printToConsole("indexOfColumn :" + indexOfColumn);
     // printToConsole("matrix.length :" + matrix.length);
-    matrix[indexRow][indexOfColumn] = parseInt(updatedValue);
+    matrix[indexRow][indexOfColumn] = updatedValue;
     for(let i=indexRow+1; i<matrix.length; i++) {
         if(i>0) {
             matrix[i][indexOfColumn] = matrix[i-1][indexOfColumn] + 1;
@@ -240,7 +295,8 @@ function main() {
     console.log("Matrix is :", JSON.stringify(matrixYearAndEditions));
 
     displayMatrixAsHTMLTable(matrixYearAndEditions);
-    bindEventListenersToTxtNumber();
+    addEventListenersToTxtNumber();
+    addEventListenersToLabels();
 
     printToConsole("End: main()")
 
