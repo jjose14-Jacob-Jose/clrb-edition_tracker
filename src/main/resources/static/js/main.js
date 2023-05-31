@@ -53,7 +53,7 @@ function createMatrix(rows, columns, initialValue) {
 }
 
 // Function to clear contents of the div 'divMatrix'. This replaces the table.
-function matrixClear() {
+function clearHTMLTable() {
 
     const divElement = document.getElementById('divMatrix');
 
@@ -76,7 +76,7 @@ function restrictToNumbers(event) {
 }
 
 // Function will ensure all input text-fields only accept digits as input.
-function makeTextFieldsOfIdTextNumberAcceptOnlyDigits() {
+function bindEventListenersToTxtNumber() {
     // Get all the text fields with type 'text'
     const textFields = document.querySelectorAll('input[type="text"]');
 
@@ -91,10 +91,10 @@ function makeTextFieldsOfIdTextNumberAcceptOnlyDigits() {
 }
 
 // Function to convert a matrix to HTML table. Created by ChatGPT.
-function displayMatrixAsTable(matrix) {
+function displayMatrixAsHTMLTable() {
 
     // Remove existing table if it exists
-    matrixClear();
+    clearHTMLTable();
 
     const table = document.createElement('matrixTable');
     let startingYear = yearStarting;
@@ -195,7 +195,7 @@ function displayMatrixAsTable(matrix) {
 }
 
 // Function will add edition type (i.e. 'vol. 1') and year (i.e. '2000') to specific column indices.
-function matrixAddEditionTypeAndYearToEachRow(matrix) {
+function matrixAddEditionTypeAndYearToEachRow() {
 
     for(let i=0; i<matrix.length; i++) {
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE] = editionsType + ". " + (volumeYearStarting+ i);
@@ -234,8 +234,8 @@ function main() {
 
     console.log("Matrix is :", JSON.stringify(matrixYearAndEditions));
 
-    displayMatrixAsTable(matrixYearAndEditions);
-    makeTextFieldsOfIdTextNumberAcceptOnlyDigits();
+    displayMatrixAsHTMLTable(matrixYearAndEditions);
+    bindEventListenersToTxtNumber();
 
     printToConsole("End: main()")
 
