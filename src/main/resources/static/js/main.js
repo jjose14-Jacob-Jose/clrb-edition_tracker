@@ -117,7 +117,7 @@ function displayMatrixAsHTMLTable() {
         textFieldYear.value = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR];
         textFieldYear.id = 'txtNumberYear' + startingYear;
         textFieldYear.addEventListener('input', function(event) {
-            incrementValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR);
+            incrementValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, textFieldYear.value);
         });
 
 
@@ -205,19 +205,22 @@ function matrixAddEditionTypeAndYearToEachRow() {
 }
 
 // Function to increment of all cells in column below the specified row.
-function incrementValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn) {
+function incrementValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
     printToConsole("incrementValueOfColumnInSubsequentRowsByOne(");
-    printToConsole("indexRow :" + indexRow);
-    printToConsole("indexOfColumn :" + indexOfColumn);
-    printToConsole("matrix.length :" + matrix.length);
+    // printToConsole("indexRow :" + indexRow);
+    // printToConsole("indexOfColumn :" + indexOfColumn);
+    // printToConsole("matrix.length :" + matrix.length);
+    matrix[indexRow][indexOfColumn] = parseInt(updatedValue);
     for(let i=indexRow+1; i<matrix.length; i++) {
-        matrix[indexRow][indexOfColumn]++;
+        if(i>0) {
+            matrix[i][indexOfColumn] = matrix[i-1][indexOfColumn] + 1;
+        }
         printToConsole("i :" + i);
-        printToConsole(" matrix[indexRow][indexOfColumn] :" +  matrix[indexRow][indexOfColumn]);
+        printToConsole(" matrix[i][indexOfColumn] :" +  matrix[i][indexOfColumn]);
     }
     printToConsole(matrix);
 
-    // displayMatrixAsTable(matrix);
+    displayMatrixAsHTMLTable();
 }
 
 // Function with main logic.
