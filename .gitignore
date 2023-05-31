@@ -161,3 +161,6 @@ cython_debug/
 
 # Web Storm Files
 .idea
+
+# IntelliJ Configuration File
+*.iml
