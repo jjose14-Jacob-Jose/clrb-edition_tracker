@@ -7,7 +7,11 @@ const MATRIX_COLUMN_INDICES = {
     COLUMN_INDEX_OF_YEAR: 2
 };
 const KEY_TO_CONFIRM_YEAR_UPDATE = 'Enter';
-const SEPARATOR_FOR_EDITION_TYPE_NUMBER = ".";
+const TEXT_LABEL_HEADER_EDITION_TYPE = "Edition Type";
+const TEXT_LABEL_HEADER_EDITION_NUMBER = "Number";
+const TEXT_LABEL_HEADER_EDITION_CHECKBOX = "Checkbox";
+const TEXT_LABEL_HEADER_YEAR = "Year";
+const TEXT_LABEL_HEADER_ISSUES= "Issues";
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
@@ -123,113 +127,144 @@ function displayMatrixAsHTMLTable() {
     // Remove existing table if it exists
     clearHTMLTable();
 
+    // Defining table header.
+    const thead = document.createElement('tHead');
+    {
+        const tr = document.createElement('tr');
+
+        let thEditionType = document.createElement('th');
+        thEditionType.textContent = TEXT_LABEL_HEADER_EDITION_TYPE;
+
+        let thEditionNumber = document.createElement('th');
+        thEditionNumber.textContent = TEXT_LABEL_HEADER_EDITION_NUMBER;
+
+        let thYear = document.createElement('th');
+        thYear.textContent = TEXT_LABEL_HEADER_YEAR;
+
+        let thEditionCheckbox = document.createElement('th');
+        thEditionCheckbox.textContent = TEXT_LABEL_HEADER_EDITION_CHECKBOX;
+
+        let thIssues = document.createElement('th');
+        thIssues.textContent = TEXT_LABEL_HEADER_ISSUES;
+        thIssues.colSpan = parseInt(editionsPerYear);
+
+        tr.appendChild(thEditionType);
+        tr.appendChild(thEditionNumber);
+        tr.appendChild(thYear);
+        tr.appendChild(thEditionCheckbox);
+        tr.appendChild(thIssues);
+
+        thead.appendChild(tr);
+    }
+
     const table = document.createElement('matrixTable');
-    let startingYear = yearStarting;
+    table.appendChild(thead);
 
-    for (let i = 0; i < matrix.length; i++) {
-        const row = document.createElement('tr');
+    let tbody = document.createElement('tBody');
+    {
 
-        const rowIndexCell = document.createElement('td');
-        // rowIndexCell.textContent = startingYear;
+        for (let i = 0; i < matrix.length; i++, volumeYearStarting++) {
 
-        const labelEditionType = document.createElement('label');
-        labelEditionType.id = 'labelEditionType' + startingYear;
-        labelEditionType.innerHTML = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE];
-        labelEditionType.addEventListener('dblclick', function(event) {
-            let userInputValue = prompt('Enter edition type:');
-            if (userInputValue !== null) {
-                this.innerHTML = userInputValue;
-                updateTextValueOfColumnInSubsequentRows(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE, userInputValue);
-            }
-        });
+            const tr = document.createElement('tr');
 
-        const labelEditionNumber = document.createElement('label');
-        labelEditionNumber.id = 'labelEditionNumber' + startingYear;
-        labelEditionNumber.innerHTML = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER];
+            const tdEditionType = document.createElement('td');
+            const labelEditionType = document.createElement('label');
+            labelEditionType.id = 'labelEditionType' + (yearStarting + i);
+            labelEditionType.innerHTML = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE];
+            labelEditionType.addEventListener('dblclick', function (event) {
+                let userInputValue = prompt('Enter edition type:');
+                if (userInputValue !== null) {
+                    this.innerHTML = userInputValue;
+                    updateTextValueOfColumnInSubsequentRows(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE, userInputValue);
+                }
+            });
+            tdEditionType.appendChild(labelEditionType);
 
-        volumeYearStarting++;
+            const tdEditionNumber = document.createElement('td');
+            const labelEditionNumber = document.createElement('label');
+            labelEditionNumber.id = 'labelEditionNumber' + (yearStarting + i);
+            labelEditionNumber.innerHTML = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER];
+            tdEditionNumber.appendChild(labelEditionNumber);
 
-        // Create text-fields for each year.
-        const textFieldYear = document.createElement('input');
-        textFieldYear.type = 'text'
-        textFieldYear.value = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR];
-        textFieldYear.id = 'txtNumberYear' + startingYear;
-        textFieldYear.addEventListener('keydown', function(event) {
-            if(event.key.toLowerCase() === KEY_TO_CONFIRM_YEAR_UPDATE.toLowerCase()) {
-                incrementIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, parseInt(textFieldYear.value));
-            }
-        });
+            const tdYear = document.createElement('td');
+            // Create text-fields for each year.
+            const textFieldYear = document.createElement('input');
+            textFieldYear.type = 'text'
+            textFieldYear.value = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR];
+            textFieldYear.id = 'txtNumberYear' + (yearStarting + i);
+            textFieldYear.addEventListener('keydown', function (event) {
+                if (event.key.toLowerCase() === KEY_TO_CONFIRM_YEAR_UPDATE.toLowerCase()) {
+                    incrementIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, parseInt(textFieldYear.value));
+                }
+            });
+            tdYear.appendChild(textFieldYear);
 
-
-        // Create a main checkbox for each year (year-checkbox).
-        const checkboxOfYear = document.createElement('input');
-        checkboxOfYear.type = 'checkbox';
-        checkboxOfYear.addEventListener('change', function() {
-            const checkboxes = row.querySelectorAll('input[type="checkbox"]');
-            for (let j = 0; j < checkboxes.length; j++) {
-                checkboxes[j].checked = checkboxOfYear.checked;
-            }
-        });
-
-        // Set year-checkbox value based on matrix item
-        checkboxOfYear.checked = false;
-
-        // Attach change event listener to year-checkbox.
-        checkboxOfYear.addEventListener('change', function () {
-            if (this.checked) {
-                // matrix[i][j] = 1; // Set matrix value to 1 if checkbox is checked
-            } else {
-                // matrix[i][j] = 0; // Set matrix value to 0 if checkbox is unchecked
-            }
-            printToConsole(matrix);
-        });
-
-        // Append year information to row.
-        row.appendChild(labelEditionType);
-        row.appendChild(checkboxOfYear);
-        row.appendChild(textFieldYear);
-
-        row.appendChild(rowIndexCell);
-        // printToConsole("hello");
-        startingYear++;
-
-        // Creating individual checkbox for each edition of year.
-        for (let indexOfMatrixColumn = Object.keys(MATRIX_COLUMN_INDICES).length, indexOfEdition = 1; indexOfMatrixColumn < matrix[i].length; indexOfMatrixColumn++, indexOfEdition++) {
-            const cell = document.createElement('td');
-
-            // Create checkbox element
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-
-            // Set checkbox value based on matrix item
-            checkbox.checked = matrix[i][indexOfMatrixColumn] !== 0;
-
-            // Create label for checkbox
-            const label = document.createElement('label');
-            label.textContent = `${indexOfEdition}`;
-
-            // Attach change event listener to checkbox
-            checkbox.addEventListener('change', function () {
+            const tdCheckboxesForEntireEdition = document.createElement('td');
+            const checkboxForEntireEdition = document.createElement('input');
+            checkboxForEntireEdition.type = 'checkbox';
+            checkboxForEntireEdition.addEventListener('change', function () {
+                const checkboxes = tr.querySelectorAll('input[type="checkbox"]');
+                for (let j = 0; j < checkboxes.length; j++) {
+                    checkboxes[j].checked = checkboxForEntireEdition.checked;
+                }
+            });
+            // Set year-checkbox value based on matrix item
+            checkboxForEntireEdition.checked = false;
+            // Attach change event listener to year-checkbox.
+            checkboxForEntireEdition.addEventListener('change', function () {
                 if (this.checked) {
-                    matrix[i][indexOfMatrixColumn] = 1; // Set matrix value to 1 if checkbox is checked
+                    // matrix[i][j] = 1; // Set matrix value to 1 if checkbox is checked
                 } else {
-                    matrix[i][indexOfMatrixColumn] = 0; // Set matrix value to 0 if checkbox is unchecked
+                    // matrix[i][j] = 0; // Set matrix value to 0 if checkbox is unchecked
                 }
                 printToConsole(matrix);
             });
+            tdCheckboxesForEntireEdition.appendChild(checkboxForEntireEdition);
 
-            // Append checkbox to cell
-            cell.appendChild(checkbox);
-            cell.appendChild(label);
+            // Append year information to row.
+            tr.appendChild(tdEditionType);
+            tr.appendChild(tdEditionNumber);
+            tr.appendChild(tdYear);
+            tr.appendChild(tdCheckboxesForEntireEdition);
+
+            const tdCheckboxesForIndividualIssues = document.createElement('td');
+            // Creating individual checkbox for each edition of year.
+            for (let indexOfMatrixColumn = Object.keys(MATRIX_COLUMN_INDICES).length, indexOfEdition = 1; indexOfMatrixColumn < matrix[i].length; indexOfMatrixColumn++, indexOfEdition++) {
+
+                // Create checkbox element
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                // Set checkbox value based on matrix item
+                checkbox.checked = matrix[i][indexOfMatrixColumn] !== 0;
+
+                // Create label for checkbox
+                const label = document.createElement('label');
+                label.textContent = `${indexOfEdition}`;
+
+                // Attach change event listener to checkbox
+                checkbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        matrix[i][indexOfMatrixColumn] = 1; // Set matrix value to 1 if checkbox is checked
+                    } else {
+                        matrix[i][indexOfMatrixColumn] = 0; // Set matrix value to 0 if checkbox is unchecked
+                    }
+                });
+
+                // Append checkbox to tdCheckboxesForIndividualIssues
+                tdCheckboxesForIndividualIssues.appendChild(checkbox);
+                tdCheckboxesForIndividualIssues.appendChild(label);
 
 
-            // Append cell to row
-            row.appendChild(cell);
+            }
+
+            // Append tdCheckboxesForIndividualIssues to row
+            tr.appendChild(tdCheckboxesForIndividualIssues);
+
+            tbody.appendChild(tr);
+            table.appendChild(tbody);
         }
 
-        table.appendChild(row);
     }
-
     if(div_matrix !== undefined)
         div_matrix.appendChild(table);
 }
@@ -239,7 +274,7 @@ function matrixAddEditionTypeAndYearToEachRow() {
 
     for(let i=0; i<matrix.length; i++) {
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE] = editionsType;
-        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER] = volumeYearStarting;
+        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER] = volumeYearStarting + i;
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR] = yearStarting + i;
     }
 
@@ -261,7 +296,7 @@ function updateTextValueOfColumnInSubsequentRows(indexRow, indexOfColumn, update
     displayMatrixAsHTMLTable();
 }
 
-// Change text value of cells below current currnt of same column.
+// Change text value of cells below current row of same column.
 function incrementIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
     printToConsole("incrementIntegerValueOfColumnInSubsequentRowsByOne(");
     // printToConsole("indexRow :" + indexRow);
@@ -296,7 +331,6 @@ function main() {
 
     displayMatrixAsHTMLTable(matrixYearAndEditions);
     addEventListenersToTxtNumber();
-    addEventListenersToLabels();
 
     printToConsole("End: main()")
 
