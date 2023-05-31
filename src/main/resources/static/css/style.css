@@ -1,8 +1,23 @@
+/*
+Author: Jacob Jose
+Date: May 15, 2023, 15:49.
+Description: CSS stylesheet for 'Edition Tracker'.
+*/
+
 #matrixTable {
     text-align: center;
 }
 
-#matrixTable th,
-#matrixTable td {
-    text-align: center;
+/*#matrixTable th,*/
+/*#matrixTable td {*/
+/*    text-align: center;*/
+/*}*/
+
+/*Styles for labels whose id starts with "labelEdition".*/
+label[id^="labelEdition"] {
+    color: #144879;
+}
+
+body {
+    background-color: #fffff0; /* Set background color */
 }

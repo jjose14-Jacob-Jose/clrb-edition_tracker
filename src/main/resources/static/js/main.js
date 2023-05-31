@@ -1,3 +1,8 @@
+/*
+Author: Jacob Jose
+Date: May 15, 2023, 15:49.
+Description: JavaScript file for 'Edition Tracker'.
+*/
 
 const INITIAL_VALUE_MATRIX = 0;
 const ID_DIV_MATRIX = "divMatrix";
@@ -318,12 +323,14 @@ function updateIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn
 // Function with main logic.
 function main() {
 
-    // Adding '+1' to ensure 'ending' year is also included.
-    let numberOfYears = yearEnding - yearStarting + 1;
-    // Adding '+2' to number of years to add 'edition number' and 'year' information.
-    let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
-    matrixAddEditionTypeAndYearToEachRow(matrixYearAndEditions);
-    displayMatrixAsHTMLTable(matrixYearAndEditions);
-    addEventListenersToTxtNumber();
+    if(editionsPerYear>0) {
+        // Adding '+1' to ensure 'ending' year is also included.
+        let numberOfYears = yearEnding - yearStarting + 1;
+        let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
+        matrixAddEditionTypeAndYearToEachRow(matrixYearAndEditions);
+        displayMatrixAsHTMLTable(matrixYearAndEditions);
+        addEventListenersToTxtNumber();
+    }
+
 
 }
