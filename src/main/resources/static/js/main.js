@@ -157,6 +157,13 @@ function displayMatrixAsHTMLTable() {
             const labelEditionNumber = document.createElement('label');
             labelEditionNumber.id = 'labelEditionNumber' + (yearStarting + i);
             labelEditionNumber.innerHTML = matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER];
+            labelEditionNumber.addEventListener('dblclick', function (event) {
+                let userInputValue = prompt('Enter edition number:', labelEditionNumber.innerHTML);
+                if (userInputValue !== null) {
+                    this.innerHTML = userInputValue;
+                    updateIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER, userInputValue);
+                }
+            });
             tdEditionNumber.appendChild(labelEditionNumber);
 
             const tdYear = document.createElement('td');
@@ -167,7 +174,7 @@ function displayMatrixAsHTMLTable() {
             textFieldYear.id = 'txtNumberYear' + (yearStarting + i);
             textFieldYear.addEventListener('keydown', function (event) {
                 if (event.key.toLowerCase() === TEXT_OF_KEY_TO_CONFIRM_YEAR_UPDATE.toLowerCase()) {
-                    incrementIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, parseInt(textFieldYear.value));
+                    updateIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, textFieldYear.value);
                 }
             });
             tdYear.appendChild(textFieldYear);
@@ -293,11 +300,11 @@ function updateTextValueOfColumnInSubsequentRows(indexRow, indexOfColumn, update
 }
 
 // Change text value of cells below current row of same column.
-function incrementIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
+function updateIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
     // printToConsole("indexRow :" + indexRow);
     // printToConsole("indexOfColumn :" + indexOfColumn);
     // printToConsole("matrix.length :" + matrix.length);
-    matrix[indexRow][indexOfColumn] = updatedValue;
+    matrix[indexRow][indexOfColumn] = parseInt(updatedValue);
     for(let i=indexRow+1; i<matrix.length; i++) {
         if(i>0) {
             matrix[i][indexOfColumn] = matrix[i-1][indexOfColumn] + 1;
