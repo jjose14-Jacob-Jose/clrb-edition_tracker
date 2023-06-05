@@ -215,7 +215,7 @@ function displayMatrixAsHTMLTable() {
                     // matrix[i][j] = 0; // Set matrix value to 0 if checkbox is unchecked
                 }
             });
-            if (matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] == FLAG_ISSUES_ALL_AVAILABLE) {
+            if (matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] === FLAG_ISSUES_ALL_AVAILABLE) {
                 checkboxForEntireEdition.checked = true;
             } else {
                 checkboxForEntireEdition.checked = false;
@@ -334,16 +334,19 @@ function main() {
     {
         document.addEventListener("DOMContentLoaded", function () {
             let divMatrix = document.getElementById("divMatrix");
-            let generateButton = document.getElementById("btnGenerateSummary");
+            let btnGenerateSummary = document.getElementById("btnGenerateSummary");
+            let btnClearAll = document.getElementById("btnClearAll");
 
             // Create a new MutationObserver instance
             let observer = new MutationObserver(function (mutationsList) {
                 // Check if divMatrix content has changed
                 for (let mutation of mutationsList) {
                     if (mutation.type === "childList" && divMatrix.innerHTML.trim() === "") {
-                        generateButton.disabled = true;
+                        btnGenerateSummary.disabled = true;
+                        btnClearAll.disabled = true;
                     } else {
-                        generateButton.disabled = false;
+                        btnGenerateSummary.disabled = false;
+                        btnClearAll.disabled = false;
                     }
                 }
             });
