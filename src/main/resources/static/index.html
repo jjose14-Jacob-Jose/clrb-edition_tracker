@@ -8,7 +8,6 @@
 </head>
 <body>
     <h1>Edition Tracker</h1>
-    <form>
         <table>
                 <tr>
                     <td><label for="txtTextEditionsType">Edition types:</label></td>
@@ -30,9 +29,15 @@
                 </tr>
             <tr>
                 <td><button id="btnCreateTable">Create Table</button><td>
+                <td><button id="btnClearAll">ClearAll</button><td>
+                <td>
+                    <form action="/" method="GET">
+                        <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary</button>
+                    </form>
+                </td>
+
             </tr>
         </table>
-    </form>
 
     <script src="/js/main.js"></script>
 

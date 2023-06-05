@@ -330,5 +330,40 @@ function main() {
         addEventListenersToTxtNumber();
     }
 
+    // Event-listener for 'Generate Summary' button.
+    {
+        document.addEventListener("DOMContentLoaded", function () {
+            let divMatrix = document.getElementById("divMatrix");
+            let generateButton = document.getElementById("btnGenerateSummary");
+
+            // Create a new MutationObserver instance
+            let observer = new MutationObserver(function (mutationsList) {
+                // Check if divMatrix content has changed
+                for (let mutation of mutationsList) {
+                    if (mutation.type === "childList" && divMatrix.innerHTML.trim() === "") {
+                        generateButton.disabled = true;
+                    } else {
+                        generateButton.disabled = false;
+                    }
+                }
+            });
+
+            // Start observing changes to divMatrix
+            observer.observe(divMatrix, {childList: true});
+
+            // Stop observing when needed (e.g., when the page is unloaded)
+            // observer.disconnect();
+        });
+    }
+
+    // Event-listener for 'Clear All' button.
+    {
+        document.getElementById("btnClearAll").addEventListener("click", function() {
+            matrix = [];
+            clearHTMLTable();
+            document.getElementById("btnGenerateSummary").disable = false;
+        })
+
+    }
 
 }
