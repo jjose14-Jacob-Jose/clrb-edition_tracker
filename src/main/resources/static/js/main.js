@@ -27,19 +27,6 @@ const FLAG_ISSUES_SOME_AVAILABLE = 2;
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
 let matrix, div_matrix;
 
-// Function to get input parameters and display the table.
-document.getElementById("btnCreateTable").addEventListener("click", function() {
-    event.preventDefault();
-
-    editionsType = document.getElementById("txtTextEditionsType").value;
-    yearStarting = parseInt(document.getElementById("txtNumberYearStarting").value);
-    yearEnding = parseInt(document.getElementById("txtNumberYearEnding").value);
-    volumeYearStarting = parseInt(document.getElementById("txtNumberVolumeStartingYear").value);
-    editionsPerYear = parseInt(document.getElementById("txtNumberEditionsPerYear").value);
-    div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
-
-    main();
-});
 
 // Function to print console outputs.
 function printToConsole(variable) {
@@ -291,7 +278,73 @@ function displayMatrixAsHTMLTable() {
         div_matrix.appendChild(table);
 }
 
+// Adding Event-Listener to HTML elements.
+function addEventListenerToHTMLElements() {
 
+    // For 'Generate Summary' button.
+    {
+        document.addEventListener("DOMContentLoaded", function () {
+            let divMatrix = document.getElementById("divMatrix");
+            let btnGenerateSummary = document.getElementById("btnGenerateSummary");
+            let btnClearAll = document.getElementById("btnClearAll");
+
+            // Create a new MutationObserver instance
+            let observer = new MutationObserver(function (mutationsList) {
+                // Check if divMatrix content has changed
+                for (let mutation of mutationsList) {
+                    if (mutation.type === "childList" && divMatrix.innerHTML.trim() === "") {
+                        btnGenerateSummary.disabled = true;
+                        btnClearAll.disabled = true;
+                    } else {
+                        btnGenerateSummary.disabled = false;
+                        btnClearAll.disabled = false;
+                    }
+                }
+            });
+
+            // Start observing changes to divMatrix
+            observer.observe(divMatrix, {childList: true});
+
+            // Stop observing when needed (e.g., when the page is unloaded)
+            // observer.disconnect();
+        });
+    }
+
+    // For 'Clear All' button.
+    {
+        document.getElementById("btnClearAll").addEventListener("click", function() {
+            matrix = [];
+            clearHTMLTable();
+            document.getElementById("btnGenerateSummary").disable = false;
+        })
+    }
+
+    // For 'Create Table' button.
+    {
+        // Function to get input parameters and display the table.
+        document.getElementById("btnCreateTable").addEventListener("click", function() {
+            event.preventDefault();
+
+            editionsType = document.getElementById("txtTextEditionsType").value;
+            yearStarting = parseInt(document.getElementById("txtNumberYearStarting").value);
+            yearEnding = parseInt(document.getElementById("txtNumberYearEnding").value);
+            volumeYearStarting = parseInt(document.getElementById("txtNumberVolumeStartingYear").value);
+            editionsPerYear = parseInt(document.getElementById("txtNumberEditionsPerYear").value);
+            div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
+
+            if(editionsPerYear>0) {
+                // Adding '+1' to ensure 'ending' year is also included.
+                let numberOfYears = yearEnding - yearStarting + 1;
+                let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
+                displayMatrixAsHTMLTable(matrixYearAndEditions);
+                addEventListenersToTxtNumber();
+            }
+
+        });
+
+    }
+
+}
 
 // Increment of cells in column below the specified row.
 function updateTextValueOfColumnInSubsequentRows(indexRow, indexOfColumn, updatedValue) {
@@ -322,51 +375,6 @@ function updateIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn
 // Function with main logic.
 function main() {
 
-    if(editionsPerYear>0) {
-        // Adding '+1' to ensure 'ending' year is also included.
-        let numberOfYears = yearEnding - yearStarting + 1;
-        let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
-        displayMatrixAsHTMLTable(matrixYearAndEditions);
-        addEventListenersToTxtNumber();
-    }
-
-    // Event-listener for 'Generate Summary' button.
-    {
-        document.addEventListener("DOMContentLoaded", function () {
-            let divMatrix = document.getElementById("divMatrix");
-            let btnGenerateSummary = document.getElementById("btnGenerateSummary");
-            let btnClearAll = document.getElementById("btnClearAll");
-
-            // Create a new MutationObserver instance
-            let observer = new MutationObserver(function (mutationsList) {
-                // Check if divMatrix content has changed
-                for (let mutation of mutationsList) {
-                    if (mutation.type === "childList" && divMatrix.innerHTML.trim() === "") {
-                        btnGenerateSummary.disabled = true;
-                        btnClearAll.disabled = true;
-                    } else {
-                        btnGenerateSummary.disabled = false;
-                        btnClearAll.disabled = false;
-                    }
-                }
-            });
-
-            // Start observing changes to divMatrix
-            observer.observe(divMatrix, {childList: true});
-
-            // Stop observing when needed (e.g., when the page is unloaded)
-            // observer.disconnect();
-        });
-    }
-
-    // Event-listener for 'Clear All' button.
-    {
-        document.getElementById("btnClearAll").addEventListener("click", function() {
-            matrix = [];
-            clearHTMLTable();
-            document.getElementById("btnGenerateSummary").disable = false;
-        })
-
-    }
+    addEventListenerToHTMLElements();
 
 }
