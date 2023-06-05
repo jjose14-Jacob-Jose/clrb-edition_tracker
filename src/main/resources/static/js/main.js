@@ -58,7 +58,14 @@ function createMatrix(rows, columns, initialValue) {
         matrix.push(row);
     }
 
-    return matrix;
+    for(let i=0; i<matrix.length; i++) {
+        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE] = editionsType;
+        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER] = volumeYearStarting + i;
+        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR] = yearStarting + i;
+        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = 0;
+
+    }
+
 }
 
 // Function to clear contents of the div 'divMatrix'. This replaces the table.
@@ -208,6 +215,12 @@ function displayMatrixAsHTMLTable() {
                     // matrix[i][j] = 0; // Set matrix value to 0 if checkbox is unchecked
                 }
             });
+            if (matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] == FLAG_ISSUES_ALL_AVAILABLE) {
+                checkboxForEntireEdition.checked = true;
+            } else {
+                checkboxForEntireEdition.checked = false;
+            }
+
             tdCheckboxesForEntireEdition.appendChild(checkboxForEntireEdition);
 
             // Append year information to row.
@@ -278,18 +291,7 @@ function displayMatrixAsHTMLTable() {
         div_matrix.appendChild(table);
 }
 
-// Function will add edition type (i.e. 'vol. 1') and year (i.e. '2000') to specific column indices.
-function matrixAddEditionTypeAndYearToEachRow() {
 
-    for(let i=0; i<matrix.length; i++) {
-        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_TYPE] = editionsType;
-        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER] = volumeYearStarting + i;
-        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR] = yearStarting + i;
-        matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = 0;
-
-    }
-
-}
 
 // Increment of cells in column below the specified row.
 function updateTextValueOfColumnInSubsequentRows(indexRow, indexOfColumn, updatedValue) {
@@ -306,9 +308,6 @@ function updateTextValueOfColumnInSubsequentRows(indexRow, indexOfColumn, update
 
 // Change text value of cells below current row of same column.
 function updateIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
-    // printToConsole("indexRow :" + indexRow);
-    // printToConsole("indexOfColumn :" + indexOfColumn);
-    // printToConsole("matrix.length :" + matrix.length);
     matrix[indexRow][indexOfColumn] = parseInt(updatedValue);
     for(let i=indexRow+1; i<matrix.length; i++) {
         if(i>0) {
@@ -327,7 +326,6 @@ function main() {
         // Adding '+1' to ensure 'ending' year is also included.
         let numberOfYears = yearEnding - yearStarting + 1;
         let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
-        matrixAddEditionTypeAndYearToEachRow(matrixYearAndEditions);
         displayMatrixAsHTMLTable(matrixYearAndEditions);
         addEventListenersToTxtNumber();
     }
