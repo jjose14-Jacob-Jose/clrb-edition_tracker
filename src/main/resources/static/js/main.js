@@ -34,7 +34,7 @@ function printToConsole(variable) {
 }
 
 // Function to create a matrix where number-of-rows = (end-start) years, number-of-columns = number-of-issues-in-a-year. Created by ChatGPT.
-function createMatrix(rows, columns, initialValue) {
+function createAndInitializeMatrix(rows, columns, initialValue) {
 
     matrix = [];
     for (let i = 0; i < rows; i++) {
@@ -50,7 +50,6 @@ function createMatrix(rows, columns, initialValue) {
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER] = volumeYearStarting + i;
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR] = yearStarting + i;
         matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = 0;
-
     }
 
 }
@@ -185,6 +184,10 @@ function displayMatrixAsHTMLTable() {
                 const checkboxes = tr.querySelectorAll('input[type="checkbox"]');
                 for (let j = 0; j < checkboxes.length; j++) {
                     checkboxes[j].checked = checkboxForEntireEdition.checked;
+                    if (checkboxes[j].checked)
+                        matrix[i][Object.keys(MATRIX_COLUMN_INDICES).length + j] = FLAG_ISSUES_ALL_AVAILABLE;
+                    else
+                        matrix[i][Object.keys(MATRIX_COLUMN_INDICES).length + j] = FLAG_ISSUES_ALL_NOT_AVAILABLE;
                 }
 
                 if(checkboxForEntireEdition.checked) {
@@ -193,14 +196,6 @@ function displayMatrixAsHTMLTable() {
                     matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = FLAG_ISSUES_ALL_NOT_AVAILABLE;
                 }
 
-            });
-            // Attach change event listener to year-checkbox.
-            checkboxForEntireEdition.addEventListener('change', function () {
-                if (this.checked) {
-                    // matrix[i][j] = 1; // Set matrix value to 1 if checkbox is checked
-                } else {
-                    // matrix[i][j] = 0; // Set matrix value to 0 if checkbox is unchecked
-                }
             });
             if (matrix[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] === FLAG_ISSUES_ALL_AVAILABLE) {
                 checkboxForEntireEdition.checked = true;
@@ -281,11 +276,14 @@ function displayMatrixAsHTMLTable() {
 // Adding Event-Listener to HTML elements.
 function addEventListenerToHTMLElements() {
 
+    let divMatrix = document.getElementById("divMatrix");
+    let btnGenerateSummary = document.getElementById("btnGenerateSummary");
+
     // For 'Generate Summary' button.
     {
         document.addEventListener("DOMContentLoaded", function () {
-            let divMatrix = document.getElementById("divMatrix");
-            let btnGenerateSummary = document.getElementById("btnGenerateSummary");
+
+
             let btnClearAll = document.getElementById("btnClearAll");
 
             // Create a new MutationObserver instance
@@ -335,11 +333,22 @@ function addEventListenerToHTMLElements() {
             if(editionsPerYear>0) {
                 // Adding '+1' to ensure 'ending' year is also included.
                 let numberOfYears = yearEnding - yearStarting + 1;
-                let matrixYearAndEditions = createMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
-                displayMatrixAsHTMLTable(matrixYearAndEditions);
+                createAndInitializeMatrix(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
+                displayMatrixAsHTMLTable();
                 addEventListenersToTxtNumber();
             }
 
+        });
+
+    }
+
+    // For 'divMatrix' table.
+    {
+        btnGenerateSummary.addEventListener('click', function(event) {
+            // Handle click event on any element within divMatrix
+            let formInputMatrixTable = document.getElementById('formInputMatrixTable');
+            formInputMatrixTable.value = JSON.stringify(matrix);
+            printToConsole("formInputMatrixTable" + formInputMatrixTable.value);
         });
 
     }
