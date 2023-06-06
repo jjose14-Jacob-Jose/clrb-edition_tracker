@@ -348,11 +348,15 @@ function addEventListenerToHTMLElements() {
             let formInputMatrixDigitsOnly = document.getElementById('formInputMatrixDigitsOnly');
             let formInputMatrixTextOnly = document.getElementById('formInputMatrixTextOnly');
 
-            formInputMatrixDigitsOnly.value = JSON.stringify(matrixDigitsOnly);
-            formInputMatrixTextOnly.value = JSON.stringify(matrixTextOnly);
-
+            // formInputMatrixDigitsOnly.value = JSON.stringify(matrixDigitsOnly);
+            // formInputMatrixTextOnly.value = JSON.stringify(matrixTextOnly);
             printToConsole("formInputMatrixDigitsOnly" + formInputMatrixDigitsOnly.value);
             printToConsole("formInputMatrixTextOnly" + formInputMatrixTextOnly.value);
+
+            formInputMatrixDigitsOnly.value = matrixDigitsOnly;
+            formInputMatrixTextOnly.value = matrixTextOnly;
+
+
         });
 
     }

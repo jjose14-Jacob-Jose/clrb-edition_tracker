@@ -31,10 +31,10 @@
                 <td><button id="btnCreateTable">Create Table</button><td>
                 <td><button id="btnClearAll" disabled="disabled">ClearAll</button><td>
                 <td>
-                    <form action="/" method="GET">
-                        <input type="hidden" id="formInputMatrixDigitsOnly">
-                        <input type="hidden" id="formInputMatrixTextOnly">
-                        <button type="button" id="btnGenerateSummary" disabled="disabled">Generate Summary</button>
+                    <form action="/postData" method="POST">
+                        <input type="hidden" id="formInputMatrixDigitsOnly" name="formInputMatrixDigitsOnly">
+                        <input type="hidden" id="formInputMatrixTextOnly" name="formInputMatrixTextOnly">
+                        <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary</button>
                     </form>
                 </td>
 
