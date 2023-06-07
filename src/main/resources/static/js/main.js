@@ -188,7 +188,7 @@ function displayMatrixAsHTMLTable() {
 
             // Creating individual checkbox for each edition of year.
             const tdCheckboxesForIndividualIssues = document.createElement('td');
-            for (let indexOfEdition = 1; indexOfEdition <= arrayAvailabilityStatusIssuesOfEachYear[i].length; indexOfEdition++) {
+            for (let indexOfEdition = 0; indexOfEdition < arrayAvailabilityStatusIssuesOfEachYear[i].length; indexOfEdition++) {
 
                 // Create checkbox element
                 const checkbox = document.createElement('input');
@@ -196,26 +196,26 @@ function displayMatrixAsHTMLTable() {
                 checkbox.id = 'checkboxOfIssue' + indexOfEdition;
 
                 // Set checkbox value based on matrix item
-                checkbox.checked = arrayAvailabilityStatusYear[i][indexOfEdition]  === 1;
+                checkbox.checked = arrayAvailabilityStatusYear[i][indexOfEdition]  === FLAG_ISSUES_ALL_AVAILABLE;
 
                 // Create label for checkbox
                 const label = document.createElement('label');
-                label.textContent = `${indexOfEdition}`;
+                label.textContent = `${indexOfEdition + 1 }`;
 
                 // Attach change event listener to checkbox
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
-                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = 1; // Value to 1 if checkbox is checked
+                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_ALL_AVAILABLE; // Value to 1 if checkbox is checked
 
                     } else {
-                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = 0; // Value to 1 if checkbox is not-checked.
+                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_NOT_AVAILABLE; // Value to 1 if checkbox is not-checked.
                     }
 
                     const checkboxesInRow = tr.querySelectorAll('input[type="checkbox"][id^="checkboxOfIssue"]');
 
                     let countChecked = 0;
                     // Starting from array-index '1'.
-                    for (let j = 1; j <= checkboxesInRow.length; j++) {
+                    for (let j = 0; j < checkboxesInRow.length; j++) {
                         if (checkboxesInRow[j].checked)
                             countChecked++;
                     }
@@ -265,6 +265,7 @@ function addEventListenerToHTMLElements() {
 
             let btnClearAll = document.getElementById("btnClearAll");
 
+            // To update the JS arrays when user adds data.
             // Create a new MutationObserver instance
             let observer = new MutationObserver(function (mutationsList) {
                 // Check if divMatrix content has changed
@@ -284,6 +285,15 @@ function addEventListenerToHTMLElements() {
 
             // Stop observing when needed (e.g., when the page is unloaded)
             // observer.disconnect();
+        });
+
+        // When 'Generate Summary' button is clicked.
+        btnGenerateSummary.addEventListener('click', function(event) {
+            document.getElementById('arrayEditionDescription').value = arrayEditionDescription;
+            document.getElementById('arrayEditionNumber').value = arrayEditionNumber;
+            document.getElementById('arrayYear').value = arrayYear;
+            document.getElementById('arrayAvailabilityStatusYear').value = arrayAvailabilityStatusYear;
+            document.getElementById('arrayAvailabilityStatusIssuesOfEachYear').value = arrayAvailabilityStatusIssuesOfEachYear;
         });
     }
 
@@ -313,24 +323,6 @@ function addEventListenerToHTMLElements() {
                 initializeArrays();
                 displayMatrixAsHTMLTable();
             }
-
-        });
-
-    }
-
-    // For 'divMatrix' table.
-    {
-        btnGenerateSummary.addEventListener('click', function(event) {
-            // Handle click event on any element within divMatrix
-            let formInputMatrixDigitsOnly = document.getElementById('formInputMatrixDigitsOnly');
-            let formInputMatrixTextOnly = document.getElementById('formInputMatrixTextOnly');
-
-            // formInputMatrixTextOnly.value = JSON.stringify(arrayEditionDescription);
-            printToConsole("formInputMatrixDigitsOnly" + formInputMatrixDigitsOnly.value);
-            printToConsole("formInputMatrixTextOnly" + formInputMatrixTextOnly.value);
-
-            formInputMatrixTextOnly.value = arrayEditionDescription;
-
 
         });
 
@@ -369,6 +361,7 @@ function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedV
     for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
         arrayToBeUpdated[i] = arrayToBeUpdated[(i-1)] + 1;
     }
+    displayMatrixAsHTMLTable();
 }
 
 // Function with main logic.

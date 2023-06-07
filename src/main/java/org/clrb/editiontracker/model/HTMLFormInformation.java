@@ -5,31 +5,57 @@ import java.util.List;
 
 public class HTMLFormInformation {
 
-    private String [] formInputMatrixTextOnly;
+    private String [] arrayEditionDescription;
+    private int [] arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear;
 
-    private List<Integer> formInputMatrixDigitsOnly;
-
-    public String[] getFormInputMatrixTextOnly() {
-        return formInputMatrixTextOnly;
+    public String[] getArrayEditionDescription() {
+        return arrayEditionDescription;
     }
 
-    public void setFormInputMatrixTextOnly(String[] formInputMatrixTextOnly) {
-        this.formInputMatrixTextOnly = formInputMatrixTextOnly;
+    public void setArrayEditionDescription(String[] arrayEditionDescription) {
+        this.arrayEditionDescription = arrayEditionDescription;
     }
 
-    public List<Integer> getFormInputMatrixDigitsOnly() {
-        return formInputMatrixDigitsOnly;
+    public int[] getArrayEditionNumber() {
+        return arrayEditionNumber;
     }
 
-    public void setFormInputMatrixDigitsOnly(List<Integer> formInputMatrixDigitsOnly) {
-        this.formInputMatrixDigitsOnly = formInputMatrixDigitsOnly;
+    public void setArrayEditionNumber(int[] arrayEditionNumber) {
+        this.arrayEditionNumber = arrayEditionNumber;
+    }
+
+    public int[] getArrayYear() {
+        return arrayYear;
+    }
+
+    public void setArrayYear(int[] arrayYear) {
+        this.arrayYear = arrayYear;
+    }
+
+    public int[] getArrayAvailabilityStatusYear() {
+        return arrayAvailabilityStatusYear;
+    }
+
+    public void setArrayAvailabilityStatusYear(int[] arrayAvailabilityStatusYear) {
+        this.arrayAvailabilityStatusYear = arrayAvailabilityStatusYear;
+    }
+
+    public int[] getArrayAvailabilityStatusIssuesOfEachYear() {
+        return arrayAvailabilityStatusIssuesOfEachYear;
+    }
+
+    public void setArrayAvailabilityStatusIssuesOfEachYear(int[] arrayAvailabilityStatusIssuesOfEachYear) {
+        this.arrayAvailabilityStatusIssuesOfEachYear = arrayAvailabilityStatusIssuesOfEachYear;
     }
 
     @Override
     public String toString() {
-        return "UserInformation{" +
-                "formInputMatrixTextOnly=" + Arrays.toString(formInputMatrixTextOnly) +
-                ", formInputMatrixDigitsOnly=" + formInputMatrixDigitsOnly +
+        return "HTMLFormInformation{" +
+                "arrayEditionDescription=" + Arrays.toString(arrayEditionDescription) +
+                ", arrayEditionNumber=" + Arrays.toString(arrayEditionNumber) +
+                ", arrayYear=" + Arrays.toString(arrayYear) +
+                ", arrayAvailabilityStatusYear=" + Arrays.toString(arrayAvailabilityStatusYear) +
+                ", arrayAvailabilityStatusIssuesOfEachYear=" + Arrays.toString(arrayAvailabilityStatusIssuesOfEachYear) +
                 '}';
     }
 }
