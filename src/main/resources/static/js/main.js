@@ -4,7 +4,6 @@ Date: May 15, 2023, 15:49.
 Description: JavaScript file for 'Edition Tracker'.
 */
 
-const INITIAL_VALUE_MATRIX = 0;
 const ID_DIV_MATRIX = "divMatrix";
 const MATRIX_COLUMN_INDICES = {
     COLUMN_INDEX_OF_EDITION_NUMBER: 0,
@@ -18,13 +17,13 @@ const TEXT_LABEL_HEADER_EDITION_CHECKBOX = "Check all";
 const TEXT_LABEL_HEADER_YEAR = "Year";
 const TEXT_LABEL_HEADER_ISSUES= "Issues";
 
-const FLAG_ISSUES_ALL_NOT_AVAILABLE = 0;
+const FLAG_ISSUES_NOT_AVAILABLE = 0;
 const FLAG_ISSUES_ALL_AVAILABLE = 1;
 const FLAG_ISSUES_SOME_AVAILABLE = 2;
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
-let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, matrixDigitsOnly, div_matrix;
+let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, div_matrix;
 
 
 // Function to print console outputs.
@@ -47,44 +46,16 @@ function initializeArrays() {
         arrayEditionDescription.push(editionsType)
         arrayEditionNumber.push(volumeYearStarting++);
         arrayYear.push(yearStarting++)
-        arrayAvailabilityStatusYear.push(FLAG_ISSUES_ALL_NOT_AVAILABLE);
-        arrayAvailabilityStatusIssuesOfEachYear.push([]);
+        arrayAvailabilityStatusYear.push(FLAG_ISSUES_NOT_AVAILABLE);
+        // Creating an array of length 'editionsPerYear' with all elements having value 'FLAG_ISSUES_NOT_AVAILABLE' and pushing it to 'arrayAvailabilityStatusIssuesOfEachYear'.
+        arrayAvailabilityStatusIssuesOfEachYear.push(Array.from({ length: editionsPerYear }, () => FLAG_ISSUES_NOT_AVAILABLE));
     }
-}
-
-// Function to create a matrix where number-of-rows = (end-start) years, number-of-columns = number-of-issues-in-a-year. Created by ChatGPT.
-function createAndInitializeMatrices(rows, columns, initialValue) {
-
-    arrayEditionDescription = [];
-    matrixDigitsOnly = [];
-
-    for (let i = 0; i < rows; i++) {
-        const row = [];
-        arrayEditionDescription[i] = editionsType;
-        for (let j = 0; j < columns; j++) {
-            row.push(initialValue);
-        }
-        matrixDigitsOnly.push(row);
-    }
-
-    for(let i=0; i<matrixDigitsOnly.length; i++) {
-        matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER] = volumeYearStarting + i;
-        matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR] = yearStarting + i;
-        matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = 0;
-    }
-
 }
 
 // Function to clear contents of the div 'divMatrix'. This replaces the table.
 function clearHTMLTable() {
-
     const divElement = document.getElementById('divMatrix');
-
-    if(matrixDigitsOnly.length > 0 || divElement!== null ) {
-
-        divElement.innerHTML = '';
-    }
-
+    divElement.innerHTML = '';
 }
 
 // Function to ensure that only numbers are accepted in text-fields.
@@ -144,6 +115,7 @@ function displayMatrixAsHTMLTable() {
 
             const tr = document.createElement('tr');
 
+            // Label for 'Edition-type' description.
             const tdEditionType = document.createElement('td');
             const labelEditionType = document.createElement('label');
             labelEditionType.id = 'labelEditionType' + (yearStarting + i);
@@ -157,36 +129,35 @@ function displayMatrixAsHTMLTable() {
             });
             tdEditionType.appendChild(labelEditionType);
 
+            // Label for 'Edition-number' description.
             const tdEditionNumber = document.createElement('td');
             const labelEditionNumber = document.createElement('label');
             labelEditionNumber.id = 'labelEditionNumber' + (yearStarting + i);
-            labelEditionNumber.innerHTML = matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER];
             labelEditionNumber.innerHTML = arrayEditionNumber[i];
             labelEditionNumber.addEventListener('dblclick', function (event) {
                 let userInputValue = prompt('Enter edition number:', labelEditionNumber.innerHTML);
                 if (userInputValue !== null) {
                     this.innerHTML = userInputValue;
                     incrementValueOfSubsequentElements(arrayEditionNumber, i, parseInt(userInputValue));
-                    updateIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_EDITION_NUMBER, userInputValue);
                 }
             });
             tdEditionNumber.appendChild(labelEditionNumber);
 
+            // Text-box for 'year'.
             const tdYear = document.createElement('td');
             // Create text-fields for each year.
             const textFieldYear = document.createElement('input');
             textFieldYear.type = 'text'
-            textFieldYear.value = matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR];
             textFieldYear.value = arrayYear[i];
             textFieldYear.id = 'txtNumberYear' + (yearStarting + i);
             textFieldYear.addEventListener('keydown', function (event) {
                 if (event.key.toLowerCase() === TEXT_OF_KEY_TO_CONFIRM_YEAR_UPDATE.toLowerCase()) {
                     incrementValueOfSubsequentElements(arrayYear, i, parseInt(textFieldYear.value));
-                    updateIntegerValueOfColumnInSubsequentRowsByOne(i, MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_YEAR, textFieldYear.value);
                 }
             });
             tdYear.appendChild(textFieldYear);
 
+            // Check-box to check all issues.
             const tdCheckboxesForEntireEdition = document.createElement('td');
             const checkboxForEntireEdition = document.createElement('input');
             checkboxForEntireEdition.type = 'checkbox';
@@ -197,55 +168,35 @@ function displayMatrixAsHTMLTable() {
                     checkboxes[j].checked = checkboxForEntireEdition.checked;
 
                     if (checkboxes[j].checked) {
-                        matrixDigitsOnly[i][Object.keys(MATRIX_COLUMN_INDICES).length + j] = FLAG_ISSUES_ALL_AVAILABLE;
                         arrayIndividualIssues.push(FLAG_ISSUES_ALL_AVAILABLE);
                     }
                     else {
-                        matrixDigitsOnly[i][Object.keys(MATRIX_COLUMN_INDICES).length + j] = FLAG_ISSUES_ALL_NOT_AVAILABLE;
-                        arrayIndividualIssues.push(FLAG_ISSUES_ALL_NOT_AVAILABLE);
+                        arrayIndividualIssues.push(FLAG_ISSUES_NOT_AVAILABLE);
                     }
                 }
                 arrayAvailabilityStatusIssuesOfEachYear[i] = arrayIndividualIssues;
 
                 if(checkboxForEntireEdition.checked) {
-                    matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = FLAG_ISSUES_ALL_AVAILABLE;
                     arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_AVAILABLE;
                 }  else {
-                    matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = FLAG_ISSUES_ALL_NOT_AVAILABLE;
-                    arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_NOT_AVAILABLE;
+                    arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
                 }
 
             });
-            if (matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] === FLAG_ISSUES_ALL_AVAILABLE) {
-                checkboxForEntireEdition.checked = true;
-            } else {
-                checkboxForEntireEdition.checked = false;
-            }
-            if (arrayAvailabilityStatusYear[i] === FLAG_ISSUES_ALL_AVAILABLE) {
-                checkboxForEntireEdition.checked = true;
-            } else {
-                checkboxForEntireEdition.checked = false;
-            }
-
+            checkboxForEntireEdition.checked = arrayAvailabilityStatusYear[i] === FLAG_ISSUES_ALL_AVAILABLE;
             tdCheckboxesForEntireEdition.appendChild(checkboxForEntireEdition);
 
-            // Append year information to row.
-            tr.appendChild(tdEditionType);
-            tr.appendChild(tdEditionNumber);
-            tr.appendChild(tdYear);
-            tr.appendChild(tdCheckboxesForEntireEdition);
-
-            const tdCheckboxesForIndividualIssues = document.createElement('td');
             // Creating individual checkbox for each edition of year.
-            for (let indexOfMatrixColumn = Object.keys(MATRIX_COLUMN_INDICES).length, indexOfEdition = 1; indexOfMatrixColumn < matrixDigitsOnly[i].length; indexOfMatrixColumn++, indexOfEdition++) {
+            const tdCheckboxesForIndividualIssues = document.createElement('td');
+            for (let indexOfEdition = 1; indexOfEdition <= arrayAvailabilityStatusIssuesOfEachYear[i].length; indexOfEdition++) {
 
                 // Create checkbox element
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.id = 'checkboxOfIssue' + indexOfEdition;
+
                 // Set checkbox value based on matrix item
-                checkbox.checked = matrixDigitsOnly[i][indexOfMatrixColumn] !== 0;
-                checkbox.checked = arrayAvailabilityStatusYear[i] !== 0;
+                checkbox.checked = arrayAvailabilityStatusYear[i][indexOfEdition]  === 1;
 
                 // Create label for checkbox
                 const label = document.createElement('label');
@@ -254,16 +205,17 @@ function displayMatrixAsHTMLTable() {
                 // Attach change event listener to checkbox
                 checkbox.addEventListener('change', function () {
                     if (this.checked) {
-                        matrixDigitsOnly[i][indexOfMatrixColumn] = 1; // Set matrix value to 1 if checkbox is checked
+                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = 1; // Value to 1 if checkbox is checked
 
                     } else {
-                        matrixDigitsOnly[i][indexOfMatrixColumn] = 0; // Set matrix value to 0 if checkbox is unchecked
+                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = 0; // Value to 1 if checkbox is not-checked.
                     }
 
                     const checkboxesInRow = tr.querySelectorAll('input[type="checkbox"][id^="checkboxOfIssue"]');
 
                     let countChecked = 0;
-                    for (let j = 0; j < checkboxesInRow.length; j++) {
+                    // Starting from array-index '1'.
+                    for (let j = 1; j <= checkboxesInRow.length; j++) {
                         if (checkboxesInRow[j].checked)
                             countChecked++;
                     }
@@ -271,17 +223,14 @@ function displayMatrixAsHTMLTable() {
                     checkboxForEntireEdition.checked = false;
 
                     if (countChecked === 0) {
-                        matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = FLAG_ISSUES_ALL_NOT_AVAILABLE;
-                        arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_NOT_AVAILABLE;
+                        arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
                     }
                     else if (countChecked === checkboxesInRow.length) {
-                        matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = FLAG_ISSUES_ALL_AVAILABLE;
                         checkboxForEntireEdition.checked = true;
                         arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_AVAILABLE;
 
                     }
                     else {
-                        matrixDigitsOnly[i][MATRIX_COLUMN_INDICES.COLUMN_INDEX_OF_FLAG_AVAILABILITY] = FLAG_ISSUES_SOME_AVAILABLE;
                         arrayAvailabilityStatusYear[i] = FLAG_ISSUES_SOME_AVAILABLE;
                     }
                 });
@@ -290,10 +239,11 @@ function displayMatrixAsHTMLTable() {
                 tdCheckboxesForIndividualIssues.appendChild(checkbox);
                 tdCheckboxesForIndividualIssues.appendChild(label);
             }
-
-            // Append tdCheckboxesForIndividualIssues to row
+            tr.appendChild(tdEditionType);
+            tr.appendChild(tdEditionNumber);
+            tr.appendChild(tdYear);
+            tr.appendChild(tdCheckboxesForEntireEdition);
             tr.appendChild(tdCheckboxesForIndividualIssues);
-
             tbody.appendChild(tr);
             table.appendChild(tbody);
         }
@@ -340,7 +290,6 @@ function addEventListenerToHTMLElements() {
     // For 'Clear All' button.
     {
         document.getElementById("btnClearAll").addEventListener("click", function() {
-            matrixDigitsOnly = [];
             clearHTMLTable();
             document.getElementById("btnGenerateSummary").disable = false;
         })
@@ -361,9 +310,7 @@ function addEventListenerToHTMLElements() {
 
             if(editionsPerYear>0) {
                 // Adding '+1' to ensure 'ending' year is also included.
-                let numberOfYears = yearEnding - yearStarting + 1;
                 initializeArrays();
-                createAndInitializeMatrices(numberOfYears, editionsPerYear + Object.keys(MATRIX_COLUMN_INDICES).length, INITIAL_VALUE_MATRIX);
                 displayMatrixAsHTMLTable();
             }
 
@@ -378,12 +325,10 @@ function addEventListenerToHTMLElements() {
             let formInputMatrixDigitsOnly = document.getElementById('formInputMatrixDigitsOnly');
             let formInputMatrixTextOnly = document.getElementById('formInputMatrixTextOnly');
 
-            // formInputMatrixDigitsOnly.value = JSON.stringify(matrixDigitsOnly);
             // formInputMatrixTextOnly.value = JSON.stringify(arrayEditionDescription);
             printToConsole("formInputMatrixDigitsOnly" + formInputMatrixDigitsOnly.value);
             printToConsole("formInputMatrixTextOnly" + formInputMatrixTextOnly.value);
 
-            formInputMatrixDigitsOnly.value = matrixDigitsOnly;
             formInputMatrixTextOnly.value = arrayEditionDescription;
 
 
@@ -424,19 +369,6 @@ function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedV
     for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
         arrayToBeUpdated[i] = arrayToBeUpdated[(i-1)] + 1;
     }
-}
-
-// Change text value of cells below current row of same column.
-function updateIntegerValueOfColumnInSubsequentRowsByOne(indexRow, indexOfColumn, updatedValue) {
-    matrixDigitsOnly[indexRow][indexOfColumn] = parseInt(updatedValue);
-    for(let i=indexRow+1; i<matrixDigitsOnly.length; i++) {
-        if(i>0) {
-            matrixDigitsOnly[i][indexOfColumn] = matrixDigitsOnly[i-1][indexOfColumn] + 1;
-        }
-        printToConsole("i :" + i);
-        printToConsole(" matrix[i][indexOfColumn] :" +  matrixDigitsOnly[i][indexOfColumn]);
-    }
-    displayMatrixAsHTMLTable();
 }
 
 // Function with main logic.
