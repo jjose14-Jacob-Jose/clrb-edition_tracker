@@ -162,7 +162,7 @@ function displayMatrixAsHTMLTable() {
             const checkboxForEntireEdition = document.createElement('input');
             checkboxForEntireEdition.type = 'checkbox';
             checkboxForEntireEdition.addEventListener('change', function () {
-                const checkboxes = tr.querySelectorAll('input[type="checkbox"]');
+                const checkboxes = tr.querySelectorAll('input[type="checkbox"][id^="checkboxOfIssue"]');
                 const arrayIndividualIssues = [];
                 for (let j = 0; j < checkboxes.length; j++) {
                     checkboxes[j].checked = checkboxForEntireEdition.checked;

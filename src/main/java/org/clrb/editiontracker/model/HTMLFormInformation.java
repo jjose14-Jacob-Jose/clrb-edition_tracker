@@ -1,12 +1,21 @@
 package org.clrb.editiontracker.model;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class HTMLFormInformation {
 
     private String [] arrayEditionDescription;
     private int [] arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear;
+
+    private int editionsPerYear;
+
+    public int getEditionsPerYear() {
+        return editionsPerYear;
+    }
+
+    public void setEditionsPerYear(int editionsPerYear) {
+        this.editionsPerYear = editionsPerYear;
+    }
 
     public String[] getArrayEditionDescription() {
         return arrayEditionDescription;
@@ -56,6 +65,7 @@ public class HTMLFormInformation {
                 ", arrayYear=" + Arrays.toString(arrayYear) +
                 ", arrayAvailabilityStatusYear=" + Arrays.toString(arrayAvailabilityStatusYear) +
                 ", arrayAvailabilityStatusIssuesOfEachYear=" + Arrays.toString(arrayAvailabilityStatusIssuesOfEachYear) +
+                ", editionsPerYear=" + editionsPerYear +
                 '}';
     }
 }

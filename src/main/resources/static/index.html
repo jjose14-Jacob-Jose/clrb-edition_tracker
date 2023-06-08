@@ -9,6 +9,7 @@
 <body>
     <h1>Edition Tracker</h1>
         <table>
+            <form action="/postData" method="POST">
                 <tr>
                     <td><label for="txtTextEditionsType">Edition types:</label></td>
                     <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="vol" ><td>
@@ -31,14 +32,14 @@
                 <td><button id="btnCreateTable">Create Table</button><td>
                 <td><button id="btnClearAll" disabled="disabled">ClearAll</button><td>
                 <td>
-                    <form action="/postData" method="POST">
+
                         <input type="hidden" id="arrayEditionDescription" name="arrayEditionDescription">
                         <input type="hidden" id="arrayEditionNumber" name="arrayEditionNumber">
                         <input type="hidden" id="arrayYear" name="arrayYear">
                         <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
                         <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
                         <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary</button>
-                    </form>
+            </form>
                 </td>
 
             </tr>
