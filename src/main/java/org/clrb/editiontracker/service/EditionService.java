@@ -52,11 +52,12 @@ public class EditionService {
             yearEdition.setStatusAvailabilityOfAllIssues(htmlFormInformation.getArrayAvailabilityStatusYear()[i]);
             yearEdition.setYear(htmlFormInformation.getArrayYear()[i]);
             int noOfIssuesAYear = htmlFormInformation.getEditionsPerYear();
-            int arrayIndexStartOfCurrentYear = i * noOfIssuesAYear;
+            int arrayIndexStartContiguousArray = i * noOfIssuesAYear;
 //            Reducing ending-index by '1' because 'getArraySummary' method considers both starting and ending index.
-            int arrayIndexEndOfCurrentYear = arrayIndexStartOfCurrentYear + noOfIssuesAYear - 1;
-            yearEdition.setListAvailableIssues(getArraySummary(htmlFormInformation.getArrayAvailabilityStatusIssuesOfEachYear(), arrayIndexStartOfCurrentYear, arrayIndexEndOfCurrentYear, EditionConstants.INDEX_OFFSET, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE));
-            yearEdition.setListUnavailableIssues(getArraySummary(htmlFormInformation.getArrayAvailabilityStatusIssuesOfEachYear(), arrayIndexStartOfCurrentYear, arrayIndexEndOfCurrentYear, EditionConstants.INDEX_OFFSET, EditionConstants.FLAG_ISSUES_NOT_AVAILABLE));
+            int arrayIndexEndContiguousArray = arrayIndexStartContiguousArray + noOfIssuesAYear - 1;
+            int arrayIndexContiguousArrayOffset = (arrayIndexStartContiguousArray * -1) + 1;
+            yearEdition.setListAvailableIssues(getArraySummary(htmlFormInformation.getArrayAvailabilityStatusIssuesOfEachYear(), arrayIndexStartContiguousArray, arrayIndexEndContiguousArray, arrayIndexContiguousArrayOffset, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE));
+            yearEdition.setListUnavailableIssues(getArraySummary(htmlFormInformation.getArrayAvailabilityStatusIssuesOfEachYear(), arrayIndexStartContiguousArray, arrayIndexEndContiguousArray, arrayIndexContiguousArrayOffset, EditionConstants.FLAG_ISSUES_NOT_AVAILABLE));
 
             listYearEditions.add(yearEdition);
         }
