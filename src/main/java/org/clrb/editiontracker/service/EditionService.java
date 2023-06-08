@@ -32,7 +32,7 @@ public class EditionService {
                         if (issueRangeStart == issueRangeEnd)
                             listArraySummarized.add(String.valueOf(issueRangeStart + arrayIndexOffset));
                         else
-                            listArraySummarized.add(String.valueOf(issueRangeStart + arrayIndexOffset) + EditionConstants.SEPARATOR_ISSUES + String.valueOf(issueRangeEnd + arrayIndexOffset));
+                            listArraySummarized.add(String.valueOf(issueRangeStart + arrayIndexOffset) + EditionConstants.DELIMITER_EDITION_DIGITS + String.valueOf(issueRangeEnd + arrayIndexOffset));
                     }
                     issueRangeStart = issueRangeEnd = EditionConstants.INVALID_VALUE_INTEGER;
                 }
@@ -41,6 +41,7 @@ public class EditionService {
         return listArraySummarized;
     }
 
+//    Return a list of 'YearEdition' where each item represents a year.
     public List<YearEdition> getYearEditionList(HTMLFormInformation htmlFormInformation) {
 
         List<YearEdition> listYearEditions = new ArrayList<YearEdition>();
@@ -65,4 +66,44 @@ public class EditionService {
         return listYearEditions;
     }
 
+    public String getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatus) {
+
+        StringBuilder summaryHoldingsSB = new StringBuilder("");
+
+        for (int i = 0; i < htmlFormInformation.getArrayAvailabilityStatusYear().length; i++) {
+
+            int availabilityStatusCurrentYear = htmlFormInformation.getArrayAvailabilityStatusYear()[i];
+
+            if ((availabilityStatusCurrentYear == availabilityStatus) || (availabilityStatusCurrentYear == EditionConstants.FLAG_ISSUES_SOME_AVAILABLE)) {
+
+                YearEdition yearEdition = listYearEditions.get(i);
+
+                summaryHoldingsSB.append(yearEdition.getEditionTypeDescription());
+                summaryHoldingsSB.append(EditionConstants.DELIMITER_EDITION_DESCRIPTION_TO_EDITION_DIGITS);
+                summaryHoldingsSB.append(yearEdition.getEditionNumber());
+                summaryHoldingsSB.append(EditionConstants.DELIMITER_EDITION_DIGITS_TO_ISSUE_DIGITS);
+
+                List<String> summaryOfRequestedIssues;
+                if (availabilityStatus == EditionConstants.FLAG_ISSUES_ALL_AVAILABLE) {
+                    summaryOfRequestedIssues = yearEdition.getListAvailableIssues();
+                } else {
+                    summaryOfRequestedIssues = yearEdition.getListUnavailableIssues();
+                }
+
+                for (int j = 0; j < summaryOfRequestedIssues.size(); i++) {
+                    summaryHoldingsSB.append(summaryOfRequestedIssues.get(j));
+
+//                    Checking to ensure a delimiter is not added after the last element.
+                    if (j < summaryOfRequestedIssues.size() - 1) {
+                        summaryHoldingsSB.append(EditionConstants.DELIMITER_SUMMARY_HOLDINGS_BETWEEN_ISSUES_OF_A_YEAR);
+                    }
+                }
+
+            }
+            summaryHoldingsSB.append(EditionConstants.DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS);
+
+        }
+
+        return summaryHoldingsSB.toString();
+    }
 }
