@@ -2,6 +2,7 @@ package org.clrb.editiontracker.service;
 
 import org.clrb.editiontracker.constants.EditionConstants;
 import org.clrb.editiontracker.model.HTMLFormInformation;
+import org.clrb.editiontracker.model.SummaryHolding;
 import org.clrb.editiontracker.model.YearEdition;
 import org.springframework.stereotype.Service;
 
@@ -66,9 +67,10 @@ public class EditionService {
         return listYearEditions;
     }
 
-    public String getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatusOne, int availabilityStatusTwo) {
+//    Returns a list of SummaryHolding.
+    public List<SummaryHolding> getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatusOne, int availabilityStatusTwo) {
 
-        StringBuilder summaryHoldingsSB = new StringBuilder("");
+        List<SummaryHolding> listSummaryHoldings = new ArrayList<SummaryHolding>();
 
         for (int i = 0; i < htmlFormInformation.getArrayAvailabilityStatusYear().length; i++) {
 
@@ -78,9 +80,10 @@ public class EditionService {
 
                 YearEdition yearEdition = listYearEditions.get(i);
 
-                summaryHoldingsSB.append(yearEdition.getEditionTypeDescription());
-                summaryHoldingsSB.append(EditionConstants.DELIMITER_EDITION_DESCRIPTION_TO_EDITION_DIGITS);
-                summaryHoldingsSB.append(yearEdition.getEditionNumber());
+                SummaryHolding summaryHolding = new SummaryHolding();
+                summaryHolding.setEditionYear(yearEdition.getYear());
+                summaryHolding.setEditionDescription(yearEdition.getEditionTypeDescription());
+                summaryHolding.setEditionNumber(yearEdition.getEditionNumber());
 
                 List<String> summaryOfRequestedIssues = new ArrayList<>();
 //                Issues numbers are to be added only if the some issues are available/unavailable. Checking this by checking size of other arraylist.
@@ -90,10 +93,7 @@ public class EditionService {
                         summaryOfRequestedIssues = yearEdition.getListUnavailableIssues();
                 }
 
-                if(summaryOfRequestedIssues.size()>0) {
-                    summaryHoldingsSB.append(EditionConstants.DELIMITER_EDITION_DIGITS_TO_ISSUE_DIGITS);
-                }
-
+                StringBuilder summaryHoldingsSB = new StringBuilder("");
                 for (int j = 0; j < summaryOfRequestedIssues.size(); j++) {
                     summaryHoldingsSB.append(summaryOfRequestedIssues.get(j));
 //                    Checking to ensure a delimiter is not added after the last element.
@@ -101,13 +101,12 @@ public class EditionService {
                         summaryHoldingsSB.append(EditionConstants.DELIMITER_SUMMARY_HOLDINGS_BETWEEN_ISSUES_OF_A_YEAR);
                     }
                 }
+                summaryHolding.setEditionIssueSummary(summaryHoldingsSB.toString());
                 summaryHoldingsSB.append(EditionConstants.DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS);
 
+                listSummaryHoldings.add(summaryHolding);
             }
-
-
         }
-
-        return summaryHoldingsSB.toString();
+        return listSummaryHoldings;
     }
 }

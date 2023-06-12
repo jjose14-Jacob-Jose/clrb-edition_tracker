@@ -33,6 +33,8 @@ public class HomeController {
         System.out.println(htmlFormInformation.toString());
         List<YearEdition> listYearEditions =  editionService.getYearEditionList(htmlFormInformation);
         editionService.getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE, EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
+
+//        Uncomment following line after debugging.
         return "redirect:/index.html";
     }
 }
