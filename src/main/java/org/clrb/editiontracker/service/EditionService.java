@@ -66,7 +66,7 @@ public class EditionService {
         return listYearEditions;
     }
 
-    public String getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatus) {
+    public String getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatusOne, int availabilityStatusTwo) {
 
         StringBuilder summaryHoldingsSB = new StringBuilder("");
 
@@ -74,33 +74,37 @@ public class EditionService {
 
             int availabilityStatusCurrentYear = htmlFormInformation.getArrayAvailabilityStatusYear()[i];
 
-            if ((availabilityStatusCurrentYear == availabilityStatus) || (availabilityStatusCurrentYear == EditionConstants.FLAG_ISSUES_SOME_AVAILABLE)) {
+            if ((availabilityStatusCurrentYear == availabilityStatusOne) || (availabilityStatusCurrentYear == availabilityStatusTwo)) {
 
                 YearEdition yearEdition = listYearEditions.get(i);
 
                 summaryHoldingsSB.append(yearEdition.getEditionTypeDescription());
                 summaryHoldingsSB.append(EditionConstants.DELIMITER_EDITION_DESCRIPTION_TO_EDITION_DIGITS);
                 summaryHoldingsSB.append(yearEdition.getEditionNumber());
-                summaryHoldingsSB.append(EditionConstants.DELIMITER_EDITION_DIGITS_TO_ISSUE_DIGITS);
 
-                List<String> summaryOfRequestedIssues;
-                if (availabilityStatus == EditionConstants.FLAG_ISSUES_ALL_AVAILABLE) {
-                    summaryOfRequestedIssues = yearEdition.getListAvailableIssues();
-                } else {
-                    summaryOfRequestedIssues = yearEdition.getListUnavailableIssues();
+                List<String> summaryOfRequestedIssues = new ArrayList<>();
+//                Issues numbers are to be added only if the some issues are available/unavailable. Checking this by checking size of other arraylist.
+                if ((availabilityStatusOne == EditionConstants.FLAG_ISSUES_ALL_AVAILABLE) & (yearEdition.getListUnavailableIssues().size() != 0)) {
+                        summaryOfRequestedIssues = yearEdition.getListAvailableIssues();
+                } else if ((yearEdition.getListAvailableIssues().size() != 0)){
+                        summaryOfRequestedIssues = yearEdition.getListUnavailableIssues();
                 }
 
-                for (int j = 0; j < summaryOfRequestedIssues.size(); i++) {
-                    summaryHoldingsSB.append(summaryOfRequestedIssues.get(j));
+                if(summaryOfRequestedIssues.size()>0) {
+                    summaryHoldingsSB.append(EditionConstants.DELIMITER_EDITION_DIGITS_TO_ISSUE_DIGITS);
+                }
 
+                for (int j = 0; j < summaryOfRequestedIssues.size(); j++) {
+                    summaryHoldingsSB.append(summaryOfRequestedIssues.get(j));
 //                    Checking to ensure a delimiter is not added after the last element.
                     if (j < summaryOfRequestedIssues.size() - 1) {
                         summaryHoldingsSB.append(EditionConstants.DELIMITER_SUMMARY_HOLDINGS_BETWEEN_ISSUES_OF_A_YEAR);
                     }
                 }
+                summaryHoldingsSB.append(EditionConstants.DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS);
 
             }
-            summaryHoldingsSB.append(EditionConstants.DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS);
+
 
         }
 

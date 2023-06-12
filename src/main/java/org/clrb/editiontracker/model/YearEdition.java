@@ -5,7 +5,19 @@ import java.util.List;
 public class YearEdition {
 
     private String editionTypeDescription;
-    private int editionNumber, year, statusAvailabilityOfAllIssues;
+    private int editionNumber;
+    private int year;
+    private int statusAvailabilityOfAllIssues;
+
+    public int getEditionsPerYear() {
+        return editionsPerYear;
+    }
+
+    public void setEditionsPerYear(int editionsPerYear) {
+        this.editionsPerYear = editionsPerYear;
+    }
+
+    private int editionsPerYear;
     private List<String> listAvailableIssues, listUnavailableIssues;
 
     public String getEditionTypeDescription() {
@@ -63,6 +75,7 @@ public class YearEdition {
                 ", editionNumber=" + editionNumber +
                 ", year=" + year +
                 ", statusAvailabilityOfAllIssues=" + statusAvailabilityOfAllIssues +
+                ", editionsPerYear=" + editionsPerYear +
                 ", listAvailableIssues=" + listAvailableIssues +
                 ", listUnavailableIssues=" + listUnavailableIssues +
                 '}';
