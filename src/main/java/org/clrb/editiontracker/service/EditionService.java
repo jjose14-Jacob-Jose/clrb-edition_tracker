@@ -67,7 +67,7 @@ public class EditionService {
         return listYearEditions;
     }
 
-//    Returns a list of SummaryHolding.
+    //    Returns a list of SummaryHolding.
     public List<SummaryHolding> getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatusOne, int availabilityStatusTwo) {
 
         List<SummaryHolding> listSummaryHoldings = new ArrayList<SummaryHolding>();
@@ -88,9 +88,9 @@ public class EditionService {
                 List<String> summaryOfRequestedIssues = new ArrayList<>();
 //                Issues numbers are to be added only if the some issues are available/unavailable. Checking this by checking size of other arraylist.
                 if ((availabilityStatusOne == EditionConstants.FLAG_ISSUES_ALL_AVAILABLE) & (yearEdition.getListUnavailableIssues().size() != 0)) {
-                        summaryOfRequestedIssues = yearEdition.getListAvailableIssues();
-                } else if ((yearEdition.getListAvailableIssues().size() != 0)){
-                        summaryOfRequestedIssues = yearEdition.getListUnavailableIssues();
+                    summaryOfRequestedIssues = yearEdition.getListAvailableIssues();
+                } else if ((yearEdition.getListAvailableIssues().size() != 0)) {
+                    summaryOfRequestedIssues = yearEdition.getListUnavailableIssues();
                 }
 
                 StringBuilder summaryHoldingsSB = new StringBuilder("");
