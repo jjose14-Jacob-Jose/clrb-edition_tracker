@@ -7,32 +7,41 @@ import java.util.List;
 
 public class SummaryHoldingService {
 
-    public String getSummarizeEditionNumbers(List<SummaryHolding> listSummaryHoldings) {
+    public String getSummaryHoldingWithIssueDetails(List<SummaryHolding> listSummaryHoldings, boolean showYearInformationAlso) {
 
         StringBuilder summarySB = new StringBuilder();
-        int editionNumberRangeStart, editionNumberRangeEnd;
+        int editionRangeStartNumber, editionRangeEndNumber, editionRangeStartYear, editionRangeEndYear;
 
         for(int i = 0; i<listSummaryHoldings.size(); i++) {
 
             SummaryHolding summaryHolding = listSummaryHoldings.get(i);
-            editionNumberRangeStart = editionNumberRangeEnd = summaryHolding.getEditionNumber();
+            editionRangeStartNumber = editionRangeEndNumber = summaryHolding.getEditionNumber();
+            editionRangeStartYear = editionRangeEndYear = summaryHolding.getEditionYear();
 
             summarySB.append(summaryHolding.getEditionDescription());
             summarySB.append(EditionConstants.DELIMITER_EDITION_DESCRIPTION_TO_EDITION_DIGITS);
-            summarySB.append(editionNumberRangeStart);
+            summarySB.append(editionRangeStartNumber);
+
+            if (showYearInformationAlso) {
+                summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeStartYear + EditionConstants.DELIMITER_YEAR_END);
+            }
 
             if (summaryHolding.getEditionIssueSummary().equalsIgnoreCase(EditionConstants.STRING_EMPTY)) {
                 while (i < listSummaryHoldings.size() - 1) {
                     SummaryHolding summaryHoldingNext = listSummaryHoldings.get(i + 1);
                     if ( (summaryHoldingNext.getEditionIssueSummary().equalsIgnoreCase(EditionConstants.STRING_EMPTY)) & summaryHolding.getEditionDescription().equalsIgnoreCase(summaryHoldingNext.getEditionDescription()) ) {
-                        editionNumberRangeEnd = summaryHoldingNext.getEditionNumber();
+                        editionRangeEndNumber = summaryHoldingNext.getEditionNumber();
+                        editionRangeEndYear = summaryHoldingNext.getEditionYear();
                         i++;
                     } else {
                         break;
                     }
                 }
-                if (editionNumberRangeStart != editionNumberRangeEnd) {
-                    summarySB.append(EditionConstants.DELIMITER_EDITION_DIGITS + editionNumberRangeEnd);
+                if (editionRangeStartNumber != editionRangeEndNumber) {
+                    summarySB.append(EditionConstants.DELIMITER_EDITION_DIGITS + editionRangeEndNumber);
+                    if (showYearInformationAlso) {
+                        summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeEndYear + EditionConstants.DELIMITER_YEAR_END);
+                    }
                 }
             } else {
                 summarySB.append(EditionConstants.DELIMITER_EDITION_DIGITS_TO_ISSUE_DIGITS);

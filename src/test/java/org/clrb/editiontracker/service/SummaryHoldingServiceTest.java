@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class SummaryHoldingServiceTest {
 
     private SummaryHoldingService summaryHoldingService;
@@ -35,7 +33,7 @@ class SummaryHoldingServiceTest {
 
         expected = "vol.1-6;";
 
-        actual = summaryHoldingService.getSummarizeEditionNumbers(listSummaryHoldings);
+        actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, false);
         Assertions.assertEquals(expected, actual);
     }
 
@@ -49,9 +47,81 @@ class SummaryHoldingServiceTest {
         listSummaryHoldings.add(new SummaryHolding("vol", "", 5, 2005));
         listSummaryHoldings.add(new SummaryHolding("vol", "", 6, 2006));
 
-        expected = "vol.1;vol.2:3;vol.3-6;";
+    expected = "vol.1;vol.2:3;vol.3-6;";
 
-        actual = summaryHoldingService.getSummarizeEditionNumbers(listSummaryHoldings);
+    actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, false);
+        Assertions.assertEquals(expected, actual);
+}
+
+    @Test
+    void getSummarizeEditionNumbers3() {
+
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 1, 2001));
+        listSummaryHoldings.add(new SummaryHolding("vol", "3", 2, 2002));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 3, 2003));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "", 4, 2004));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 5, 2005));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 6, 2006));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "3-5", 7, 2007));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "", 8, 2008));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "", 9, 2009));
+
+        expected = "vol.1;vol.2:3;vol.3;vol-B.4;vol.5-6;vol-B.7:3-5;vol-B.8-9;";
+
+        actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, false);
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    void getSummarizeEditionNumbers4() {
+
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 1, 2001));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 2, 2002));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 3, 2003));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 4, 2004));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 5, 2005));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 6, 2006));
+
+        expected = "vol.1(2001)-6(2006);";
+
+        actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, true);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void getSummarizeEditionNumbers5() {
+
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 1, 2001));
+        listSummaryHoldings.add(new SummaryHolding("vol", "3", 2, 2002));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 3, 2003));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 4, 2004));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 5, 2005));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 6, 2006));
+
+        expected = "vol.1(2001);vol.2(2002):3;vol.3(2003)-6(2006);";
+
+        actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, true);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void getSummarizeEditionNumbers6() {
+
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 1, 2001));
+        listSummaryHoldings.add(new SummaryHolding("vol", "3", 2, 2002));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 3, 2003));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "", 4, 2004));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 5, 2005));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 6, 2006));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "3-5", 7, 2007));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "", 8, 2008));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "", 9, 2009));
+        listSummaryHoldings.add(new SummaryHolding("vol-B", "", 10, 2010));
+
+        expected = "vol.1(2001);vol.2(2002):3;vol.3(2003);vol-B.4(2004);vol.5(2005)-6(2006);vol-B.7(2007):3-5;vol-B.8(2008)-10(2010);";
+
+        actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, true);
+        Assertions.assertEquals(expected, actual);
+    }
+
 }

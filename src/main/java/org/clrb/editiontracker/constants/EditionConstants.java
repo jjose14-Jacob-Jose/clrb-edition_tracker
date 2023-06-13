@@ -12,5 +12,7 @@ public class EditionConstants {
     public static final String DELIMITER_EDITION_DESCRIPTION_TO_EDITION_DIGITS = ".";
     public static final String DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS = ";";
     public static final String DELIMITER_SUMMARY_HOLDINGS_BETWEEN_ISSUES_OF_A_YEAR = ",";
+    public static final String DELIMITER_YEAR_START = "(";
+    public static final String DELIMITER_YEAR_END = ")";
     public static final String STRING_EMPTY = "";
 }
