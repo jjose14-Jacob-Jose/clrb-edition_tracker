@@ -8,36 +8,50 @@
 </head>
 <body>
     <h1>Edition Tracker</h1>
-        <table>
+        <table id="tableUserInput">
             <form action="/postData" method="POST">
                 <tr>
                     <td><label for="txtTextEditionsType">Edition types:</label></td>
-                    <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="vol" ><td>
+                    <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="vol" ></td>
                 </tr>
                 <tr>
                     <td><label for="txtNumberYearStarting">Starting Year:</label></td>
-                    <td><input type="text" id="txtNumberYearStarting" name="yearStarting" required placeholder="Earliest edition in Alma" value="2000" ><td>
-                    <td><label for="txtNumberYearEnding">End Year:</label></td>
+                    <td><input type="text" id="txtNumberYearStarting" name="yearStarting" required placeholder="Earliest edition in Alma" value="2000" ></td>
+                    <td><label for="txtNumberYearEnding" class="right-align">End Year:</label></td>
                     <td><input type="text" id="txtNumberYearEnding" name="yearEnding" required placeholder="Latest edition in Alma or 2020" value="2020" ></td>
                 </tr>
                 <tr>
                     <td><label for="txtNumberVolumeStartingYear">Volume of starting year:</label></td>
                     <td><input type="text" id="txtNumberVolumeStartingYear" name="volumeStartingYear" required placeholder="Volume of starting year" value="1" ></td>
+                    <td><label for="divRBMode" class="right-align" >Mode</label></td>
+                    <td>
+                        <div id="divRBMode">
+                            <label>
+                                <input type="radio" name="rbMode" id="rbModeBasic" value="basic" checked>
+                                Basic
+                            </label>
+                            <label>
+                                <input type="radio" name="rbMode" id="rbModeAdvanced" value="advanced">
+                                Advanced
+                            </label>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td><label for="txtNumberEditionsPerYear">Editions in a year:</label></td>
                     <td><input type="text" id="txtNumberEditionsPerYear" name="editionsPerYear" required placeholder="Number of issues in a year" value="12" ></td>
                 </tr>
             <tr>
-                <td><button id="btnCreateTable">Create Table</button><td>
-                <td><button id="btnClearAll" disabled="disabled">ClearAll</button><td>
-                <td>
+                <td><button id="btnCreateTable">Create Table</button></td>
+                <td><button id="btnClearAll" disabled="disabled">ClearAll</button></td>
+                <td colspan="2">
 
                         <input type="hidden" id="arrayEditionDescription" name="arrayEditionDescription">
                         <input type="hidden" id="arrayEditionNumber" name="arrayEditionNumber">
                         <input type="hidden" id="arrayYear" name="arrayYear">
                         <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
                         <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
+
                         <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary</button>
             </form>
                 </td>

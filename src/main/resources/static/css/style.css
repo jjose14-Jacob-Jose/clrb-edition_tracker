@@ -18,6 +18,18 @@ label[id^="labelEdition"] {
     color: #144879;
 }
 
+#tableUserInput {
+    border: 1px solid black;
+    /*background-color: #f2f2f2;*/
+    /*padding: 10px;*/
+    text-align: right;
+}
+td, tr {
+    border: 1px solid black;
+}
+
+
+
 body {
     background-color: #fffff0; /* Set background color */
 }
