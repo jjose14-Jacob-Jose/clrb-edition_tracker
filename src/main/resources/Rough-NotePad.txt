@@ -1,0 +1,7 @@
+[
+SummaryHolding{editionDescription='vol', editionIssueDescription='1,3', editionNumber=1, editionYear=2000},
+SummaryHolding{editionDescription='vol', editionIssueDescription='2', editionNumber=2, editionYear=2001},
+SummaryHolding{editionDescription='vol', editionIssueDescription='', editionNumber=3, editionYear=2002},
+SummaryHolding{editionDescription='vol', editionIssueDescription='', editionNumber=4, editionYear=2003},
+SummaryHolding{editionDescription='vol', editionIssueDescription='2', editionNumber=5, editionYear=2004},
+SummaryHolding{editionDescription='vol', editionIssueDescription='1,3', editionNumber=6, editionYear=2005}]
