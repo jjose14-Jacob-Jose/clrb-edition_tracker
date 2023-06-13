@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Jacob Jose">
@@ -70,13 +70,13 @@
                 <td><label for="textAreaUnavailableEditions">Missing editions:</label></td>
                 <td><label for="textAreaAvailableSummaryHolding">Summary Holding (available):</label></td>
                 <td><label for="textAreaUnavailableEditionsWithYear" class="modeAdvanced" >Missing editions with year:</label></td>
-                <td><label for="textAreaAvailableEditionsWithYear"class="modeAdvanced" >Available edition with year:</label></td>
+                <td><label for="textAreaAvailableEditionsWithYear" class="modeAdvanced" >Available edition with year:</label></td>
             </tr>
             <tr>
-                <td><textarea id="textAreaUnavailableEditions" name="textAreaUnavailableEditions">${textAreaUnavailableEditions}</textarea></td>
-                <td><textarea id="textAreaAvailableSummaryHolding" name="textAreaAvailableSummaryHolding">${textAreaAvailableSummaryHolding}</textarea></td>
-                <td><textarea id="textAreaUnavailableEditionsWithYear" name="textAreaUnavailableEditionsWithYear" class="modeAdvanced" >${textAreaUnavailableEditionsWithYear}</textarea></td>
-                <td><textarea id="textAreaAvailableEditionsWithYear" name="textAreaAvailableEditionsWithYear" class="modeAdvanced">${textAreaAvailableEditionsWithYear}</textarea></td>
+                <td><textarea id="textAreaUnavailableEditions" name="textAreaUnavailableEditions" th:text="${textAreaUnavailableEditions}"></textarea></td>
+                <td><textarea id="textAreaAvailableSummaryHolding" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
+                <td><textarea id="textAreaUnavailableEditionsWithYear" name="textAreaUnavailableEditionsWithYear" class="modeAdvanced"  th:text="${textAreaUnavailableEditionsWithYear}"> </textarea></td>
+                <td><textarea id="textAreaAvailableEditionsWithYear" name="textAreaAvailableEditionsWithYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithYear}"> </textarea></td>
             </tr>
 
 
