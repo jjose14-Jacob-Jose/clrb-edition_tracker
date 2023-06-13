@@ -5,6 +5,8 @@ import org.clrb.editiontracker.model.HTMLFormInformation;
 import org.clrb.editiontracker.model.SummaryHolding;
 import org.clrb.editiontracker.model.YearEdition;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,4 +111,21 @@ public class EditionService {
         }
         return listSummaryHoldings;
     }
+
+    public String getModel(HTMLFormInformation htmlFormInformation, Model modelResponse, String returnViewName) {
+
+        List<YearEdition> listYearEditions= getYearEditionList(htmlFormInformation);
+        List<SummaryHolding> listSummaryHoldingsAvailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE , EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
+        List<SummaryHolding> listSummaryHoldingsUnavailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_NOT_AVAILABLE , EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
+
+        SummaryHoldingService summaryHoldingService = new SummaryHoldingService();
+
+        modelResponse.addAttribute(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_MISSING_WITH_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsUnavailable, true));
+        modelResponse.addAttribute(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITH_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsAvailable, true));
+        modelResponse.addAttribute(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_SUMMARY_HOLDINGS, summaryHoldingService.getSummaryHoldingStandardFormat(listSummaryHoldingsAvailable));
+
+        return returnViewName;
+    }
+
+
 }
