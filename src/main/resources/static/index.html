@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Edition Tracker</h1>
+    <div class="divTableContainers" id="divTableContainers">
         <table id="tableUserInput">
             <form action="/postData" method="POST">
                 <tr>
@@ -59,6 +60,28 @@
             </tr>
         </table>
 
+        <table id="tableSummaryHolding">
+            <thead>
+                <td colspan="2" class="tableHeader">
+                    Summary
+                </td>
+            </thead>
+            <tr>
+                <td><label for="textAreaUnavailableEditions">Missing editions:</label></td>
+                <td><label for="textAreaAvailableSummaryHolding">Summary Holding (available):</label></td>
+                <td><label for="textAreaUnavailableEditionsWithYear" class="modeAdvanced" >Missing editions with year:</label></td>
+                <td><label for="textAreaAvailableEditionsWithYear"class="modeAdvanced" >Available edition with year:</label></td>
+            </tr>
+            <tr>
+                <td><textarea id="textAreaUnavailableEditions" name="textAreaUnavailableEditions"></textarea></td>
+                <td><textarea id="textAreaAvailableSummaryHolding" name="textAreaAvailableSummaryHolding"></textarea></td>
+                <td><textarea id="textAreaUnavailableEditionsWithYear" name="textAreaUnavailableEditionsWithYear" class="modeAdvanced" ></textarea></td>
+                <td><textarea id="textAreaAvailableEditionsWithYear" name="textAreaAvailableEditionsWithYear" class="modeAdvanced"></textarea></td>
+            </tr>
+
+
+        </table>
+    </div>
     <script src="/js/main.js"></script>
 
     <div id="divMatrix"></div>
