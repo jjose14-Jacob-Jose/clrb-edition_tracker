@@ -309,9 +309,9 @@ function displaySummaryInformation(response) {
     document.getElementById('textAreaAvailableEditionsWithYear').innerText = response['textAreaAvailableEditionsWithYear'];
     document.getElementById('textAreaAvailableEditionsWithoutYear').innerText = response['textAreaAvailableEditionsWithoutYear'];
     document.getElementById('textAreaAvailableSummaryHolding').innerText = response['textAreaAvailableSummaryHolding'];
+    document.getElementById('tableSummaryHolding').style.display = 'table';
 
 }
-
 
 // Adding Event-Listener to HTML elements.
 function addEventListenerToHTMLElements() {
@@ -362,7 +362,7 @@ function addEventListenerToHTMLElements() {
     {
         document.getElementById("btnClearAll").addEventListener("click", function() {
             clearHTMLTable();
-            document.getElementById("btnGenerateSummary").disable = false;
+            toggleSummaryHoldingResultHTMLVisibility(true);
         })
     }
 
@@ -403,8 +403,28 @@ function addEventListenerToHTMLElements() {
         });
     }
 
-    ajaxForFormUserInput();
+    // Showing results from Java API.
+    {
+        toggleSummaryHoldingResultHTMLVisibility(false);
+        ajaxForFormUserInput();
+    }
+
+
 }
+
+// Hides the table displaying SummaryHoldings results from Java API.
+function toggleSummaryHoldingResultHTMLVisibility (flag) {
+
+    document.getElementById("btnGenerateSummary").disable = flag;
+    if (flag) {
+        document.getElementById('tableSummaryHolding').style.display = 'table';
+    } else {
+        document.getElementById('tableSummaryHolding').style.display = 'none';
+
+    }
+
+}
+
 
 // Function with main logic.
 function main() {
