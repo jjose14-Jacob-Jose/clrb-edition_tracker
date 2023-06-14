@@ -1,4 +1,9 @@
-after the statement 'return "redirect:/index";', Java spring is opening 'error.html' in web browser.
+HTML
+    <td><textarea id="textAreaUnavailableEditionsWithoutYear" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
 
-error.html path:
-'src/main/resources/templates/error.html'
+JavaScript
+    document.getElementById('textAreaUnavailableEditionsWithoutYear').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+
+
+Warning in IDE:
+Cannot resolve 'textAreaUnavailableEditionsWithoutYear'

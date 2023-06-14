@@ -21,6 +21,9 @@ const FLAG_ISSUES_NOT_AVAILABLE = 0;
 const FLAG_ISSUES_ALL_AVAILABLE = 1;
 const FLAG_ISSUES_SOME_AVAILABLE = 2;
 
+const URL_GENERATE_SUMMARY = "/postData";
+const URL_GENERATE_SUMMARY_REQUEST_TYPE = "POST";
+
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
 let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, div_matrix;
@@ -252,6 +255,64 @@ function displayMatrixAsHTMLTable() {
         div_matrix.appendChild(table);
 }
 
+// Increment of String-cells in column below the specified row.
+function updateTextValueOfColumnInSubsequentRowsOfArray(arrayToBeUpdated, indexRow, updatedValue) {
+    arrayToBeUpdated[indexRow] = updatedValue;
+    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
+        if(i>0) {
+            arrayToBeUpdated[i] = updatedValue;
+        }
+    }
+    displayMatrixAsHTMLTable();
+}
+
+// Increment of integer-cells in column below the specified row.
+function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedValue) {
+    arrayToBeUpdated[indexRow] = updatedValue;
+    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
+        arrayToBeUpdated[i] = arrayToBeUpdated[(i-1)] + 1;
+    }
+    displayMatrixAsHTMLTable();
+}
+
+// Ajax to call REST API and update page content dynamically.
+function ajaxForFormUserInput() {
+
+
+    $(document).ready(function() {
+        $('#formUserInput').submit(function(event) {
+            event.preventDefault();
+
+            let formData = $(this).serialize();
+
+            $.ajax({
+                url: URL_GENERATE_SUMMARY,
+                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    // Update the page content using the response data
+                    displaySummaryInformation(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+}
+
+// Function to update page content using the JSON response
+function displaySummaryInformation(response) {
+    document.getElementById('textAreaUnavailableEditionsWithoutYear').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+    document.getElementById('textAreaUnavailableEditionsWithYear').innerText = response['textAreaUnavailableEditionsWithYear'];
+    document.getElementById('textAreaAvailableEditionsWithYear').innerText = response['textAreaAvailableEditionsWithYear'];
+    document.getElementById('textAreaAvailableEditionsWithoutYear').innerText = response['textAreaAvailableEditionsWithoutYear'];
+    document.getElementById('textAreaAvailableSummaryHolding').innerText = response['textAreaAvailableSummaryHolding'];
+
+}
+
+
 // Adding Event-Listener to HTML elements.
 function addEventListenerToHTMLElements() {
 
@@ -342,33 +403,10 @@ function addEventListenerToHTMLElements() {
         });
     }
 
-}
-
-// Increment of String-cells in column below the specified row.
-function updateTextValueOfColumnInSubsequentRowsOfArray(arrayToBeUpdated, indexRow, updatedValue) {
-    arrayToBeUpdated[indexRow] = updatedValue;
-    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
-        if(i>0) {
-            arrayToBeUpdated[i] = updatedValue;
-        }
-    }
-    displayMatrixAsHTMLTable();
-}
-
-// Increment of integer-cells in column below the specified row.
-function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedValue) {
-    arrayToBeUpdated[indexRow] = updatedValue;
-    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
-        arrayToBeUpdated[i] = arrayToBeUpdated[(i-1)] + 1;
-    }
-    displayMatrixAsHTMLTable();
+    ajaxForFormUserInput();
 }
 
 // Function with main logic.
 function main() {
-
-
     addEventListenerToHTMLElements();
-
-
 }
