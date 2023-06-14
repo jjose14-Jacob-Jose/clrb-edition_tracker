@@ -18,6 +18,37 @@ label[id^="labelEdition"] {
     color: #144879;
 }
 
+#tableUserInput {
+    border: 1px solid black;
+    /*background-color: #f2f2f2;*/
+    padding-right: 10px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+td, tr {
+    border: 1px solid black;
+}
+
+#tableSummaryHolding {
+    text-align: left;
+}
+
+.divTableContainers{
+    display: flex;
+    flex: 1;
+}
+
+.tableHeader {
+    text-align: center;
+}
+
+/*.table1, .table2 {*/
+
+/*    margin-right: 10px; !* Adjust the spacing between tables if needed *!*/
+/*}*/
+
+
 body {
     background-color: #fffff0; /* Set background color */
 }

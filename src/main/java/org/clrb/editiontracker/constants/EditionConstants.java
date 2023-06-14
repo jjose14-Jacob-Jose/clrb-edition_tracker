@@ -15,4 +15,11 @@ public class EditionConstants {
     public static final String DELIMITER_YEAR_START = "(";
     public static final String DELIMITER_YEAR_END = ")";
     public static final String STRING_EMPTY = "";
+
+    public static final String HTML_ELEMENT_NAME_SUMMARY_MISSING_WITHOUT_YEAR = "textAreaUnavailableEditionsWithoutYear";
+    public static final String HTML_ELEMENT_NAME_SUMMARY_MISSING_WITH_YEAR = "textAreaUnavailableEditionsWithYear";
+    public static final String HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITHOUT_YEAR = "textAreaAvailableEditionsWithoutYear";
+    public static final String HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITH_YEAR = "textAreaAvailableEditionsWithYear";
+    public static final String HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_SUMMARY_HOLDINGS = "textAreaAvailableSummaryHolding";
+
 }
