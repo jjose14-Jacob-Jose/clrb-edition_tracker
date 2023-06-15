@@ -24,14 +24,26 @@ const FLAG_ISSUES_SOME_AVAILABLE = 2;
 const URL_GENERATE_SUMMARY = "/postData";
 const URL_GENERATE_SUMMARY_REQUEST_TYPE = "POST";
 
+const HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED = "modeAdvanced";
+const HTML_ELEMENT_CLASS_VALUE_MODE_BASIC = "modeBasic";
+const HTML_ELEMENT_NAME_MODE = "rbMode";
+
+const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
+
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
 let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, div_matrix;
+let userMode, responseFromAPI;
 
 
 // Function to print console outputs.
 function printToConsole(variable) {
     console.log(JSON.stringify(variable));
+}
+
+// Show variable as an alert.
+function printToAlert(variable) {
+    console.log(MESSAGE_ERROR_API_RESPONSE + "\n" + JSON.stringify(variable));
 }
 
 // Initialize individual arrays.
@@ -59,6 +71,16 @@ function initializeArrays() {
 function clearHTMLTable() {
     const divElement = document.getElementById('divMatrix');
     divElement.innerHTML = '';
+
+    clearAPIResponse();
+}
+
+function clearAPIResponse() {
+    setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
+    setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
+    userMode = null;
+    responseFromAPI = null;
+
 }
 
 // Function to ensure that only numbers are accepted in text-fields.
@@ -275,51 +297,57 @@ function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedV
     displayMatrixAsHTMLTable();
 }
 
-// Ajax to call REST API and update page content dynamically.
-function ajaxForFormUserInput() {
 
-
-    $(document).ready(function() {
-        $('#formUserInput').submit(function(event) {
-            event.preventDefault();
-
-            let formData = $(this).serialize();
-
-            $.ajax({
-                url: URL_GENERATE_SUMMARY,
-                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    // Update the page content using the response data
-                    displaySummaryInformation(response);
-                },
-                error: function(error) {
-                    console.log(error);
-                }
-            });
-        });
-    });
-}
 
 // Function to update page content using the JSON response
-function displaySummaryInformation(response) {
-    document.getElementById('textAreaUnavailableEditionsWithoutYear').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+function displayAPIResponseInHTML(response) {
+    document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+    document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').innerText = response['textAreaUnavailableEditionsWithoutYear'];
     document.getElementById('textAreaUnavailableEditionsWithYear').innerText = response['textAreaUnavailableEditionsWithYear'];
     document.getElementById('textAreaAvailableEditionsWithYear').innerText = response['textAreaAvailableEditionsWithYear'];
     document.getElementById('textAreaAvailableEditionsWithoutYear').innerText = response['textAreaAvailableEditionsWithoutYear'];
-    document.getElementById('textAreaAvailableSummaryHolding').innerText = response['textAreaAvailableSummaryHolding'];
-    document.getElementById('tableSummaryHolding').style.display = 'table';
+    document.getElementById('textAreaAvailableSummaryHoldingBasic').innerText = response['textAreaAvailableSummaryHolding'];
+    document.getElementById('textAreaAvailableSummaryHoldingAdvanced').innerText = response['textAreaAvailableSummaryHolding'];
+
+    toggleUserModeVisibility();
 
 }
 
-// Adding Event-Listener to HTML elements.
-function addEventListenerToHTMLElements() {
+
+// Get value of 'selected' radio button from a group.
+function getRadioButtonsValue(radioButtonName) {
+    let arrayOfRadioButtons = document.getElementsByName("rbMode");
+
+    let valueOfSelectedRadioButton = null;
+
+    for (var i = 0; i < arrayOfRadioButtons.length; i++) {
+        if (arrayOfRadioButtons[i].checked) {
+            valueOfSelectedRadioButton = arrayOfRadioButtons[i].value;
+            break;
+        }
+    }
+
+    return valueOfSelectedRadioButton;
+
+}
+
+
+// Initial-load steps.
+function initialLoadingActivities() {
+
+    userMode = getRadioButtonsValue(HTML_ELEMENT_NAME_MODE);
+
+    // Hiding HTML elements that render API response.
+    {
+        responseFromAPI = null;
+        setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
+        setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
+    }
 
     let divMatrix = document.getElementById("divMatrix");
     let btnGenerateSummary = document.getElementById("btnGenerateSummary");
 
-    // For 'Generate Summary' button.
+    // Event-listener for 'Generate Summary' button.
     {
         document.addEventListener("DOMContentLoaded", function () {
 
@@ -358,15 +386,15 @@ function addEventListenerToHTMLElements() {
         });
     }
 
-    // For 'Clear All' button.
+    // Event-listener for 'Clear All' button.
     {
         document.getElementById("btnClearAll").addEventListener("click", function() {
             clearHTMLTable();
-            toggleSummaryHoldingResultHTMLVisibility(true);
+            setVisibilityOfHTMLClassElements(false);
         })
     }
 
-    // For 'Create Table' button.
+    // Event-listener 'Create Table' button.
     {
         // Function to get input parameters and display the table.
         document.getElementById("btnCreateTable").addEventListener("click", function() {
@@ -405,28 +433,71 @@ function addEventListenerToHTMLElements() {
 
     // Showing results from Java API.
     {
-        toggleSummaryHoldingResultHTMLVisibility(false);
         ajaxForFormUserInput();
     }
 
-
 }
 
-// Hides the table displaying SummaryHoldings results from Java API.
-function toggleSummaryHoldingResultHTMLVisibility (flag) {
+// Change visibility of all HTML elements of specified class.
+function setVisibilityOfHTMLClassElements(htmlClassName, visibilityFlag) {
 
-    document.getElementById("btnGenerateSummary").disable = flag;
-    if (flag) {
-        document.getElementById('tableSummaryHolding').style.display = 'table';
-    } else {
-        document.getElementById('tableSummaryHolding').style.display = 'none';
+    let elements = document.getElementsByClassName(htmlClassName);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = visibilityFlag ? "block" : "none";
+    }
+}
+
+// Ajax to call REST API and update page content dynamically.
+function ajaxForFormUserInput() {
+
+
+    $(document).ready(function() {
+        $('#formUserInput').submit(function(event) {
+            event.preventDefault();
+
+            let formData = $(this).serialize();
+
+            $.ajax({
+                url: URL_GENERATE_SUMMARY,
+                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    // Update the page content using the response data
+                    displayAPIResponseInHTML(response);
+                    responseFromAPI = response;
+                },
+                error: function(error) {
+                    console.log(error);
+                    printToAlert(error);
+                }
+            });
+        });
+    });
+}
+
+// Set the current mode (basic/advanced) selected by user.
+function setUserMode(mode) {
+    userMode = mode;
+    toggleUserModeVisibility();
+}
+
+// Toggle visibility of elements based on user-mode ('basic'/'advanced').
+function toggleUserModeVisibility() {
+    if( responseFromAPI !== null) {
+        if (userMode === HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED) {
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, true);
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
+        }
+        else {
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, true);
+        }
 
     }
-
 }
-
 
 // Function with main logic.
 function main() {
-    addEventListenerToHTMLElements();
+    initialLoadingActivities();
 }

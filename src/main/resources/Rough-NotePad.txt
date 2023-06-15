@@ -1,9 +1,10 @@
-HTML
-    <td><textarea id="textAreaUnavailableEditionsWithoutYear" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
+HTML:
+    <label>
+        <input type="radio" name="rbMode" id="rbModeBasic" value="modeBasic" onclick="setUserMode(this.value)" checked>
+        Basic
+    </label>
 
-JavaScript
-    document.getElementById('textAreaUnavailableEditionsWithoutYear').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+JS Code:
+   userMode = document.getElementsByName("rbMode").value;
 
-
-Warning in IDE:
-Cannot resolve 'textAreaUnavailableEditionsWithoutYear'
+Any mistakes?

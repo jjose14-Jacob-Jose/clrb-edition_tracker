@@ -29,11 +29,11 @@
                 <td>
                     <div id="divRBMode">
                         <label>
-                            <input type="radio" name="rbMode" id="rbModeBasic" value="basic" checked>
+                            <input type="radio" name="rbMode" id="rbModeBasic" value="modeBasic" onclick="setUserMode(this.value)" checked>
                             Basic
                         </label>
                         <label>
-                            <input type="radio" name="rbMode" id="rbModeAdvanced" value="advanced">
+                            <input type="radio" name="rbMode" id="rbModeAdvanced" value="modeAdvanced" onclick="setUserMode(this.value)" >
                             Advanced
                         </label>
                     </div>
@@ -61,7 +61,18 @@
         </tr>
     </table>
 
-    <table id="tableSummaryHolding">
+    <table id="tableSummaryHoldingBasic" class="modeBasic">
+        <tr>
+            <td><label for="textAreaUnavailableEditionsWithoutYearAdvanced">Missing Editions</label></td>
+            <td><label for="textAreaAvailableSummaryHoldingBasic">Summary Holdings (available)</label></td>
+        </tr>
+        <tr>
+            <td><textarea id="textAreaUnavailableEditionsWithoutYearBasic" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
+            <td><textarea id="textAreaAvailableSummaryHoldingBasic" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
+        </tr>
+    </table>
+
+    <table id="tableSummaryHoldingAdvanced" class="modeAdvanced" >
         <tr>
             <td colspan="2" class="tableHeader">
                 Missing Editions
@@ -74,17 +85,17 @@
             </td>
         </tr>
         <tr>
-            <td><label for="textAreaUnavailableEditionsWithoutYear">Without Year</label></td>
+            <td><label for="textAreaUnavailableEditionsWithoutYearAdvanced">Without Year</label></td>
             <td><label for="textAreaUnavailableEditionsWithYear">With Year</label></td>
             <td><label for="textAreaAvailableEditionsWithYear" class="modeAdvanced" >With Year</label></td>
             <td><label for="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" >Without Year</label></td>
         </tr>
         <tr>
-            <td><textarea id="textAreaUnavailableEditionsWithoutYear" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
+            <td><textarea id="textAreaUnavailableEditionsWithoutYearAdvanced" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
             <td><textarea id="textAreaUnavailableEditionsWithYear" name="textAreaUnavailableEditionsWithYear" class="modeAdvanced"  th:text="${textAreaUnavailableEditionsWithYear}"> </textarea></td>
             <td><textarea id="textAreaAvailableEditionsWithYear" name="textAreaAvailableEditionsWithYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithYear}"> </textarea></td>
             <td><textarea id="textAreaAvailableEditionsWithoutYear" name="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithoutYear}"> </textarea></td>
-            <td><textarea id="textAreaAvailableSummaryHolding" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
+            <td><textarea id="textAreaAvailableSummaryHoldingAdvanced" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
         </tr>
 
 
