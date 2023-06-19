@@ -297,8 +297,6 @@ function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedV
     displayMatrixAsHTMLTable();
 }
 
-
-
 // Function to update page content using the JSON response
 function displayAPIResponseInHTML(response) {
     document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').innerText = response['textAreaUnavailableEditionsWithoutYear'];
@@ -312,7 +310,6 @@ function displayAPIResponseInHTML(response) {
     toggleUserModeVisibility();
 
 }
-
 
 // Get value of 'selected' radio button from a group.
 function getRadioButtonsValue(radioButtonName) {
@@ -331,6 +328,34 @@ function getRadioButtonsValue(radioButtonName) {
 
 }
 
+// Ajax to call REST API and update page content dynamically.
+function ajaxForFormUserInput() {
+
+
+    $(document).ready(function() {
+        $('#formUserInput').submit(function(event) {
+            event.preventDefault();
+            let formData = $(this).serialize();
+
+            $.ajax({
+                url: URL_GENERATE_SUMMARY,
+                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    // Update the page content using the response data
+                    responseFromAPI = response;
+                    displayAPIResponseInHTML(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                    printToAlert(error);
+                }
+            });
+        });
+    });
+    printToConsole("Line 'ajaxForFormUserInput'");
+}
 
 // Initial-load steps.
 function initialLoadingActivities() {
@@ -378,6 +403,7 @@ function initialLoadingActivities() {
 
         // When 'Generate Summary' button is clicked.
         btnGenerateSummary.addEventListener('click', function(event) {
+            printToConsole("Line  'initialLoadingActivities'");
             document.getElementById('arrayEditionDescription').value = arrayEditionDescription;
             document.getElementById('arrayEditionNumber').value = arrayEditionNumber;
             document.getElementById('arrayYear').value = arrayYear;
@@ -445,35 +471,6 @@ function setVisibilityOfHTMLClassElements(htmlClassName, visibilityFlag) {
     for (let i = 0; i < elements.length; i++) {
         elements[i].style.display = visibilityFlag ? "block" : "none";
     }
-}
-
-// Ajax to call REST API and update page content dynamically.
-function ajaxForFormUserInput() {
-
-
-    $(document).ready(function() {
-        $('#formUserInput').submit(function(event) {
-            event.preventDefault();
-
-            let formData = $(this).serialize();
-
-            $.ajax({
-                url: URL_GENERATE_SUMMARY,
-                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    // Update the page content using the response data
-                    displayAPIResponseInHTML(response);
-                    responseFromAPI = response;
-                },
-                error: function(error) {
-                    console.log(error);
-                    printToAlert(error);
-                }
-            });
-        });
-    });
 }
 
 // Set the current mode (basic/advanced) selected by user.
