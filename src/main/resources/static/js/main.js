@@ -21,14 +21,29 @@ const FLAG_ISSUES_NOT_AVAILABLE = 0;
 const FLAG_ISSUES_ALL_AVAILABLE = 1;
 const FLAG_ISSUES_SOME_AVAILABLE = 2;
 
+const URL_GENERATE_SUMMARY = "/postData";
+const URL_GENERATE_SUMMARY_REQUEST_TYPE = "POST";
+
+const HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED = "modeAdvanced";
+const HTML_ELEMENT_CLASS_VALUE_MODE_BASIC = "modeBasic";
+const HTML_ELEMENT_NAME_MODE = "rbMode";
+
+const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
+
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
 let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, div_matrix;
+let userMode, responseFromAPI;
 
 
 // Function to print console outputs.
 function printToConsole(variable) {
     console.log(JSON.stringify(variable));
+}
+
+// Show variable as an alert.
+function printToAlert(variable) {
+    console.log(MESSAGE_ERROR_API_RESPONSE + "\n" + JSON.stringify(variable));
 }
 
 // Initialize individual arrays.
@@ -56,6 +71,16 @@ function initializeArrays() {
 function clearHTMLTable() {
     const divElement = document.getElementById('divMatrix');
     divElement.innerHTML = '';
+
+    clearAPIResponse();
+}
+
+function clearAPIResponse() {
+    setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
+    setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
+    userMode = null;
+    responseFromAPI = null;
+
 }
 
 // Function to ensure that only numbers are accepted in text-fields.
@@ -252,13 +277,102 @@ function displayMatrixAsHTMLTable() {
         div_matrix.appendChild(table);
 }
 
-// Adding Event-Listener to HTML elements.
-function addEventListenerToHTMLElements() {
+// Increment of String-cells in column below the specified row.
+function updateTextValueOfColumnInSubsequentRowsOfArray(arrayToBeUpdated, indexRow, updatedValue) {
+    arrayToBeUpdated[indexRow] = updatedValue;
+    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
+        if(i>0) {
+            arrayToBeUpdated[i] = updatedValue;
+        }
+    }
+    displayMatrixAsHTMLTable();
+}
+
+// Increment of integer-cells in column below the specified row.
+function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedValue) {
+    arrayToBeUpdated[indexRow] = updatedValue;
+    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
+        arrayToBeUpdated[i] = arrayToBeUpdated[(i-1)] + 1;
+    }
+    displayMatrixAsHTMLTable();
+}
+
+// Function to update page content using the JSON response
+function displayAPIResponseInHTML(response) {
+    document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+    document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+    document.getElementById('textAreaUnavailableEditionsWithYear').innerText = response['textAreaUnavailableEditionsWithYear'];
+    document.getElementById('textAreaAvailableEditionsWithYear').innerText = response['textAreaAvailableEditionsWithYear'];
+    document.getElementById('textAreaAvailableEditionsWithoutYear').innerText = response['textAreaAvailableEditionsWithoutYear'];
+    document.getElementById('textAreaAvailableSummaryHoldingBasic').innerText = response['textAreaAvailableSummaryHolding'];
+    document.getElementById('textAreaAvailableSummaryHoldingAdvanced').innerText = response['textAreaAvailableSummaryHolding'];
+
+    toggleUserModeVisibility();
+
+}
+
+// Get value of 'selected' radio button from a group.
+function getRadioButtonsValue(radioButtonName) {
+    let arrayOfRadioButtons = document.getElementsByName("rbMode");
+
+    let valueOfSelectedRadioButton = null;
+
+    for (var i = 0; i < arrayOfRadioButtons.length; i++) {
+        if (arrayOfRadioButtons[i].checked) {
+            valueOfSelectedRadioButton = arrayOfRadioButtons[i].value;
+            break;
+        }
+    }
+
+    return valueOfSelectedRadioButton;
+
+}
+
+// Ajax to call REST API and update page content dynamically.
+function ajaxForFormUserInput() {
+
+
+    $(document).ready(function() {
+        $('#formUserInput').submit(function(event) {
+            event.preventDefault();
+            let formData = $(this).serialize();
+
+            $.ajax({
+                url: URL_GENERATE_SUMMARY,
+                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    // Update the page content using the response data
+                    responseFromAPI = response;
+                    displayAPIResponseInHTML(response);
+                },
+                error: function(error) {
+                    console.log(error);
+                    printToAlert(error);
+                }
+            });
+        });
+    });
+    printToConsole("Line 'ajaxForFormUserInput'");
+}
+
+// Initial-load steps.
+function initialLoadingActivities() {
+
+    userMode = getRadioButtonsValue(HTML_ELEMENT_NAME_MODE);
+
+    // Hiding HTML elements that render API response.
+    {
+        responseFromAPI = null;
+        setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
+        setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
+    }
 
     let divMatrix = document.getElementById("divMatrix");
     let btnGenerateSummary = document.getElementById("btnGenerateSummary");
 
-    // For 'Generate Summary' button.
+    // Event-listener for 'Generate Summary' button.
     {
         document.addEventListener("DOMContentLoaded", function () {
 
@@ -289,6 +403,7 @@ function addEventListenerToHTMLElements() {
 
         // When 'Generate Summary' button is clicked.
         btnGenerateSummary.addEventListener('click', function(event) {
+            printToConsole("Line  'initialLoadingActivities'");
             document.getElementById('arrayEditionDescription').value = arrayEditionDescription;
             document.getElementById('arrayEditionNumber').value = arrayEditionNumber;
             document.getElementById('arrayYear').value = arrayYear;
@@ -297,15 +412,15 @@ function addEventListenerToHTMLElements() {
         });
     }
 
-    // For 'Clear All' button.
+    // Event-listener for 'Clear All' button.
     {
         document.getElementById("btnClearAll").addEventListener("click", function() {
             clearHTMLTable();
-            document.getElementById("btnGenerateSummary").disable = false;
+            setVisibilityOfHTMLClassElements(false);
         })
     }
 
-    // For 'Create Table' button.
+    // Event-listener 'Create Table' button.
     {
         // Function to get input parameters and display the table.
         document.getElementById("btnCreateTable").addEventListener("click", function() {
@@ -342,33 +457,44 @@ function addEventListenerToHTMLElements() {
         });
     }
 
+    // Showing results from Java API.
+    {
+        ajaxForFormUserInput();
+    }
+
 }
 
-// Increment of String-cells in column below the specified row.
-function updateTextValueOfColumnInSubsequentRowsOfArray(arrayToBeUpdated, indexRow, updatedValue) {
-    arrayToBeUpdated[indexRow] = updatedValue;
-    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
-        if(i>0) {
-            arrayToBeUpdated[i] = updatedValue;
+// Change visibility of all HTML elements of specified class.
+function setVisibilityOfHTMLClassElements(htmlClassName, visibilityFlag) {
+
+    let elements = document.getElementsByClassName(htmlClassName);
+    for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = visibilityFlag ? "block" : "none";
+    }
+}
+
+// Set the current mode (basic/advanced) selected by user.
+function setUserMode(mode) {
+    userMode = mode;
+    toggleUserModeVisibility();
+}
+
+// Toggle visibility of elements based on user-mode ('basic'/'advanced').
+function toggleUserModeVisibility() {
+    if( responseFromAPI !== null) {
+        if (userMode === HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED) {
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, true);
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
         }
-    }
-    displayMatrixAsHTMLTable();
-}
+        else {
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
+            setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, true);
+        }
 
-// Increment of integer-cells in column below the specified row.
-function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedValue) {
-    arrayToBeUpdated[indexRow] = updatedValue;
-    for(let i=indexRow+1; i<arrayToBeUpdated.length; i++) {
-        arrayToBeUpdated[i] = arrayToBeUpdated[(i-1)] + 1;
     }
-    displayMatrixAsHTMLTable();
 }
 
 // Function with main logic.
 function main() {
-
-
-    addEventListenerToHTMLElements();
-
-
+    initialLoadingActivities();
 }
