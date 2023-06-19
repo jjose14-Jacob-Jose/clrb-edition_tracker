@@ -1,25 +1,18 @@
-    $(document).ready(function() {
-        $('#formUserInput').submit(function(event) {
-            event.preventDefault();
-            let formData = $(this).serialize();
+// Creating buttons to increase or decrease number of issues per year.
+const btnIssueCountIncrease = document.createElement('input');
+btnIssueCountIncrease.type = 'button';
+btnIssueCountIncrease.value = TEXT_BUTTON_ISSUE_COUNT_INCREASE;
+btnIssueCountIncrease.id = TEXT_BUTTON_ISSUE_COUNT_INCREASE + i;
+btnIssueCountIncrease.addEventListener("click", function() {
+    changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
+});
 
-            $.ajax({
-                url: URL_GENERATE_SUMMARY,
-                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    // Update the page content using the response data
-                    displayAPIResponseInHTML(response);
-                    responseFromAPI = response;
-                },
-                error: function(error) {
-                    console.log(error);
-                    printToAlert(error);
-                }
-            });
-        });
-    });
+const btnIssueCountDecrease = document.createElement('input');
+btnIssueCountDecrease.type = 'button';
+btnIssueCountDecrease.value = TEXT_BUTTON_ISSUE_COUNT_DECREASE;
+btnIssueCountDecrease.id = TEXT_BUTTON_ISSUE_COUNT_DECREASE + i;
+btnIssueCountIncrease.addEventListener("click", function() {
+    changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
+});
 
-
-    When I debug the above JS code, after clicking the form's 'submit' button, the code inside '$.ajax' is not executed. When I click the submit button second time, the code is executed.
+The code is called by above t2 function.

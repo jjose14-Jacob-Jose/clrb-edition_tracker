@@ -16,6 +16,8 @@ const TEXT_LABEL_HEADER_EDITION_NUMBER = "Number";
 const TEXT_LABEL_HEADER_EDITION_CHECKBOX = "Check all";
 const TEXT_LABEL_HEADER_YEAR = "Year";
 const TEXT_LABEL_HEADER_ISSUES= "Issues";
+const TEXT_BUTTON_ISSUE_COUNT_INCREASE= "+";
+const TEXT_BUTTON_ISSUE_COUNT_DECREASE= "-";
 
 const FLAG_ISSUES_NOT_AVAILABLE = 0;
 const FLAG_ISSUES_ALL_AVAILABLE = 1;
@@ -32,7 +34,7 @@ const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact cu
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
-let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, div_matrix;
+let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, arrayEditionsInTheYear, div_matrix;
 let userMode, responseFromAPI;
 
 
@@ -54,6 +56,7 @@ function initializeArrays() {
     arrayYear = [];
     arrayAvailabilityStatusYear = [];
     arrayAvailabilityStatusIssuesOfEachYear = [];
+    arrayEditionsInTheYear = [];
 
     const yearRange = yearEnding - yearStarting + 1;
     
@@ -64,6 +67,7 @@ function initializeArrays() {
         arrayAvailabilityStatusYear.push(FLAG_ISSUES_NOT_AVAILABLE);
         // Creating an array of length 'editionsPerYear' with all elements having value 'FLAG_ISSUES_NOT_AVAILABLE' and pushing it to 'arrayAvailabilityStatusIssuesOfEachYear'.
         arrayAvailabilityStatusIssuesOfEachYear.push(Array.from({ length: editionsPerYear }, () => FLAG_ISSUES_NOT_AVAILABLE));
+        arrayEditionsInTheYear.push(editionsPerYear);
     }
 }
 
@@ -233,7 +237,7 @@ function displayMatrixAsHTMLTable() {
                         arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_ALL_AVAILABLE; // Value to 1 if checkbox is checked
 
                     } else {
-                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_NOT_AVAILABLE; // Value to 1 if checkbox is not-checked.
+                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_NOT_AVAILABLE; // Value to 0 if checkbox is not-checked.
                     }
 
                     const checkboxesInRow = tr.querySelectorAll('input[type="checkbox"][id^="checkboxOfIssue"]');
@@ -264,17 +268,54 @@ function displayMatrixAsHTMLTable() {
                 tdCheckboxesForIndividualIssues.appendChild(checkbox);
                 tdCheckboxesForIndividualIssues.appendChild(label);
             }
+
+            // Creating buttons to increase or decrease number of issues per year.
+            const btnIssueCountIncrease = document.createElement('input');
+            btnIssueCountIncrease.type = 'button';
+            btnIssueCountIncrease.value = TEXT_BUTTON_ISSUE_COUNT_INCREASE;
+            btnIssueCountIncrease.id = TEXT_BUTTON_ISSUE_COUNT_INCREASE + i;
+            btnIssueCountIncrease.addEventListener("click", function() {
+                changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
+            });
+
+            const btnIssueCountDecrease = document.createElement('input');
+            btnIssueCountDecrease.type = 'button';
+            btnIssueCountDecrease.value = TEXT_BUTTON_ISSUE_COUNT_DECREASE;
+            btnIssueCountDecrease.id = TEXT_BUTTON_ISSUE_COUNT_DECREASE + i;
+            btnIssueCountDecrease.addEventListener("click", function() {
+                changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountDecrease.value);
+            });
+
+            const tdButtonsForIssueCountChange = document.createElement('td');
+            tdButtonsForIssueCountChange.appendChild(btnIssueCountIncrease);
+            tdButtonsForIssueCountChange.appendChild(btnIssueCountDecrease);
+
             tr.appendChild(tdEditionType);
             tr.appendChild(tdEditionNumber);
             tr.appendChild(tdYear);
             tr.appendChild(tdCheckboxesForEntireEdition);
             tr.appendChild(tdCheckboxesForIndividualIssues);
+            tr.appendChild(tdButtonsForIssueCountChange);
             tbody.appendChild(tr);
             table.appendChild(tbody);
         }
     }
     if(div_matrix !== undefined)
         div_matrix.appendChild(table);
+}
+
+function changeIssueCountOfCurrentAndSubsequentYear(editionIndexInMatrix, changeMode) {
+    printToConsole("BEFORE: arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]: " + arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]);
+    for (let i = editionIndexInMatrix; i < arrayAvailabilityStatusIssuesOfEachYear.length; i++) {
+        if (changeMode === TEXT_BUTTON_ISSUE_COUNT_INCREASE)  {
+            arrayAvailabilityStatusIssuesOfEachYear[i].push(FLAG_ISSUES_NOT_AVAILABLE);
+        } else {
+            arrayAvailabilityStatusIssuesOfEachYear[i].pop();
+        }
+    }
+    printToConsole("AFTER: arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]: " + arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]);
+    displayMatrixAsHTMLTable();
+
 }
 
 // Increment of String-cells in column below the specified row.

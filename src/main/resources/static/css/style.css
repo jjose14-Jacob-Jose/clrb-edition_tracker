@@ -28,6 +28,7 @@ label[id^="labelEdition"] {
 
 td, tr {
     border: 1px solid black;
+    text-align: left;
 }
 
 #tableSummaryHoldingAdvanced {
