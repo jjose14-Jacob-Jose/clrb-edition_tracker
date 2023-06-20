@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class HTMLFormInformation {
 
     private String [] arrayEditionDescription;
-    private int [] arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear;
+    private int [] arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, arrayIssuesInTheYear;
 
     private int editionsPerYear;
 
@@ -57,6 +57,14 @@ public class HTMLFormInformation {
         this.arrayAvailabilityStatusIssuesOfEachYear = arrayAvailabilityStatusIssuesOfEachYear;
     }
 
+    public int[] getArrayIssuesInTheYear() {
+        return arrayIssuesInTheYear;
+    }
+
+    public void setArrayIssuesInTheYear(int[] arrayIssuesInTheYear) {
+        this.arrayIssuesInTheYear = arrayIssuesInTheYear;
+    }
+
     @Override
     public String toString() {
         return "HTMLFormInformation{" +
@@ -65,6 +73,7 @@ public class HTMLFormInformation {
                 ", arrayYear=" + Arrays.toString(arrayYear) +
                 ", arrayAvailabilityStatusYear=" + Arrays.toString(arrayAvailabilityStatusYear) +
                 ", arrayAvailabilityStatusIssuesOfEachYear=" + Arrays.toString(arrayAvailabilityStatusIssuesOfEachYear) +
+                ", arrayIssuesInTheYear=" + Arrays.toString(arrayIssuesInTheYear) +
                 ", editionsPerYear=" + editionsPerYear +
                 '}';
     }

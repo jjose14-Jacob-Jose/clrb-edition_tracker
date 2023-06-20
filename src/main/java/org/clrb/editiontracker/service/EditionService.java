@@ -50,17 +50,26 @@ public class EditionService {
 
         List<YearEdition> listYearEditions = new ArrayList<YearEdition>();
 
+        int arrayIndexStartContiguousArray, arrayIndexEndContiguousArray;
+        arrayIndexStartContiguousArray = arrayIndexEndContiguousArray = 0;
         for(int i = 0; i<htmlFormInformation.getArrayEditionNumber().length; i++) {
             YearEdition yearEdition = new YearEdition();
             yearEdition.setEditionTypeDescription(htmlFormInformation.getArrayEditionDescription()[i]);
             yearEdition.setEditionNumber(htmlFormInformation.getArrayEditionNumber()[i]);
             yearEdition.setStatusAvailabilityOfAllIssues(htmlFormInformation.getArrayAvailabilityStatusYear()[i]);
             yearEdition.setYear(htmlFormInformation.getArrayYear()[i]);
-            int noOfIssuesAYear = htmlFormInformation.getEditionsPerYear();
-            int arrayIndexStartContiguousArray = i * noOfIssuesAYear;
-//            Reducing ending-index by '1' because 'getArraySummary' method considers both starting and ending index.
-            int arrayIndexEndContiguousArray = arrayIndexStartContiguousArray + noOfIssuesAYear - 1;
-            int arrayIndexContiguousArrayOffset = (arrayIndexStartContiguousArray * -1) + 1;
+//            int arrayIndexContiguousArrayOffset = (arrayIndexStartContiguousArray * -1) + 1;
+
+//            '-1' to be reduced from indices at start.
+            if (arrayIndexEndContiguousArray == 0) {
+                arrayIndexStartContiguousArray = arrayIndexEndContiguousArray;
+                arrayIndexEndContiguousArray = arrayIndexEndContiguousArray + htmlFormInformation.getArrayIssuesInTheYear()[i] -1;
+
+            } else {
+                arrayIndexStartContiguousArray = arrayIndexEndContiguousArray + 1;
+                arrayIndexEndContiguousArray = arrayIndexEndContiguousArray + htmlFormInformation.getArrayIssuesInTheYear()[i];
+            }
+            int arrayIndexContiguousArrayOffset = arrayIndexStartContiguousArray * -1 + 1;
             yearEdition.setListAvailableIssues(getArraySummary(htmlFormInformation.getArrayAvailabilityStatusIssuesOfEachYear(), arrayIndexStartContiguousArray, arrayIndexEndContiguousArray, arrayIndexContiguousArrayOffset, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE));
             yearEdition.setListUnavailableIssues(getArraySummary(htmlFormInformation.getArrayAvailabilityStatusIssuesOfEachYear(), arrayIndexStartContiguousArray, arrayIndexEndContiguousArray, arrayIndexContiguousArrayOffset, EditionConstants.FLAG_ISSUES_NOT_AVAILABLE));
 

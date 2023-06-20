@@ -34,7 +34,7 @@ const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact cu
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
-let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, arrayEditionsInTheYear, div_matrix;
+let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, arrayIssuesInTheYear, div_matrix;
 let userMode, responseFromAPI;
 
 
@@ -56,7 +56,7 @@ function initializeArrays() {
     arrayYear = [];
     arrayAvailabilityStatusYear = [];
     arrayAvailabilityStatusIssuesOfEachYear = [];
-    arrayEditionsInTheYear = [];
+    arrayIssuesInTheYear = [];
 
     const yearRange = yearEnding - yearStarting + 1;
     
@@ -67,7 +67,7 @@ function initializeArrays() {
         arrayAvailabilityStatusYear.push(FLAG_ISSUES_NOT_AVAILABLE);
         // Creating an array of length 'editionsPerYear' with all elements having value 'FLAG_ISSUES_NOT_AVAILABLE' and pushing it to 'arrayAvailabilityStatusIssuesOfEachYear'.
         arrayAvailabilityStatusIssuesOfEachYear.push(Array.from({ length: editionsPerYear }, () => FLAG_ISSUES_NOT_AVAILABLE));
-        arrayEditionsInTheYear.push(editionsPerYear);
+        arrayIssuesInTheYear.push(editionsPerYear);
     }
 }
 
@@ -309,8 +309,10 @@ function changeIssueCountOfCurrentAndSubsequentYear(editionIndexInMatrix, change
     for (let i = editionIndexInMatrix; i < arrayAvailabilityStatusIssuesOfEachYear.length; i++) {
         if (changeMode === TEXT_BUTTON_ISSUE_COUNT_INCREASE)  {
             arrayAvailabilityStatusIssuesOfEachYear[i].push(FLAG_ISSUES_NOT_AVAILABLE);
+            arrayIssuesInTheYear[i]++;
         } else {
             arrayAvailabilityStatusIssuesOfEachYear[i].pop();
+            arrayIssuesInTheYear[i]--;
         }
     }
     printToConsole("AFTER: arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]: " + arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]);
@@ -450,6 +452,7 @@ function initialLoadingActivities() {
             document.getElementById('arrayYear').value = arrayYear;
             document.getElementById('arrayAvailabilityStatusYear').value = arrayAvailabilityStatusYear;
             document.getElementById('arrayAvailabilityStatusIssuesOfEachYear').value = arrayAvailabilityStatusIssuesOfEachYear;
+            document.getElementById('arrayIssuesInTheYear').value = arrayIssuesInTheYear;
         });
     }
 
