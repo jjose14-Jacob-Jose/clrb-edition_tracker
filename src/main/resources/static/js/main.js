@@ -225,7 +225,7 @@ function displayMatrixAsHTMLTable() {
                 checkbox.id = 'checkboxOfIssue' + indexOfEdition;
 
                 // Set checkbox value based on matrix item
-                checkbox.checked = arrayAvailabilityStatusYear[i][indexOfEdition]  === FLAG_ISSUES_ALL_AVAILABLE;
+                checkbox.checked = arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition]  === FLAG_ISSUES_ALL_AVAILABLE;
 
                 // Create label for checkbox
                 const label = document.createElement('label');
