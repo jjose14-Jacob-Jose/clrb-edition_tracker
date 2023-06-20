@@ -1,18 +1,6 @@
-// Creating buttons to increase or decrease number of issues per year.
-const btnIssueCountIncrease = document.createElement('input');
-btnIssueCountIncrease.type = 'button';
-btnIssueCountIncrease.value = TEXT_BUTTON_ISSUE_COUNT_INCREASE;
-btnIssueCountIncrease.id = TEXT_BUTTON_ISSUE_COUNT_INCREASE + i;
-btnIssueCountIncrease.addEventListener("click", function() {
-    changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
-});
+#matrixTable {
+    display: inline-block;
+    background: blue;
+}
 
-const btnIssueCountDecrease = document.createElement('input');
-btnIssueCountDecrease.type = 'button';
-btnIssueCountDecrease.value = TEXT_BUTTON_ISSUE_COUNT_DECREASE;
-btnIssueCountDecrease.id = TEXT_BUTTON_ISSUE_COUNT_DECREASE + i;
-btnIssueCountIncrease.addEventListener("click", function() {
-    changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
-});
-
-The code is called by above t2 function.
+Gave above CSS property, still table has cells horizontally aligned.

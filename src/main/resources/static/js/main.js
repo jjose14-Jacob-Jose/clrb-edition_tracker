@@ -30,6 +30,8 @@ const HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED = "modeAdvanced";
 const HTML_ELEMENT_CLASS_VALUE_MODE_BASIC = "modeBasic";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
 
+const CSS_VISIBILITY_HIDDEN = 'none';
+
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
 
 // Global Variable declarations.
@@ -82,7 +84,6 @@ function clearHTMLTable() {
 function clearAPIResponse() {
     setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
     setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
-    userMode = null;
     responseFromAPI = null;
 
 }
@@ -136,6 +137,7 @@ function displayMatrixAsHTMLTable() {
 
     const table = document.createElement('matrixTable');
     table.id = "matrixTable";
+    table.className = "matrixTable";
     table.appendChild(thead);
 
     let tbody = document.createElement('tBody');
@@ -286,16 +288,19 @@ function displayMatrixAsHTMLTable() {
                 changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountDecrease.value);
             });
 
-            const tdButtonsForIssueCountChange = document.createElement('td');
-            tdButtonsForIssueCountChange.appendChild(btnIssueCountIncrease);
-            tdButtonsForIssueCountChange.appendChild(btnIssueCountDecrease);
+            const tdIssueCountIncrease = document.createElement('td');
+            tdIssueCountIncrease.appendChild(btnIssueCountIncrease);
+
+            const tdIssueCountDecrease = document.createElement('td');
+            tdIssueCountDecrease.appendChild(btnIssueCountDecrease);
 
             tr.appendChild(tdEditionType);
             tr.appendChild(tdEditionNumber);
             tr.appendChild(tdYear);
             tr.appendChild(tdCheckboxesForEntireEdition);
             tr.appendChild(tdCheckboxesForIndividualIssues);
-            tr.appendChild(tdButtonsForIssueCountChange);
+            tr.appendChild(tdIssueCountIncrease);
+            tr.appendChild(tdIssueCountDecrease);
             tbody.appendChild(tr);
             table.appendChild(tbody);
         }
