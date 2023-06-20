@@ -26,11 +26,6 @@ label[id^="labelEdition"] {
     text-align: right;
 }
 
-
-td, tr {
-    border: 1px solid black;
-}
-
 #tableSummaryHoldingAdvanced {
     text-align: left;
 }

@@ -28,6 +28,8 @@ const URL_GENERATE_SUMMARY_REQUEST_TYPE = "POST";
 
 const HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED = "modeAdvanced";
 const HTML_ELEMENT_CLASS_VALUE_MODE_BASIC = "modeBasic";
+const HTML_ELEMENT_VALUE_INCREASE = "+";
+const HTML_ELEMENT_VALUE_DECREASE = "-";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
 
 const CSS_VISIBILITY_HIDDEN = 'none';
@@ -140,6 +142,7 @@ function displayMatrixAsHTMLTable() {
     table.className = "matrixTable";
     table.appendChild(thead);
 
+    // Adding matrix of (checkboxes).
     let tbody = document.createElement('tBody');
     {
         for (let i = 0; i < arrayYear.length; i++, volumeYearStarting++) {
@@ -301,14 +304,98 @@ function displayMatrixAsHTMLTable() {
             tr.appendChild(tdCheckboxesForIndividualIssues);
             tr.appendChild(tdIssueCountIncrease);
             tr.appendChild(tdIssueCountDecrease);
+
             tbody.appendChild(tr);
             table.appendChild(tbody);
         }
+
+        // Adding buttons to add or delete rows.
+        {
+            const btnAddEdition = document.createElement('input');
+            btnAddEdition.type = 'button';
+            btnAddEdition.value = HTML_ELEMENT_VALUE_INCREASE;
+            btnAddEdition.addEventListener("click", function () {
+                matrixRowAddOrDelete(HTML_ELEMENT_VALUE_INCREASE);
+            });
+
+            const btnDeleteEdition = document.createElement('input');
+            btnDeleteEdition.type = 'button';
+            btnDeleteEdition.value = HTML_ELEMENT_VALUE_DECREASE;
+            btnDeleteEdition.addEventListener("click", function () {
+                matrixRowAddOrDelete(HTML_ELEMENT_VALUE_DECREASE);
+            });
+
+
+            const tdBtnAddEdition = document.createElement('td');
+            tdBtnAddEdition.appendChild(btnAddEdition);
+
+            const tdBtnDeleteEdition = document.createElement('td');
+            tdBtnDeleteEdition.appendChild(btnDeleteEdition);
+
+            const tr = document.createElement('tr');
+            tr.appendChild(tdBtnAddEdition);
+            tr.appendChild(tdBtnDeleteEdition);
+
+            table.appendChild(tr);
+        }
+
     }
     if(div_matrix !== undefined)
         div_matrix.appendChild(table);
 }
 
+// Add or delete a row from the end of the matrix.
+function matrixRowAddOrDelete(mode) {
+
+    if (mode === HTML_ELEMENT_VALUE_INCREASE) {
+
+        let lastRowValue = arrayGetLastElement(arrayEditionDescription);
+        arrayEditionDescription.push(lastRowValue);
+
+        lastRowValue = arrayGetLastElement(arrayEditionNumber);
+        arrayEditionNumber.push(lastRowValue+1);
+
+        lastRowValue = arrayGetLastElement(arrayYear);
+        arrayYear.push(lastRowValue + 1);
+
+        // Availability status of new row must be 'nothing found'.
+        arrayAvailabilityStatusYear.push(FLAG_ISSUES_NOT_AVAILABLE);
+
+        const issuesPublishedInLastYear = arrayGetLastElement(arrayIssuesInTheYear);
+        arrayIssuesInTheYear.push(issuesPublishedInLastYear);
+
+        const arrayAvailabilityStatusIssuesCurrentYear = [];
+        // Adding 'not found' flags to matrix, the count of new flags is equal to number of issues in last year.
+        for (let i = 0; i<issuesPublishedInLastYear; i++) {
+            arrayAvailabilityStatusIssuesCurrentYear.push(FLAG_ISSUES_NOT_AVAILABLE);
+        }
+        arrayAvailabilityStatusIssuesOfEachYear.push(arrayAvailabilityStatusIssuesCurrentYear);
+
+    } else  if (mode === HTML_ELEMENT_VALUE_DECREASE) {
+        // Removing last element of the arrays.
+        arrayEditionDescription.pop();
+        arrayEditionNumber.pop();
+        arrayYear.pop();
+        arrayAvailabilityStatusYear.pop();
+        arrayIssuesInTheYear.pop();
+        arrayAvailabilityStatusIssuesOfEachYear.pop();
+    }
+
+    displayMatrixAsHTMLTable();
+}
+// Get last element of the array.
+function arrayGetLastElement(array) {
+    return array.slice(-1)[0];
+}
+
+// Push a copy of the last element to back of array.
+function arrayPushCopyOfLastElementToEnd (array) {
+    const lastElement = array.slice(-1)[0];
+    array.push(lastElement);
+    return array;
+}
+
+// Increase or Decrease the number of issues in current and subsequent rows.
 function changeIssueCountOfCurrentAndSubsequentYear(editionIndexInMatrix, changeMode) {
     printToConsole("BEFORE: arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]: " + arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]);
     for (let i = editionIndexInMatrix; i < arrayAvailabilityStatusIssuesOfEachYear.length; i++) {

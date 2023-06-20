@@ -1,6 +1,1 @@
-#matrixTable {
-    display: inline-block;
-    background: blue;
-}
-
-Gave above CSS property, still table has cells horizontally aligned.
+I am adding 2 buttons in
