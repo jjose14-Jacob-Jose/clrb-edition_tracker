@@ -26,10 +26,6 @@ label[id^="labelEdition"] {
     text-align: right;
 }
 
-td, tr {
-    border: 1px solid black;
-}
-
 #tableSummaryHoldingAdvanced {
     text-align: left;
 }
@@ -42,6 +38,10 @@ td, tr {
 .tableHeader {
     text-align: center;
 }
+
+/*textarea {*/
+/*    white-space: pre-wrap;*/
+/*}*/
 
 /*.table1, .table2 {*/
 

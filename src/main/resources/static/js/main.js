@@ -16,6 +16,8 @@ const TEXT_LABEL_HEADER_EDITION_NUMBER = "Number";
 const TEXT_LABEL_HEADER_EDITION_CHECKBOX = "Check all";
 const TEXT_LABEL_HEADER_YEAR = "Year";
 const TEXT_LABEL_HEADER_ISSUES= "Issues";
+const TEXT_BUTTON_ISSUE_COUNT_INCREASE= "+";
+const TEXT_BUTTON_ISSUE_COUNT_DECREASE= "-";
 
 const FLAG_ISSUES_NOT_AVAILABLE = 0;
 const FLAG_ISSUES_ALL_AVAILABLE = 1;
@@ -26,13 +28,18 @@ const URL_GENERATE_SUMMARY_REQUEST_TYPE = "POST";
 
 const HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED = "modeAdvanced";
 const HTML_ELEMENT_CLASS_VALUE_MODE_BASIC = "modeBasic";
+const HTML_ELEMENT_VALUE_INCREASE = "+";
+const HTML_ELEMENT_VALUE_DECREASE = "-";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
+
+const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API = ';';
+const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML = ";\n";
 
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
-let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, div_matrix;
+let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, arrayIssuesInTheYear, div_matrix;
 let userMode, responseFromAPI;
 
 
@@ -54,6 +61,7 @@ function initializeArrays() {
     arrayYear = [];
     arrayAvailabilityStatusYear = [];
     arrayAvailabilityStatusIssuesOfEachYear = [];
+    arrayIssuesInTheYear = [];
 
     const yearRange = yearEnding - yearStarting + 1;
     
@@ -64,6 +72,7 @@ function initializeArrays() {
         arrayAvailabilityStatusYear.push(FLAG_ISSUES_NOT_AVAILABLE);
         // Creating an array of length 'editionsPerYear' with all elements having value 'FLAG_ISSUES_NOT_AVAILABLE' and pushing it to 'arrayAvailabilityStatusIssuesOfEachYear'.
         arrayAvailabilityStatusIssuesOfEachYear.push(Array.from({ length: editionsPerYear }, () => FLAG_ISSUES_NOT_AVAILABLE));
+        arrayIssuesInTheYear.push(editionsPerYear);
     }
 }
 
@@ -78,7 +87,6 @@ function clearHTMLTable() {
 function clearAPIResponse() {
     setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_BASIC, false);
     setVisibilityOfHTMLClassElements(HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED, false);
-    userMode = null;
     responseFromAPI = null;
 
 }
@@ -132,8 +140,10 @@ function displayMatrixAsHTMLTable() {
 
     const table = document.createElement('matrixTable');
     table.id = "matrixTable";
+    table.className = "matrixTable";
     table.appendChild(thead);
 
+    // Adding matrix of (checkboxes).
     let tbody = document.createElement('tBody');
     {
         for (let i = 0; i < arrayYear.length; i++, volumeYearStarting++) {
@@ -221,7 +231,7 @@ function displayMatrixAsHTMLTable() {
                 checkbox.id = 'checkboxOfIssue' + indexOfEdition;
 
                 // Set checkbox value based on matrix item
-                checkbox.checked = arrayAvailabilityStatusYear[i][indexOfEdition]  === FLAG_ISSUES_ALL_AVAILABLE;
+                checkbox.checked = arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition]  === FLAG_ISSUES_ALL_AVAILABLE;
 
                 // Create label for checkbox
                 const label = document.createElement('label');
@@ -233,7 +243,7 @@ function displayMatrixAsHTMLTable() {
                         arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_ALL_AVAILABLE; // Value to 1 if checkbox is checked
 
                     } else {
-                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_NOT_AVAILABLE; // Value to 1 if checkbox is not-checked.
+                        arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_NOT_AVAILABLE; // Value to 0 if checkbox is not-checked.
                     }
 
                     const checkboxesInRow = tr.querySelectorAll('input[type="checkbox"][id^="checkboxOfIssue"]');
@@ -264,17 +274,143 @@ function displayMatrixAsHTMLTable() {
                 tdCheckboxesForIndividualIssues.appendChild(checkbox);
                 tdCheckboxesForIndividualIssues.appendChild(label);
             }
+
+            // Creating buttons to increase or decrease number of issues per year.
+            const btnIssueCountIncrease = document.createElement('input');
+            btnIssueCountIncrease.type = 'button';
+            btnIssueCountIncrease.value = TEXT_BUTTON_ISSUE_COUNT_INCREASE;
+            btnIssueCountIncrease.id = TEXT_BUTTON_ISSUE_COUNT_INCREASE + i;
+            btnIssueCountIncrease.addEventListener("click", function() {
+                changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
+            });
+
+            const btnIssueCountDecrease = document.createElement('input');
+            btnIssueCountDecrease.type = 'button';
+            btnIssueCountDecrease.value = TEXT_BUTTON_ISSUE_COUNT_DECREASE;
+            btnIssueCountDecrease.id = TEXT_BUTTON_ISSUE_COUNT_DECREASE + i;
+            btnIssueCountDecrease.addEventListener("click", function() {
+                changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountDecrease.value);
+            });
+
+            const tdIssueCountIncrease = document.createElement('td');
+            tdIssueCountIncrease.appendChild(btnIssueCountIncrease);
+
+            const tdIssueCountDecrease = document.createElement('td');
+            tdIssueCountDecrease.appendChild(btnIssueCountDecrease);
+
             tr.appendChild(tdEditionType);
             tr.appendChild(tdEditionNumber);
             tr.appendChild(tdYear);
             tr.appendChild(tdCheckboxesForEntireEdition);
             tr.appendChild(tdCheckboxesForIndividualIssues);
+            tr.appendChild(tdIssueCountIncrease);
+            tr.appendChild(tdIssueCountDecrease);
+
             tbody.appendChild(tr);
             table.appendChild(tbody);
         }
+
+        // Adding buttons to add or delete rows.
+        {
+            const btnAddEdition = document.createElement('input');
+            btnAddEdition.type = 'button';
+            btnAddEdition.value = HTML_ELEMENT_VALUE_INCREASE;
+            btnAddEdition.addEventListener("click", function () {
+                matrixRowAddOrDelete(HTML_ELEMENT_VALUE_INCREASE);
+            });
+
+            const btnDeleteEdition = document.createElement('input');
+            btnDeleteEdition.type = 'button';
+            btnDeleteEdition.value = HTML_ELEMENT_VALUE_DECREASE;
+            btnDeleteEdition.addEventListener("click", function () {
+                matrixRowAddOrDelete(HTML_ELEMENT_VALUE_DECREASE);
+            });
+
+
+            const tdBtnAddEdition = document.createElement('td');
+            tdBtnAddEdition.appendChild(btnAddEdition);
+
+            const tdBtnDeleteEdition = document.createElement('td');
+            tdBtnDeleteEdition.appendChild(btnDeleteEdition);
+
+            const tr = document.createElement('tr');
+            tr.appendChild(tdBtnAddEdition);
+            tr.appendChild(tdBtnDeleteEdition);
+
+            table.appendChild(tr);
+        }
+
     }
     if(div_matrix !== undefined)
         div_matrix.appendChild(table);
+}
+
+// Add or delete a row from the end of the matrix.
+function matrixRowAddOrDelete(mode) {
+
+    if (mode === HTML_ELEMENT_VALUE_INCREASE) {
+
+        let lastRowValue = arrayGetLastElement(arrayEditionDescription);
+        arrayEditionDescription.push(lastRowValue);
+
+        lastRowValue = arrayGetLastElement(arrayEditionNumber);
+        arrayEditionNumber.push(lastRowValue+1);
+
+        lastRowValue = arrayGetLastElement(arrayYear);
+        arrayYear.push(lastRowValue + 1);
+
+        // Availability status of new row must be 'nothing found'.
+        arrayAvailabilityStatusYear.push(FLAG_ISSUES_NOT_AVAILABLE);
+
+        const issuesPublishedInLastYear = arrayGetLastElement(arrayIssuesInTheYear);
+        arrayIssuesInTheYear.push(issuesPublishedInLastYear);
+
+        const arrayAvailabilityStatusIssuesCurrentYear = [];
+        // Adding 'not found' flags to matrix, the count of new flags is equal to number of issues in last year.
+        for (let i = 0; i<issuesPublishedInLastYear; i++) {
+            arrayAvailabilityStatusIssuesCurrentYear.push(FLAG_ISSUES_NOT_AVAILABLE);
+        }
+        arrayAvailabilityStatusIssuesOfEachYear.push(arrayAvailabilityStatusIssuesCurrentYear);
+
+    } else  if (mode === HTML_ELEMENT_VALUE_DECREASE) {
+        // Removing last element of the arrays.
+        arrayEditionDescription.pop();
+        arrayEditionNumber.pop();
+        arrayYear.pop();
+        arrayAvailabilityStatusYear.pop();
+        arrayIssuesInTheYear.pop();
+        arrayAvailabilityStatusIssuesOfEachYear.pop();
+    }
+
+    displayMatrixAsHTMLTable();
+}
+// Get last element of the array.
+function arrayGetLastElement(array) {
+    return array.slice(-1)[0];
+}
+
+// Push a copy of the last element to back of array.
+function arrayPushCopyOfLastElementToEnd (array) {
+    const lastElement = array.slice(-1)[0];
+    array.push(lastElement);
+    return array;
+}
+
+// Increase or Decrease the number of issues in current and subsequent rows.
+function changeIssueCountOfCurrentAndSubsequentYear(editionIndexInMatrix, changeMode) {
+    printToConsole("BEFORE: arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]: " + arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]);
+    for (let i = editionIndexInMatrix; i < arrayAvailabilityStatusIssuesOfEachYear.length; i++) {
+        if (changeMode === TEXT_BUTTON_ISSUE_COUNT_INCREASE)  {
+            arrayAvailabilityStatusIssuesOfEachYear[i].push(FLAG_ISSUES_NOT_AVAILABLE);
+            arrayIssuesInTheYear[i]++;
+        } else {
+            arrayAvailabilityStatusIssuesOfEachYear[i].pop();
+            arrayIssuesInTheYear[i]--;
+        }
+    }
+    printToConsole("AFTER: arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]: " + arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]);
+    displayMatrixAsHTMLTable();
+
 }
 
 // Increment of String-cells in column below the specified row.
@@ -299,16 +435,76 @@ function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedV
 
 // Function to update page content using the JSON response
 function displayAPIResponseInHTML(response) {
-    document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').innerText = response['textAreaUnavailableEditionsWithoutYear'];
-    document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').innerText = response['textAreaUnavailableEditionsWithoutYear'];
-    document.getElementById('textAreaUnavailableEditionsWithYear').innerText = response['textAreaUnavailableEditionsWithYear'];
-    document.getElementById('textAreaAvailableEditionsWithYear').innerText = response['textAreaAvailableEditionsWithYear'];
-    document.getElementById('textAreaAvailableEditionsWithoutYear').innerText = response['textAreaAvailableEditionsWithoutYear'];
-    document.getElementById('textAreaAvailableSummaryHoldingBasic').innerText = response['textAreaAvailableSummaryHolding'];
-    document.getElementById('textAreaAvailableSummaryHoldingAdvanced').innerText = response['textAreaAvailableSummaryHolding'];
+    let stringInResponse, maximumNumberOfLines, numberOfLines;
 
+    stringInResponse = response['textAreaUnavailableEditionsWithoutYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines;
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').value = stringInResponse;
+
+    stringInResponse = response['textAreaUnavailableEditionsWithoutYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').value = stringInResponse;
+
+    stringInResponse = response['textAreaUnavailableEditionsWithYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaUnavailableEditionsWithYear').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableEditionsWithYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableEditionsWithYear').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableEditionsWithoutYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableEditionsWithoutYear').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableSummaryHolding'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableSummaryHoldingBasic').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableSummaryHolding'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableSummaryHoldingAdvanced').value = stringInResponse;
+
+    textAreasAdjustSize(maximumNumberOfLines*20);
     toggleUserModeVisibility();
 
+}
+
+// Adjust height of all textarea showing results so that all text is visible.
+function textAreasAdjustSize(height) {
+    textAreaSetHeightAs('textAreaUnavailableEditionsWithoutYearBasic', height);
+    textAreaSetHeightAs('textAreaUnavailableEditionsWithoutYearAdvanced', height);
+    textAreaSetHeightAs('textAreaUnavailableEditionsWithYear', height);
+    textAreaSetHeightAs('textAreaAvailableEditionsWithYear', height);
+    textAreaSetHeightAs('textAreaAvailableEditionsWithoutYear', height);
+    textAreaSetHeightAs('textAreaAvailableSummaryHoldingBasic', height);
+    textAreaSetHeightAs('textAreaAvailableSummaryHoldingAdvanced', height);
+
+}
+
+// Adjust height of textarea to avoid scrolling.
+function textAreaSetHeightAs(textAreaHTMLID, height) {
+    const textarea = document.getElementById(textAreaHTMLID);
+    textarea.style.height = height + 'px'; // Set the height to the scrollHeight
+}
+
+function stringGetNumberOfCharacterOccurrences(string, character) {
+    const matches = string.split(character);
+    return matches.length - 1;
 }
 
 // Get value of 'selected' radio button from a group.
@@ -409,6 +605,7 @@ function initialLoadingActivities() {
             document.getElementById('arrayYear').value = arrayYear;
             document.getElementById('arrayAvailabilityStatusYear').value = arrayAvailabilityStatusYear;
             document.getElementById('arrayAvailabilityStatusIssuesOfEachYear').value = arrayAvailabilityStatusIssuesOfEachYear;
+            document.getElementById('arrayIssuesInTheYear').value = arrayIssuesInTheYear;
         });
     }
 
@@ -492,6 +689,11 @@ function toggleUserModeVisibility() {
         }
 
     }
+}
+
+// Replace all occurrences of ';' in a String with specified character.
+function stringReplaceAllSemiColonWithCharacter(string, characterReplacement) {
+    return string.replace(/;/g, characterReplacement);
 }
 
 // Function with main logic.
