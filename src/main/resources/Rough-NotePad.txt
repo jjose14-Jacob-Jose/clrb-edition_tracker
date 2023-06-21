@@ -1,7 +1,1 @@
-JS code:
-document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').innerText = 'vol.1:2-12;\nvol.2:1,3-12;\nvol.3-21;\n';
-
-Content inside HTML textarea is:
-vol.1:2-12;vol.2:1,3-12;vol.3-21;
-
-Why isn't there a newline after each ;?
+A JS function is setting the value of a textarea. Is it possible to adjust the height of the textarea such that the entire text is visible?

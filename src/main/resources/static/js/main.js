@@ -32,6 +32,7 @@ const HTML_ELEMENT_VALUE_INCREASE = "+";
 const HTML_ELEMENT_VALUE_DECREASE = "-";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
 
+const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API = ';';
 const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML = ";\n";
 
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
@@ -434,38 +435,76 @@ function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedV
 
 // Function to update page content using the JSON response
 function displayAPIResponseInHTML(response) {
-    let stringInResponse;
+    let stringInResponse, maximumNumberOfLines, numberOfLines;
 
     stringInResponse = response['textAreaUnavailableEditionsWithoutYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').value = stringInResponse;
 
     stringInResponse = response['textAreaUnavailableEditionsWithoutYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').value = stringInResponse;
 
     stringInResponse = response['textAreaUnavailableEditionsWithYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaUnavailableEditionsWithYear').value = stringInResponse;
 
     stringInResponse = response['textAreaAvailableEditionsWithYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaAvailableEditionsWithYear').value = stringInResponse;
 
     stringInResponse = response['textAreaAvailableEditionsWithoutYear'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaAvailableEditionsWithoutYear').value = stringInResponse;
 
     stringInResponse = response['textAreaAvailableSummaryHolding'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaAvailableSummaryHoldingBasic').value = stringInResponse;
 
     stringInResponse = response['textAreaAvailableSummaryHolding'];
+    numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
+    maximumNumberOfLines = numberOfLines > maximumNumberOfLines ? numberOfLines: maximumNumberOfLines;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaAvailableSummaryHoldingAdvanced').value = stringInResponse;
 
+    textAreasAdjustSize(maximumNumberOfLines*20);
     toggleUserModeVisibility();
 
+}
+
+// Adjust height of all textarea showing results so that all text is visible.
+function textAreasAdjustSize(height) {
+    textAreaSetHeightAs('textAreaUnavailableEditionsWithoutYearBasic', height);
+    textAreaSetHeightAs('textAreaUnavailableEditionsWithoutYearAdvanced', height);
+    textAreaSetHeightAs('textAreaUnavailableEditionsWithYear', height);
+    textAreaSetHeightAs('textAreaAvailableEditionsWithYear', height);
+    textAreaSetHeightAs('textAreaAvailableEditionsWithoutYear', height);
+    textAreaSetHeightAs('textAreaAvailableSummaryHoldingBasic', height);
+    textAreaSetHeightAs('textAreaAvailableSummaryHoldingAdvanced', height);
+
+}
+
+// Adjust height of textarea to avoid scrolling.
+function textAreaSetHeightAs(textAreaHTMLID, height) {
+    const textarea = document.getElementById(textAreaHTMLID);
+    textarea.style.height = height + 'px'; // Set the height to the scrollHeight
+}
+
+function stringGetNumberOfCharacterOccurrences(string, character) {
+    const matches = string.split(character);
+    return matches.length - 1;
 }
 
 // Get value of 'selected' radio button from a group.
