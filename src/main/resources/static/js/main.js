@@ -32,9 +32,7 @@ const HTML_ELEMENT_VALUE_INCREASE = "+";
 const HTML_ELEMENT_VALUE_DECREASE = "-";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
 
-const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API = ";";
 const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML = ";\n";
-const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_ISSUES_OF_A_YEAR = ",";
 
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
 
@@ -446,11 +444,25 @@ function displayAPIResponseInHTML(response) {
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').value = stringInResponse;
 
-    document.getElementById('textAreaUnavailableEditionsWithYear').innerText = response['textAreaUnavailableEditionsWithYear'];
-    document.getElementById('textAreaAvailableEditionsWithYear').innerText = response['textAreaAvailableEditionsWithYear'];
-    document.getElementById('textAreaAvailableEditionsWithoutYear').innerText = response['textAreaAvailableEditionsWithoutYear'];
-    document.getElementById('textAreaAvailableSummaryHoldingBasic').innerText = response['textAreaAvailableSummaryHolding'];
-    document.getElementById('textAreaAvailableSummaryHoldingAdvanced').innerText = response['textAreaAvailableSummaryHolding'];
+    stringInResponse = response['textAreaUnavailableEditionsWithYear'];
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaUnavailableEditionsWithYear').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableEditionsWithYear'];
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableEditionsWithYear').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableEditionsWithoutYear'];
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableEditionsWithoutYear').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableSummaryHolding'];
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableSummaryHoldingBasic').value = stringInResponse;
+
+    stringInResponse = response['textAreaAvailableSummaryHolding'];
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaAvailableSummaryHoldingAdvanced').value = stringInResponse;
 
     toggleUserModeVisibility();
 

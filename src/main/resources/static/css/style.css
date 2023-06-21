@@ -39,10 +39,9 @@ label[id^="labelEdition"] {
     text-align: center;
 }
 
-textarea {
-    background: brown;
-    white-space: pre-wrap;
-}
+/*textarea {*/
+/*    white-space: pre-wrap;*/
+/*}*/
 
 /*.table1, .table2 {*/
 
