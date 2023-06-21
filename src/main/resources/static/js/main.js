@@ -32,7 +32,9 @@ const HTML_ELEMENT_VALUE_INCREASE = "+";
 const HTML_ELEMENT_VALUE_DECREASE = "-";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
 
-const CSS_VISIBILITY_HIDDEN = 'none';
+const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API = ";";
+const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML = ";\n";
+const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_ISSUES_OF_A_YEAR = ",";
 
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
 
@@ -434,8 +436,16 @@ function incrementValueOfSubsequentElements(arrayToBeUpdated, indexRow, updatedV
 
 // Function to update page content using the JSON response
 function displayAPIResponseInHTML(response) {
-    document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').innerText = response['textAreaUnavailableEditionsWithoutYear'];
-    document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').innerText = response['textAreaUnavailableEditionsWithoutYear'];
+    let stringInResponse;
+
+    stringInResponse = response['textAreaUnavailableEditionsWithoutYear'];
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').value = stringInResponse;
+
+    stringInResponse = response['textAreaUnavailableEditionsWithoutYear'];
+    stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
+    document.getElementById('textAreaUnavailableEditionsWithoutYearAdvanced').value = stringInResponse;
+
     document.getElementById('textAreaUnavailableEditionsWithYear').innerText = response['textAreaUnavailableEditionsWithYear'];
     document.getElementById('textAreaAvailableEditionsWithYear').innerText = response['textAreaAvailableEditionsWithYear'];
     document.getElementById('textAreaAvailableEditionsWithoutYear').innerText = response['textAreaAvailableEditionsWithoutYear'];
@@ -628,6 +638,11 @@ function toggleUserModeVisibility() {
         }
 
     }
+}
+
+// Replace all occurrences of ';' in a String with specified character.
+function stringReplaceAllSemiColonWithCharacter(string, characterReplacement) {
+    return string.replace(/;/g, characterReplacement);
 }
 
 // Function with main logic.

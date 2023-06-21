@@ -39,6 +39,11 @@ label[id^="labelEdition"] {
     text-align: center;
 }
 
+textarea {
+    background: brown;
+    white-space: pre-wrap;
+}
+
 /*.table1, .table2 {*/
 
 /*    margin-right: 10px; !* Adjust the spacing between tables if needed *!*/
