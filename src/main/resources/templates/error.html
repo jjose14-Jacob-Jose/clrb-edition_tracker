@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Error</title>
+    <title>Redirect Page</title>
+    <script>
+        function redirect() {
+            setTimeout(function() {
+                window.location.href = "/"; // Replace with your desired URL
+            }, 5000); // 5000 milliseconds = 5 seconds
+        }
+    </script>
 </head>
-<body>
-    <H1>Error</H1>
-
+<body onload="redirect()">
+    <h1>Error</h1>
+    <p>
+        <a href="/">Click here</a> if you are not redirected in 5 seconds.
+    </p>
 </body>
 </html>
