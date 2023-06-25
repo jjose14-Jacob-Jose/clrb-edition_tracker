@@ -48,6 +48,14 @@
                     </execution>
                 </executions>
             </plugin>
+<!--            For running the JAR from CMD using command 'java -jar *.jar'.-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
