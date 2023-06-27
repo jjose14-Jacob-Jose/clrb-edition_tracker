@@ -52,6 +52,7 @@ const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR = '5';
 const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES = '6';
 const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_SUMMARY_HOLDINGS = '7';
 const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_RESET = '8';
+const KEYBOARD_LETTER_TO_FOCUS_ON_RB_ADVANCED = '9';
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
@@ -792,12 +793,15 @@ function enableKeyboardShortCuts() {
 
 
     document.addEventListener('keydown', function(event) {
+        printToConsole("event.altKey: "+event.altKey);
+        printToConsole("event.key: "+event.key);
         // Shortcuts executed when numeric keys pressed with 'ALT'.
-        if (event.altKey && event.key) {
-            let htmlInputElement;
+        if (event.altKey) {
+            let htmlInputElement = STRING_VALUE_EMPTY;
             switch (event.key) {
                 case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITION_TYPE_DESCRIPTION:
                     htmlInputElement = document.getElementById("txtTextEditionsType");
+                    printToConsole("case: " + KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITION_TYPE_DESCRIPTION);
                     break;
                 case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_STARTING:
                     htmlInputElement = document.getElementById("txtNumberYearStarting");
@@ -809,7 +813,16 @@ function enableKeyboardShortCuts() {
                     htmlInputElement = document.getElementById("txtNumberEditionsPerYear");
                     break;
                 case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR:
-                    htmlInputElement = document.getElementById("txtNumberEditionsPerYear");
+                    htmlInputElement = document.getElementById("txtNumberVolumeStartingYear");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES:
+                    htmlInputElement = document.getElementById("btnCreateTable");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_SUMMARY_HOLDINGS:
+                    htmlInputElement = document.getElementById("btnGenerateSummary");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR:
+                    htmlInputElement = document.getElementById("txtNumberVolumeStartingYear");
                     break;
                 case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES:
                     htmlInputElement = document.getElementById("btnCreateTable");
@@ -820,17 +833,24 @@ function enableKeyboardShortCuts() {
                 case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_RESET:
                     htmlInputElement = document.getElementById("btnClearAll");
                     break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_RB_ADVANCED:
+                    htmlInputElement = document.getElementById("rbModeAdvanced");
+                    break;
 
             }
 
-            // Select all contents if the shortcut key is pressed for a text field.
-            if (htmlInputElement === "object" && htmlInputElement instanceof HTMLInputElement) {
-                htmlInputElement.select();
-            }
-
-            // Click the button if shortcut key for a button is pressed.
-            if (htmlInputElement === "object" && htmlInputElement instanceof HTMLButtonElement) {
-                htmlInputElement.click();
+            if (htmlInputElement !== STRING_VALUE_EMPTY) {
+                if (htmlInputElement instanceof HTMLInputElement) {
+                    if (htmlInputElement.type === "radio") {
+                        htmlInputElement.checked = true;
+                    } else {
+                        // Select all contents if the shortcut key is pressed for a text field.
+                        htmlInputElement.select();
+                    }
+                } else if (htmlInputElement instanceof HTMLButtonElement) {
+                    // Click the button if shortcut key for a button is pressed.
+                    htmlInputElement.click();
+                }
             }
         }
     });
