@@ -12,8 +12,13 @@
 <body>
     <table id="tableHeading">
         <tr>
-            <td><h1>Edition Tracker</h1></td>
+            <td><h1><a href="/" class="URLLikeRegularText"> GSS </a></h1></td>
             <td><div id="divUserInteractionArea" class="divUserInteractionArea"></div></td>
+            <td>Contact us: </td>
+            <td><a href="mailto:support@(&*SD(fsdfsfgss.com">support@gss.com</a></td>
+        </tr>
+        <tr>
+
         </tr>
     </table>
 
@@ -31,29 +36,17 @@
                 <td><input type="text" id="txtNumberYearEnding" name="yearEnding" required placeholder="Latest edition in Alma or 2020" value="2020" ></td>
             </tr>
             <tr>
-                <td><label id="lblTxtNumberVolumeStartingYear" for="txtNumberVolumeStartingYear">Volume of starting year:</label></td>
-                <td><input type="text" id="txtNumberVolumeStartingYear" name="volumeStartingYear" required placeholder="Volume of starting year" value="1" ></td>
-                <td><label for="divRBMode" class="right-align" >Mode</label></td>
-                <td>
-                    <div id="divRBMode">
-                        <label>
-                            <input type="radio" name="rbMode" id="rbModeBasic" value="modeBasic" onclick="setUserMode(this.value)" checked>
-                            Basic
-                        </label>
-                        <label>
-                            <input type="radio" name="rbMode" id="rbModeAdvanced" value="modeAdvanced" onclick="setUserMode(this.value)" >
-                            Advanced
-                        </label>
-                    </div>
-                </td>
-            </tr>
-            <tr>
                 <td><label id="lblTxtNumberEditionsPerYear" for="txtNumberEditionsPerYear">Editions in a year:</label></td>
                 <td><input type="text" id="txtNumberEditionsPerYear" name="editionsPerYear" required placeholder="Number of issues in a year" value="12" ></td>
+                <td><label id="lblTxtNumberVolumeStartingYear" for="txtNumberVolumeStartingYear">Volume of starting year:</label></td>
+                <td><input type="text" id="txtNumberVolumeStartingYear" name="volumeStartingYear" required placeholder="Volume of starting year" value="1" ></td>
+            </tr>
+            <tr>
+
             </tr>
         <tr>
-            <td><button id="btnCreateTable">Create Table</button></td>
-            <td><button id="btnClearAll" disabled="disabled">ClearAll</button></td>
+            <td><button id="btnCreateTable">Generate Checkboxes</button></td>
+
             <td colspan="2">
 
                     <input type="hidden" id="arrayEditionDescription" name="arrayEditionDescription">
@@ -62,11 +55,26 @@
                     <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
                     <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
                     <input type="hidden" id="arrayIssuesInTheYear" name="arrayIssuesInTheYear">
-
-                    <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary</button>
+                    <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary Holdings</button>
         </form>
             </td>
+        <td><button id="btnClearAll" disabled="disabled">Reset</button></td>
 
+        </tr>
+        <tr>
+            <td><label for="divRBMode" class="right-align" >Output:</label></td>
+            <td>
+                <div id="divRBMode">
+                    <label>
+                        <input type="radio" name="rbMode" id="rbModeBasic" value="modeBasic" onclick="setUserMode(this.value)" checked>
+                        Basic
+                    </label>
+                    <label>
+                        <input type="radio" name="rbMode" id="rbModeAdvanced" value="modeAdvanced" onclick="setUserMode(this.value)" >
+                        Detailed
+                    </label>
+                </div>
+            </td>
         </tr>
     </table>
 

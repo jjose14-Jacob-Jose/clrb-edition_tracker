@@ -44,6 +44,15 @@ const MESSAGE_DUPLICATE_EDITION_NUMBER = " already exists. Please enter a unique
 
 const STRING_VALUE_EMPTY = "";
 
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITION_TYPE_DESCRIPTION = '1';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_STARTING = '2';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_ENDING = '3';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITIONS_IN_A_YEAR = '4';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR = '5';
+const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES = '6';
+const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_SUMMARY_HOLDINGS = '7';
+const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_RESET = '8';
+
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
 let arrayEditionDescription, arrayEditionNumber, arrayYear, arrayAvailabilityStatusYear, arrayAvailabilityStatusIssuesOfEachYear, arrayIssuesInTheYear, div_matrix;
@@ -272,6 +281,7 @@ function displayMatrixAsHTMLTable() {
                 // Create label for checkbox
                 const label = document.createElement('label');
                 label.textContent = `${indexOfEdition + 1 }`;
+                label.setAttribute('for', 'checkboxOfIssue' + indexOfEdition);
 
                 // Attach change event listener to checkbox
                 checkbox.addEventListener('change', function () {
@@ -719,18 +729,18 @@ function initialLoadingActivities() {
     }
 
     // All input text-fields with id start 'txtNumber'.
-    {
-        // Get all the text fields with type 'text'
-        const textFields = document.querySelectorAll('input[type="text"]');
-
-        // Apply the validation function to text fields with IDs starting with 'txtNumber'.
-        textFields.forEach(textField => {
-            if (textField.id.startsWith('txtNumber')) {
-                textField.addEventListener('input', restrictToNumbers);
-                textField.addEventListener('keydown', restrictToNumbers);
-            }
-        });
-    }
+    // {
+    //     // Get all the text fields with type 'text'
+    //     const textFields = document.querySelectorAll('input[type="text"]');
+    //
+    //     // Apply the validation function to text fields with IDs starting with 'txtNumber'.
+    //     textFields.forEach(textField => {
+    //         if (textField.id.startsWith('txtNumber')) {
+    //             textField.addEventListener('input', restrictToNumbers);
+    //             textField.addEventListener('keydown', restrictToNumbers);
+    //         }
+    //     });
+    // }
 
     // Showing results from Java API.
     {
@@ -738,6 +748,7 @@ function initialLoadingActivities() {
     }
 
     loadingAnimationHide();
+    enableKeyboardShortCuts();
 
 }
 
@@ -774,6 +785,56 @@ function toggleUserModeVisibility() {
 // Replace all occurrences of ';' in a String with specified character.
 function stringReplaceAllSemiColonWithCharacter(string, characterReplacement) {
     return string.replace(/;/g, characterReplacement);
+}
+
+ // Enable keyboard shorts.
+function enableKeyboardShortCuts() {
+
+
+    document.addEventListener('keydown', function(event) {
+        // Shortcuts executed when numeric keys pressed with 'ALT'.
+        if (event.altKey && event.key) {
+            let htmlInputElement;
+            switch (event.key) {
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITION_TYPE_DESCRIPTION:
+                    htmlInputElement = document.getElementById("txtTextEditionsType");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_STARTING:
+                    htmlInputElement = document.getElementById("txtNumberYearStarting");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_ENDING:
+                    htmlInputElement = document.getElementById("txtNumberYearEnding");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITIONS_IN_A_YEAR:
+                    htmlInputElement = document.getElementById("txtNumberEditionsPerYear");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR:
+                    htmlInputElement = document.getElementById("txtNumberEditionsPerYear");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES:
+                    htmlInputElement = document.getElementById("btnCreateTable");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_SUMMARY_HOLDINGS:
+                    htmlInputElement = document.getElementById("btnGenerateSummary");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_RESET:
+                    htmlInputElement = document.getElementById("btnClearAll");
+                    break;
+
+            }
+
+            // Select all contents if the shortcut key is pressed for a text field.
+            if (htmlInputElement === "object" && htmlInputElement instanceof HTMLInputElement) {
+                htmlInputElement.select();
+            }
+
+            // Click the button if shortcut key for a button is pressed.
+            if (htmlInputElement === "object" && htmlInputElement instanceof HTMLButtonElement) {
+                htmlInputElement.click();
+            }
+        }
+    });
+
 }
 
 // Function with main logic.
