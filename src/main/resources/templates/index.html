@@ -7,23 +7,24 @@
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/main.js"></script>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N5DCWKQ06J"></script>
 </head>
 <body>
     <h1>Edition Tracker</h1>
     <table id="tableUserInput">
         <form action="/postData" method="POST" id="formUserInput">
             <tr>
-                <td><label for="txtTextEditionsType">Edition types:</label></td>
+                <td><label id="lblTxtTextEditionsType" for="txtTextEditionsType">Edition types:</label></td>
                 <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="vol" ></td>
             </tr>
             <tr>
-                <td><label for="txtNumberYearStarting">Starting Year:</label></td>
+                <td><label id="lblTxtNumberYearStarting" for="txtNumberYearStarting">Starting Year:</label></td>
                 <td><input type="text" id="txtNumberYearStarting" name="yearStarting" required placeholder="Earliest edition in Alma" value="2000" ></td>
-                <td><label for="txtNumberYearEnding" class="right-align">End Year:</label></td>
+                <td><label id="lblTxtNumberYearEnding" for="txtNumberYearEnding" class="right-align">End Year:</label></td>
                 <td><input type="text" id="txtNumberYearEnding" name="yearEnding" required placeholder="Latest edition in Alma or 2020" value="2020" ></td>
             </tr>
             <tr>
-                <td><label for="txtNumberVolumeStartingYear">Volume of starting year:</label></td>
+                <td><label id="lblTxtNumberVolumeStartingYear" for="txtNumberVolumeStartingYear">Volume of starting year:</label></td>
                 <td><input type="text" id="txtNumberVolumeStartingYear" name="volumeStartingYear" required placeholder="Volume of starting year" value="1" ></td>
                 <td><label for="divRBMode" class="right-align" >Mode</label></td>
                 <td>
@@ -40,7 +41,7 @@
                 </td>
             </tr>
             <tr>
-                <td><label for="txtNumberEditionsPerYear">Editions in a year:</label></td>
+                <td><label id="lblTxtNumberEditionsPerYear" for="txtNumberEditionsPerYear">Editions in a year:</label></td>
                 <td><input type="text" id="txtNumberEditionsPerYear" name="editionsPerYear" required placeholder="Number of issues in a year" value="12" ></td>
             </tr>
         <tr>
@@ -102,12 +103,12 @@
 
     </table>
 
-
     <div id="divMatrix"></div>
 
     <script>
         main();
     </script>
+
     <div id="divUserGuide">
         <hr>
         <h3>User Guide</h3>
@@ -120,7 +121,6 @@
 
 
     </div>
-
 
 </body>
 </html>

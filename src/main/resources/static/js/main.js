@@ -36,6 +36,9 @@ const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API = ';';
 const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML = ";\n";
 
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
+const MESSAGE_INVALID_INTEGER_INPUT_SUFFIX = " is not a valid number.";
+
+const STRING_VALUE_EMPTY = "";
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
@@ -50,7 +53,8 @@ function printToConsole(variable) {
 
 // Show variable as an alert.
 function printToAlert(variable) {
-    console.log(MESSAGE_ERROR_API_RESPONSE + "\n" + JSON.stringify(variable));
+    printToConsole(JSON.stringify(variable));
+    alert(JSON.stringify(variable));
 }
 
 // Initialize individual arrays.
@@ -527,7 +531,6 @@ function getRadioButtonsValue(radioButtonName) {
 // Ajax to call REST API and update page content dynamically.
 function ajaxForFormUserInput() {
 
-
     $(document).ready(function() {
         $('#formUserInput').submit(function(event) {
             event.preventDefault();
@@ -550,7 +553,6 @@ function ajaxForFormUserInput() {
             });
         });
     });
-    printToConsole("Line 'ajaxForFormUserInput'");
 }
 
 // Initial-load steps.
@@ -623,18 +625,44 @@ function initialLoadingActivities() {
         document.getElementById("btnCreateTable").addEventListener("click", function() {
             event.preventDefault();
 
-            editionsType = document.getElementById("txtTextEditionsType").value;
-            yearStarting = parseInt(document.getElementById("txtNumberYearStarting").value);
-            yearEnding = parseInt(document.getElementById("txtNumberYearEnding").value);
-            volumeYearStarting = parseInt(document.getElementById("txtNumberVolumeStartingYear").value);
-            editionsPerYear = parseInt(document.getElementById("txtNumberEditionsPerYear").value);
-            div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
+            try {
+                editionsType = document.getElementById("txtTextEditionsType").value;
+                yearStarting = parseInt(document.getElementById("txtNumberYearStarting").value);
+                yearEnding = parseInt(document.getElementById("txtNumberYearEnding").value);
+                volumeYearStarting = parseInt(document.getElementById("txtNumberVolumeStartingYear").value);
+                editionsPerYear = parseInt(document.getElementById("txtNumberEditionsPerYear").value);
+                div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
 
-            if(editionsPerYear>0) {
-                // Adding '+1' to ensure 'ending' year is also included.
-                initializeArrays();
-                displayMatrixAsHTMLTable();
+                let messageError = STRING_VALUE_EMPTY;
+                // Check if the parsed values are NaN (Not-a-Number)
+                if (isNaN(yearStarting)) {
+                    messageError = document.getElementById("lblTxtNumberYearStarting").innerHTML;
+                }
+                if (isNaN(yearEnding)) {
+                    messageError = document.getElementById("lblTxtNumberYearEnding").innerHTML;
+                }
+                if (isNaN(volumeYearStarting)) {
+                    messageError = document.getElementById("lblTxtNumberVolumeStartingYear").innerHTML;
+                }
+                if (isNaN(editionsPerYear)) {
+                    messageError = document.getElementById("lblTxtNumberEditionsPerYear").innerHTML;
+                }
+
+                if (messageError !== STRING_VALUE_EMPTY) {
+                    messageError = messageError + MESSAGE_INVALID_INTEGER_INPUT_SUFFIX;
+                    throw new Error (messageError);
+                }
+
+                if(editionsPerYear>0) {
+                    // Adding '+1' to ensure 'ending' year is also included.
+                    initializeArrays();
+                    displayMatrixAsHTMLTable();
+                }
+
+            } catch (error) {
+                printToAlert(error.message)
             }
+
 
         });
 
