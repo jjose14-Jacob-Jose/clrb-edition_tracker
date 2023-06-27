@@ -10,7 +10,14 @@
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N5DCWKQ06J"></script>
 </head>
 <body>
-    <h1>Edition Tracker</h1>
+    <table id="tableHeading">
+        <tr>
+            <td><h1>Edition Tracker</h1></td>
+            <td><div id="divUserInteractionArea" class="divUserInteractionArea"></div></td>
+        </tr>
+    </table>
+
+
     <table id="tableUserInput">
         <form action="/postData" method="POST" id="formUserInput">
             <tr>
@@ -108,7 +115,6 @@
     <script>
         main();
     </script>
-
     <div id="divUserGuide">
         <hr>
         <h3>User Guide</h3>
