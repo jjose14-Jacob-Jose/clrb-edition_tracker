@@ -164,3 +164,6 @@ cython_debug/
 
 # IntelliJ Configuration File
 *.iml
+
+# Visual Studio Code Configuration File.
+.vscode
