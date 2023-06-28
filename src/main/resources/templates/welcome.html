@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="author" content="Jacob Jose">
+        <title>GSS</title>
+    <!--  JavaScript to check if server is ready.-->
+        <script>
+          function checkServerStatus() {
+            // fetch("/")
+            fetch("http://localhost:8080/")
+                    .then(response => {
+                      if (response.ok) {
+                        // Server is up and running
+                        window.location.href = "http://localhost:8080/"; // Replace with your desired URL
+                      } else {
+                        // Server is still starting
+                        // Retry or show a loading indicator
+                      }
+                    })
+                    .catch(error => {
+                      // Error occurred, server may not be accessible
+                      // Handle the error
+                    });
+          }
+
+          // Checking if the server is available.
+          checkServerStatus();
+
+        </script>
+
+
+    </head>
+    <body style="background-color: #000000; display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <div id="divLoadingMessage" style="color: white; text-align: left; font-family: 'Arial Narrow'; margin: 25%">
+            <h1>
+                We are experiencing high traffic at the moment. Kindly as we are deploying additional resources.
+                <br><br>
+                Estimated wait time is under 3 minutes.
+                <br><br>
+                We appreciate your patience. Thank you.
+            </h1>
+
+            <br><br><br><br>
+
+            <h3>
+                You would automatically redirected once our servers are operational.
+                <br><br>
+                <a href="#" style="color: white;"> Click here</a>, if you are not automatically redirected.
+            </h3>
+        </div>
+
+    </body>
+
+
+
+
+</html>

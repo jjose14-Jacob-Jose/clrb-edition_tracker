@@ -23,8 +23,12 @@ public class EditionController {
 
     @GetMapping("/")
     public String home() {
-        System.out.println("EditionController.java: @GetMapping(\"/\")");
         return "index";
+    }
+
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "welcome";
     }
 
 //    @PostMapping("/postData")
