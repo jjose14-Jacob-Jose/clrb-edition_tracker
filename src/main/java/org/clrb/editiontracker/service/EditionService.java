@@ -4,13 +4,11 @@ import org.clrb.editiontracker.constants.EditionConstants;
 import org.clrb.editiontracker.model.HTMLFormInformation;
 import org.clrb.editiontracker.model.SummaryHolding;
 import org.clrb.editiontracker.model.YearEdition;
+import org.clrb.editiontracker.util.EditionTrackerLogger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class EditionService {
@@ -18,6 +16,7 @@ public class EditionService {
 //    Get summary-range of indexes that have the 'identifyingValue'.
     public List<String> getArraySummary(int [] array, int arrayIndexStart, int arrayIndexEnd, int arrayIndexOffset, int identifyingValue) {
 
+        EditionTrackerLogger.logInfo("EditionService - getArraySummary(" + Arrays.toString(array) + ", " + arrayIndexStart + ", " + arrayIndexEnd + ", " + arrayIndexOffset + ", " + identifyingValue + ")");
         List<String> listArraySummarized = new ArrayList<String>();
         if ((arrayIndexStart == arrayIndexEnd) & (array[arrayIndexStart] == identifyingValue)) {
                 listArraySummarized.add(String.valueOf(arrayIndexStart + arrayIndexOffset));
@@ -42,11 +41,14 @@ public class EditionService {
                 }
             }
         }
+        EditionTrackerLogger.logInfo("EditionService - getArraySummary() - listArraySummarized: " + String.join(", ", listArraySummarized));
         return listArraySummarized;
     }
 
 //    Return a list of 'YearEdition' where each item represents a year.
     public List<YearEdition> getYearEditionList(HTMLFormInformation htmlFormInformation) {
+
+        EditionTrackerLogger.logInfo("EditionService - getYearEditionList(" + htmlFormInformation.toString() + ")");
 
         List<YearEdition> listYearEditions = new ArrayList<YearEdition>();
 
@@ -76,12 +78,14 @@ public class EditionService {
             listYearEditions.add(yearEdition);
         }
 
+        EditionTrackerLogger.logInfo("EditionService - getYearEditionList() - listYearEditions: " + listYearEditions.toString());
         return listYearEditions;
     }
 
     //    Returns a list of SummaryHolding.
     public List<SummaryHolding> getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatusOne, int availabilityStatusTwo) {
 
+        EditionTrackerLogger.logInfo("EditionService - getSummaryHoldingsDetailed(" + listYearEditions.toString() + ", " + htmlFormInformation.toString() + ", " + availabilityStatusOne + ", " + availabilityStatusTwo +")");
         List<SummaryHolding> listSummaryHoldings = new ArrayList<SummaryHolding>();
 
         for (int i = 0; i < htmlFormInformation.getArrayAvailabilityStatusYear().length; i++) {
@@ -119,11 +123,13 @@ public class EditionService {
                 listSummaryHoldings.add(summaryHolding);
             }
         }
+        EditionTrackerLogger.logInfo("EditionService - getSummaryHoldingsDetailed() - listSummaryHoldings:" +  listSummaryHoldings.toString());
         return listSummaryHoldings;
     }
 
     public ResponseEntity<?> getResponseEntity(HTMLFormInformation htmlFormInformation) {
 
+        EditionTrackerLogger.logInfo("EditionService - getResponseEntity( "+ htmlFormInformation.toString() + " )");
         List<YearEdition> listYearEditions= getYearEditionList(htmlFormInformation);
         List<SummaryHolding> listSummaryHoldingsAvailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE , EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
         List<SummaryHolding> listSummaryHoldingsUnavailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_NOT_AVAILABLE , EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
@@ -137,6 +143,7 @@ public class EditionService {
         responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITHOUT_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsAvailable, false));
         responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_SUMMARY_HOLDINGS, summaryHoldingService.getSummaryHoldingStandardFormat(listSummaryHoldingsAvailable));
 
+        EditionTrackerLogger.logInfo("EditionService - getResponseEntity() - responseData("+ responseData + ")");
         return ResponseEntity.ok(responseData);
     }
 
