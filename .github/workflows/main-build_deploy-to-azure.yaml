@@ -29,8 +29,8 @@ jobs:
         uses: azure/docker-login@v1
         with:
           login-server: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io
-          username: ${{ secrets.ACR_FTPS_PASSWORD }}
-          password: ${{ secrets.ACR_FTPS_USERNAME }}
+          username: ${{ secrets.ACR_FTPS_USERNAME }}
+          password: ${{ secrets.ACR_FTPS_PASSWORD }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
