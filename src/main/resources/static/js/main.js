@@ -32,10 +32,27 @@ const HTML_ELEMENT_VALUE_INCREASE = "+";
 const HTML_ELEMENT_VALUE_DECREASE = "-";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
 
+const CSS_HTML_ELEMENT_VALUE_INCREASE = "btnIncrease";
+const CSS_HTML_ELEMENT_VALUE_DECREASE = "btnDecrease";
+
 const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API = ';';
 const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML = ";\n";
 
-const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message:";
+const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message: ";
+const MESSAGE_INVALID_INTEGER_INPUT_SUFFIX = " is not a valid number.";
+const MESSAGE_DUPLICATE_EDITION_NUMBER = " already exists. Please enter a unique value.";
+
+const STRING_VALUE_EMPTY = "";
+
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITION_TYPE_DESCRIPTION = '1';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_STARTING = '2';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_ENDING = '3';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITIONS_IN_A_YEAR = '4';
+const KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR = '5';
+const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES = '6';
+const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_SUMMARY_HOLDINGS = '7';
+const KEYBOARD_LETTER_TO_FOCUS_ON_BTN_RESET = '8';
+const KEYBOARD_LETTER_TO_FOCUS_ON_RB_ADVANCED = '9';
 
 // Global Variable declarations.
 let editionsType, yearStarting, yearEnding, volumeYearStarting, editionsPerYear;
@@ -50,7 +67,8 @@ function printToConsole(variable) {
 
 // Show variable as an alert.
 function printToAlert(variable) {
-    console.log(MESSAGE_ERROR_API_RESPONSE + "\n" + JSON.stringify(variable));
+    printToConsole(JSON.stringify(variable));
+    alert(JSON.stringify(variable));
 }
 
 // Initialize individual arrays.
@@ -172,8 +190,36 @@ function displayMatrixAsHTMLTable() {
             labelEditionNumber.addEventListener('dblclick', function (event) {
                 let userInputValue = prompt('Enter edition number:', labelEditionNumber.innerHTML);
                 if (userInputValue !== null) {
-                    this.innerHTML = userInputValue;
-                    incrementValueOfSubsequentElements(arrayEditionNumber, i, parseInt(userInputValue));
+
+                    if(isNaN(userInputValue)) {
+                        alert(userInputValue + MESSAGE_INVALID_INTEGER_INPUT_SUFFIX);
+                    } else {
+                        userInputValue = parseInt(userInputValue);
+                        // Checking if the edition number input already exists.
+                        let flagIsUniqueValue = true;
+                        {
+                            // Checking values (above-rows) before the current index.
+                            for(let j=0; j<i && flagIsUniqueValue; j++) {
+                                if (arrayEditionNumber[j] == userInputValue)
+                                    flagIsUniqueValue = false;
+                            }
+
+                            // Checking values (below-rows) after the current index.
+                            for(let j=i+1; j<arrayEditionNumber.length && flagIsUniqueValue; j++) {
+                                if (arrayEditionNumber[j] == userInputValue)
+                                    flagIsUniqueValue = false;
+                            }
+                        }
+
+                        // Check if the user has entered an already existing edition number.
+                        if(flagIsUniqueValue) {
+                            this.innerHTML = userInputValue;
+                            incrementValueOfSubsequentElements(arrayEditionNumber, i, parseInt(userInputValue));
+                        } else {
+                            printToAlert(userInputValue + MESSAGE_DUPLICATE_EDITION_NUMBER);
+                        }
+                    }
+
                 }
             });
             tdEditionNumber.appendChild(labelEditionNumber);
@@ -236,6 +282,7 @@ function displayMatrixAsHTMLTable() {
                 // Create label for checkbox
                 const label = document.createElement('label');
                 label.textContent = `${indexOfEdition + 1 }`;
+                label.setAttribute('for', 'checkboxOfIssue' + indexOfEdition);
 
                 // Attach change event listener to checkbox
                 checkbox.addEventListener('change', function () {
@@ -280,6 +327,7 @@ function displayMatrixAsHTMLTable() {
             btnIssueCountIncrease.type = 'button';
             btnIssueCountIncrease.value = TEXT_BUTTON_ISSUE_COUNT_INCREASE;
             btnIssueCountIncrease.id = TEXT_BUTTON_ISSUE_COUNT_INCREASE + i;
+            btnIssueCountIncrease.className = CSS_HTML_ELEMENT_VALUE_INCREASE;
             btnIssueCountIncrease.addEventListener("click", function() {
                 changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
             });
@@ -288,6 +336,7 @@ function displayMatrixAsHTMLTable() {
             btnIssueCountDecrease.type = 'button';
             btnIssueCountDecrease.value = TEXT_BUTTON_ISSUE_COUNT_DECREASE;
             btnIssueCountDecrease.id = TEXT_BUTTON_ISSUE_COUNT_DECREASE + i;
+            btnIssueCountDecrease.className = CSS_HTML_ELEMENT_VALUE_DECREASE;
             btnIssueCountDecrease.addEventListener("click", function() {
                 changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountDecrease.value);
             });
@@ -315,6 +364,7 @@ function displayMatrixAsHTMLTable() {
             const btnAddEdition = document.createElement('input');
             btnAddEdition.type = 'button';
             btnAddEdition.value = HTML_ELEMENT_VALUE_INCREASE;
+            btnAddEdition.className = CSS_HTML_ELEMENT_VALUE_INCREASE;
             btnAddEdition.addEventListener("click", function () {
                 matrixRowAddOrDelete(HTML_ELEMENT_VALUE_INCREASE);
             });
@@ -322,6 +372,7 @@ function displayMatrixAsHTMLTable() {
             const btnDeleteEdition = document.createElement('input');
             btnDeleteEdition.type = 'button';
             btnDeleteEdition.value = HTML_ELEMENT_VALUE_DECREASE;
+            btnDeleteEdition.className = CSS_HTML_ELEMENT_VALUE_DECREASE;
             btnDeleteEdition.addEventListener("click", function () {
                 matrixRowAddOrDelete(HTML_ELEMENT_VALUE_DECREASE);
             });
@@ -524,10 +575,20 @@ function getRadioButtonsValue(radioButtonName) {
 
 }
 
+// Show loading animation spinner.
+function loadingAnimationShow() {
+    // Hide loading spinner animation.
+    document.getElementById('divUserInteractionArea').style.display = 'block';
+}
+
+// Hide loading animation spinner.
+function loadingAnimationHide() {
+    // Hide loading spinner animation.
+    document.getElementById('divUserInteractionArea').style.display = 'none';
+}
+
 // Ajax to call REST API and update page content dynamically.
 function ajaxForFormUserInput() {
-
-
     $(document).ready(function() {
         $('#formUserInput').submit(function(event) {
             event.preventDefault();
@@ -541,16 +602,18 @@ function ajaxForFormUserInput() {
                 success: function(response) {
                     // Update the page content using the response data
                     responseFromAPI = response;
+                    loadingAnimationHide();
                     displayAPIResponseInHTML(response);
                 },
                 error: function(error) {
-                    console.log(error);
-                    printToAlert(error);
+                    loadingAnimationHide();
+                    printToAlert(MESSAGE_ERROR_API_RESPONSE + error);
                 }
             });
         });
     });
-    printToConsole("Line 'ajaxForFormUserInput'");
+
+
 }
 
 // Initial-load steps.
@@ -599,7 +662,7 @@ function initialLoadingActivities() {
 
         // When 'Generate Summary' button is clicked.
         btnGenerateSummary.addEventListener('click', function(event) {
-            printToConsole("Line  'initialLoadingActivities'");
+            loadingAnimationShow();
             document.getElementById('arrayEditionDescription').value = arrayEditionDescription;
             document.getElementById('arrayEditionNumber').value = arrayEditionNumber;
             document.getElementById('arrayYear').value = arrayYear;
@@ -623,41 +686,70 @@ function initialLoadingActivities() {
         document.getElementById("btnCreateTable").addEventListener("click", function() {
             event.preventDefault();
 
-            editionsType = document.getElementById("txtTextEditionsType").value;
-            yearStarting = parseInt(document.getElementById("txtNumberYearStarting").value);
-            yearEnding = parseInt(document.getElementById("txtNumberYearEnding").value);
-            volumeYearStarting = parseInt(document.getElementById("txtNumberVolumeStartingYear").value);
-            editionsPerYear = parseInt(document.getElementById("txtNumberEditionsPerYear").value);
-            div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
+            try {
+                editionsType = document.getElementById("txtTextEditionsType").value;
+                yearStarting = parseInt(document.getElementById("txtNumberYearStarting").value);
+                yearEnding = parseInt(document.getElementById("txtNumberYearEnding").value);
+                volumeYearStarting = parseInt(document.getElementById("txtNumberVolumeStartingYear").value);
+                editionsPerYear = parseInt(document.getElementById("txtNumberEditionsPerYear").value);
+                div_matrix = document.querySelector("#"+ID_DIV_MATRIX);
 
-            if(editionsPerYear>0) {
-                // Adding '+1' to ensure 'ending' year is also included.
-                initializeArrays();
-                displayMatrixAsHTMLTable();
+                let messageError = STRING_VALUE_EMPTY;
+                // Check if the parsed values are NaN (Not-a-Number)
+                if (isNaN(yearStarting)) {
+                    messageError = document.getElementById("lblTxtNumberYearStarting").innerHTML;
+                }
+                if (isNaN(yearEnding)) {
+                    messageError = document.getElementById("lblTxtNumberYearEnding").innerHTML;
+                }
+                if (isNaN(volumeYearStarting)) {
+                    messageError = document.getElementById("lblTxtNumberVolumeStartingYear").innerHTML;
+                }
+                if (isNaN(editionsPerYear)) {
+                    messageError = document.getElementById("lblTxtNumberEditionsPerYear").innerHTML;
+                }
+
+                if (messageError !== STRING_VALUE_EMPTY) {
+                    messageError = messageError + MESSAGE_INVALID_INTEGER_INPUT_SUFFIX;
+                    throw new Error (messageError);
+                }
+
+                if(editionsPerYear>0) {
+                    // Adding '+1' to ensure 'ending' year is also included.
+                    initializeArrays();
+                    displayMatrixAsHTMLTable();
+                }
+
+            } catch (error) {
+                printToAlert(error.message)
             }
+
 
         });
 
     }
 
     // All input text-fields with id start 'txtNumber'.
-    {
-        // Get all the text fields with type 'text'
-        const textFields = document.querySelectorAll('input[type="text"]');
-
-        // Apply the validation function to text fields with IDs starting with 'txtNumber'.
-        textFields.forEach(textField => {
-            if (textField.id.startsWith('txtNumber')) {
-                textField.addEventListener('input', restrictToNumbers);
-                textField.addEventListener('keydown', restrictToNumbers);
-            }
-        });
-    }
+    // {
+    //     // Get all the text fields with type 'text'
+    //     const textFields = document.querySelectorAll('input[type="text"]');
+    //
+    //     // Apply the validation function to text fields with IDs starting with 'txtNumber'.
+    //     textFields.forEach(textField => {
+    //         if (textField.id.startsWith('txtNumber')) {
+    //             textField.addEventListener('input', restrictToNumbers);
+    //             textField.addEventListener('keydown', restrictToNumbers);
+    //         }
+    //     });
+    // }
 
     // Showing results from Java API.
     {
         ajaxForFormUserInput();
     }
+
+    loadingAnimationHide();
+    enableKeyboardShortCuts();
 
 }
 
@@ -694,6 +786,75 @@ function toggleUserModeVisibility() {
 // Replace all occurrences of ';' in a String with specified character.
 function stringReplaceAllSemiColonWithCharacter(string, characterReplacement) {
     return string.replace(/;/g, characterReplacement);
+}
+
+ // Enable keyboard shorts.
+function enableKeyboardShortCuts() {
+
+
+    document.addEventListener('keydown', function(event) {
+        printToConsole("event.altKey: "+event.altKey);
+        printToConsole("event.key: "+event.key);
+        // Shortcuts executed when numeric keys pressed with 'ALT'.
+        if (event.altKey) {
+            let htmlInputElement = STRING_VALUE_EMPTY;
+            switch (event.key) {
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITION_TYPE_DESCRIPTION:
+                    htmlInputElement = document.getElementById("txtTextEditionsType");
+                    printToConsole("case: " + KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITION_TYPE_DESCRIPTION);
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_STARTING:
+                    htmlInputElement = document.getElementById("txtNumberYearStarting");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_YEAR_ENDING:
+                    htmlInputElement = document.getElementById("txtNumberYearEnding");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_EDITIONS_IN_A_YEAR:
+                    htmlInputElement = document.getElementById("txtNumberEditionsPerYear");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR:
+                    htmlInputElement = document.getElementById("txtNumberVolumeStartingYear");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES:
+                    htmlInputElement = document.getElementById("btnCreateTable");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_SUMMARY_HOLDINGS:
+                    htmlInputElement = document.getElementById("btnGenerateSummary");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_TXT_VOLUME_OF_STARTING_YEAR:
+                    htmlInputElement = document.getElementById("txtNumberVolumeStartingYear");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_CHECKBOXES:
+                    htmlInputElement = document.getElementById("btnCreateTable");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_GENERATE_SUMMARY_HOLDINGS:
+                    htmlInputElement = document.getElementById("btnGenerateSummary");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_BTN_RESET:
+                    htmlInputElement = document.getElementById("btnClearAll");
+                    break;
+                case KEYBOARD_LETTER_TO_FOCUS_ON_RB_ADVANCED:
+                    htmlInputElement = document.getElementById("rbModeAdvanced");
+                    break;
+
+            }
+
+            if (htmlInputElement !== STRING_VALUE_EMPTY) {
+                if (htmlInputElement instanceof HTMLInputElement) {
+                    if (htmlInputElement.type === "radio") {
+                        htmlInputElement.checked = true;
+                    } else {
+                        // Select all contents if the shortcut key is pressed for a text field.
+                        htmlInputElement.select();
+                    }
+                } else if (htmlInputElement instanceof HTMLButtonElement) {
+                    // Click the button if shortcut key for a button is pressed.
+                    htmlInputElement.click();
+                }
+            }
+        }
+    });
+
 }
 
 // Function with main logic.

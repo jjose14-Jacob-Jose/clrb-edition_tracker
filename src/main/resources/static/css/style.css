@@ -49,6 +49,47 @@ label[id^="labelEdition"] {
 /*}*/
 
 
+/*Styles for the body.*/
 body {
     background-color: #fffff0; /* Set background color */
 }
+
+/*Following is for loading spiner animation.*/
+#divUserInteractionArea {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 100s linear infinite; /* Safari */
+    animation: spin .5s linear infinite;
+}
+
+/* Safari (loading spinner animation)*/
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+/*Other Browsers loading spinner animation.*/
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/*Styles for increase button.*/
+.btnIncrease {
+    background: #bae1ba;
+}
+
+/*Styles for decrease button.*/
+.btnDecrease {
+    background: #eeb6b6;
+}
+
+/*Remove underline and blue color from HTML anchor-tag text. */
+.URLLikeRegularText {
+    color: inherit;
+    text-decoration: none;
+}
+
+
