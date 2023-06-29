@@ -57,9 +57,15 @@ jobs:
           az --version
 
       - name: Azure Login
-        uses: azure/actions/login@v1
+        uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA }}
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.appId }}",
+              "clientSecret": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.password }}",
+              "tenantId": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.tenant }}",
+              "subscriptionId": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.subscriptionId }}"
+            }
 
       - name: Set up Azure CLI
         uses: azure/CLI@v1
