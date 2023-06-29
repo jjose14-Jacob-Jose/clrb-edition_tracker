@@ -51,6 +51,9 @@ jobs:
           push: true
           tags: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/clrb-edition-tracker-image:${{ github.event.release.tag_name }}
 
+      - name: Set up Azure CLI
+        uses: azure/CLI@v1
+
       - name: Azure Login
         uses: azure/login@v1
         with:
