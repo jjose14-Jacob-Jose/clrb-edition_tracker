@@ -1,9 +1,16 @@
 name: Main build and deploy to Azure
 
+# Uncomment following to run the GitHub Action when a push is made to 'main'.
+#on:
+#  push:
+#    branches:
+#      - main
+
+# Trigger, the Action when a release is created.
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - created
 
 jobs:
   build-and-deploy:
