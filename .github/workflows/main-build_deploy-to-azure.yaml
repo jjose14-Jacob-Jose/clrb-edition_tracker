@@ -51,17 +51,17 @@ jobs:
           push: true
           tags: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/clrb-edition-tracker-image:${{ github.event.release.tag_name }}
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA }}
+
       - name: Set up Azure CLI
         uses: azure/CLI@v1
         with:
           inlineScript: |
             az --version
             az account show
-
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA }}
 
       - name: Update Azure WebApp tag
         uses: azure/cli@v1
