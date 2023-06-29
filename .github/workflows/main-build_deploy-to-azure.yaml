@@ -51,6 +51,11 @@ jobs:
           push: true
           tags: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/clrb-edition-tracker-image:${{ github.event.release.tag_name }}
 
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          az --version
+
       - name: Azure Login
         uses: azure/login@v1
         with:
