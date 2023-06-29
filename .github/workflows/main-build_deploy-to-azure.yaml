@@ -39,12 +39,25 @@ jobs:
           username: ${{ secrets.ACR_FTPS_USERNAME }}
           password: ${{ secrets.ACR_FTPS_PASSWORD }}
 
+#  Print Docker image's name.
       - name: Display image tag
         run: echo ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/clrb-edition-tracker-image:${{ github.event.release.tag_name }}
 
+#  Push Docker image to Azure.
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
           tags: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/clrb-edition-tracker-image:${{ github.event.release.tag_name }}
+
+      - name: Update Azure WebApp tag
+        uses: azure/cli@v1
+        with:
+          inlineScript: az webapp config container set --name ${{ secrets.AZURE_WEB_APP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --docker-custom-image-name ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/clrb-edition-tracker-image:${{ steps.generate-tag.outputs.tag }}
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEB_APP_NAME }}
+          images: ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/clrb-edition-tracker-image:${{ steps.generate-tag.outputs.tag }}
