@@ -36,7 +36,7 @@ on:
     types:
       - created
       - edited
-  workflow_dispatch:
+#  workflow_dispatch:
 
 permissions:
   contents: read
@@ -65,6 +65,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Debug variables
+        run: |
+          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
+          echo "DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DOCKERHUB_REPOSITORY_NAME }}"
+          echo "RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}"
+          echo "GIT_REFERENCE: ${{ github.ref }}"
+
 
       - name: Build and push Docker image to Docker Hub.
         run: |
