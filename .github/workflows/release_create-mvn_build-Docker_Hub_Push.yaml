@@ -43,7 +43,8 @@ jobs:
 
 
       - name: Configure Azure CLI
-        uses: azure/login@v1
+#        Specify 'azure/actions/login@v1'; using 'azure/login@v1' doesn't work and is bug.
+        uses: azure/actions/login@v1
         with:
           creds: |
             {
