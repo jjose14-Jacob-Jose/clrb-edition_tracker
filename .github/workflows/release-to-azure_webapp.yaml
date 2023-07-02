@@ -32,10 +32,10 @@ env:
   AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEB_APP_NAME }}  # set this to the name of your Azure Web App
 
 on:
-#  release:
-#    types:
-#      - created
-  workflow_dispatch:
+  release:
+    types:
+      - created
+#  workflow_dispatch:
 
 permissions:
   contents: read
