@@ -35,7 +35,8 @@ on:
   release:
     types:
       - created
-#  workflow_dispatch:
+      - edited
+  workflow_dispatch:
 
 permissions:
   contents: read
