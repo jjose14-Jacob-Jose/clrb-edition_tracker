@@ -1,4 +1,4 @@
-name: Main build and deploy to Azure
+name: release_create-mvn_build-Docker_Hub_Push
 
 on:
   release:
