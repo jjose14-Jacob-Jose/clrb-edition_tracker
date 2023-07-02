@@ -1,101 +1,77 @@
-#Following template obtained from GitHub Actions template.
+# Following template obtained from GitHub Actions template.
 
-# This workflow will build and push a Docker container to an Azure Web App when a commit is pushed to your default branch.
+# Builds and pushes a Docker image to Docker Hub and Azure Web App. It doesn't work in Azure Web App.
+
+#name: Build and deploy Docker image to Azure Web App and Docker Container.
 #
-# This workflow assumes you have already created the target Azure App Service web app.
-# For instructions see https://docs.microsoft.com/en-us/azure/app-service/quickstart-custom-container?tabs=dotnet&pivots=container-linux
+#env:
+#  AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEB_APP_NAME }}  # set this to the name of your Azure Web App
 #
-# To configure this workflow:
+#on:
+#  release:
+#    types:
+#      - created
+#      - edited
+##  workflow_dispatch:
 #
-# 1. Download the Publish Profile for your Azure Web App. You can download this file from the Overview page of your Web App in the Azure Portal.
-#    For more information: https://docs.microsoft.com/en-us/azure/app-service/deploy-github-actions?tabs=applevel#generate-deployment-credentials
+#permissions:
+#  contents: read
 #
-# 2. Create a secret in your repository named AZURE_WEBAPP_PUBLISH_PROFILE, paste the publish profile contents as the value of the secret.
-#    For instructions on obtaining the publish profile see: https://docs.microsoft.com/azure/app-service/deploy-github-actions#configure-the-github-secret
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
 #
-# 3. Create a GitHub Personal access token with "repo" and "read:packages" permissions.
+#    steps:
+#      - uses: actions/checkout@v3
 #
-# 4. Create three app settings on your Azure Web app:
-#       DOCKER_REGISTRY_SERVER_URL: Set this to "https://ghcr.io"
-#       DOCKER_REGISTRY_SERVER_USERNAME: Set this to the GitHub username or organization that owns the repository
-#       DOCKER_REGISTRY_SERVER_PASSWORD: Set this to the value of your PAT token from the previous step
+#      - name: Set up JDK 11
+#        uses: actions/setup-java@v2
+#        with:
+#          java-version: '11'
+#          distribution: 'temurin'
 #
-# 5. Change the value for the AZURE_WEBAPP_NAME.
+#      - name: Build with Maven
+#        run: mvn clean package
 #
-# For more information on GitHub Actions for Azure: https://github.com/Azure/Actions
-# For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
-
-name: Build and deploy Azure Web App on a GitHub release.
-
-env:
-  AZURE_WEBAPP_NAME: ${{ secrets.AZURE_WEB_APP_NAME }}  # set this to the name of your Azure Web App
-
-on:
-  release:
-    types:
-      - created
-      - edited
-#  workflow_dispatch:
-
-permissions:
-  contents: read
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-
-      - name: Build with Maven
-        run: mvn clean package
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Debug variables
-        run: |
-          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
-          echo "DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DOCKERHUB_REPOSITORY_NAME }}"
-          echo "RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}"
-          echo "GIT_REFERENCE: ${{ github.ref }}"
-
-
-      - name: Build and push Docker image to Docker Hub.
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ github.event.release.tag_name }} .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ github.event.release.tag_name }}
-
-  deploy:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Lowercase the repo name and username
-        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: '${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ github.event.release.tag_name }}'
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v1
+#
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v1
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      - name: Debug variables
+#        run: |
+#          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
+#          echo "DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DOCKERHUB_REPOSITORY_NAME }}"
+#          echo "RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}"
+#          echo "GIT_REFERENCE: ${{ github.ref }}"
+#
+#
+#      - name: Build and push Docker image to Docker Hub.
+#        run: |
+#          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ github.event.release.tag_name }} .
+#          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ github.event.release.tag_name }}
+#
+#  deploy:
+#    permissions:
+#      contents: none
+#    runs-on: ubuntu-latest
+#    needs: build
+#    environment:
+#      name: 'Development'
+#      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+#
+#    steps:
+#      - name: Lowercase the repo name and username
+#        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
+#
+#      - name: Deploy to Azure Web App
+#        id: deploy-to-webapp
+#        uses: azure/webapps-deploy@v2
+#        with:
+#          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+#          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+#          images: '${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ github.event.release.tag_name }}'
