@@ -1,4 +1,4 @@
-name: Main build and deploy to Azure
+name: Main build and deploy to Azure - old
 
 # Uncomment following to run the GitHub Action when a push is made to 'main'.
 #on:
@@ -8,9 +8,7 @@ name: Main build and deploy to Azure
 
 # Trigger, the Action when a release is created.
 on:
-  release:
-    types:
-      - created
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
