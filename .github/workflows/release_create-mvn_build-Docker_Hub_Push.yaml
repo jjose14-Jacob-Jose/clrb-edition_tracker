@@ -36,25 +36,3 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}${{ github.event.release.tag_name }}:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}${{ github.event.release.tag_name }}:latest
-
-      - name: Install Azure CLI
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-          az --version
-
-
-      - name: Configure Azure CLI
-#        Specify 'azure/actions/login@v1'; using 'azure/login@v1' doesn't work and is bug.
-        uses: azure/actions/login@v1
-        with:
-          creds: |
-            {
-              "clientId": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.appId }}",
-              "clientSecret": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.password }}",
-              "tenantId": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.tenant }}",
-              "subscriptionId": "${{ secrets.AZURE_CREDENTIALS_SERVICE_PRINCIPAL_GHA.subscriptionId }}"
-            }
-
-      - name: Deploy to Azure Web App
-        run: |
-          az webapp config container set --name ${{ secrets.AZURE_WEB_APP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --docker-custom-image-name ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ github.event.release.tag_name }}
