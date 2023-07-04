@@ -32,7 +32,7 @@ public class SummaryHoldingService {
             if (summaryHolding.getEditionIssueSummary().equalsIgnoreCase(EditionConstants.STRING_EMPTY)) {
                 while (i < listSummaryHoldings.size() - 1) {
                     SummaryHolding summaryHoldingNext = listSummaryHoldings.get(i + 1);
-                    if ( (summaryHoldingNext.getEditionIssueSummary().equalsIgnoreCase(EditionConstants.STRING_EMPTY)) & summaryHolding.getEditionDescription().equalsIgnoreCase(summaryHoldingNext.getEditionDescription()) ) {
+                    if ( (summaryHoldingNext.getEditionIssueSummary().equalsIgnoreCase(EditionConstants.STRING_EMPTY)) & summaryHolding.getEditionDescription().equalsIgnoreCase(summaryHoldingNext.getEditionDescription()) & (summaryHoldingNext.getEditionNumber() == editionRangeEndNumber + 1)) {
                         editionRangeEndNumber = summaryHoldingNext.getEditionNumber();
                         editionRangeEndYear = summaryHoldingNext.getEditionYear();
                         i++;
