@@ -211,13 +211,9 @@ function displayMatrixAsHTMLTable() {
                             }
                         }
 
-                        // Check if the user has entered an already existing edition number.
-                        if(flagIsUniqueValue) {
-                            this.innerHTML = userInputValue;
-                            incrementValueOfSubsequentElements(arrayEditionNumber, i, parseInt(userInputValue));
-                        } else {
-                            printToAlert(userInputValue + MESSAGE_DUPLICATE_EDITION_NUMBER);
-                        }
+                        this.innerHTML = userInputValue;
+                        incrementValueOfSubsequentElements(arrayEditionNumber, i, parseInt(userInputValue));
+
                     }
 
                 }
