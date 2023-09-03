@@ -143,6 +143,40 @@ function displayMatrixAsHTMLTable() {
         let thEditionCheckbox = document.createElement('th');
         thEditionCheckbox.textContent = TEXT_LABEL_HEADER_EDITION_CHECKBOX;
 
+        let checkboxToCheckAllCheckboxes = document.createElement('input');
+        checkboxToCheckAllCheckboxes.type = 'checkbox';
+        checkboxToCheckAllCheckboxes.addEventListener('change', function () {
+
+            // Get all checkboxes in the web page.
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+            // Loop through the checkboxes and set their checked state to that of header checkbox.
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = checkboxToCheckAllCheckboxes.checked;
+            });
+
+            // Change status of flags that correspond to each year.
+            for(let i=0; i < arrayAvailabilityStatusYear.length; i++) {
+                if(checkboxToCheckAllCheckboxes.checked)
+                    arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_AVAILABLE;
+                else
+                    arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
+            }
+
+            // Change status of flags that correspond to each issue.
+            for(let i=0; i < arrayAvailabilityStatusIssuesOfEachYear.length; i++) {
+                for(let j = 0; j<arrayAvailabilityStatusIssuesOfEachYear[i].length; j++) {
+                    if(checkboxToCheckAllCheckboxes.checked)
+                        arrayAvailabilityStatusIssuesOfEachYear[i][j] = FLAG_ISSUES_ALL_AVAILABLE;
+                    else
+                        arrayAvailabilityStatusIssuesOfEachYear[i][j] = FLAG_ISSUES_NOT_AVAILABLE;
+                }
+            }
+
+        });
+
+        thEditionCheckbox.appendChild(checkboxToCheckAllCheckboxes);
+
         let thIssues = document.createElement('th');
         thIssues.textContent = TEXT_LABEL_HEADER_ISSUES;
         thIssues.colSpan = parseInt(editionsPerYear);
@@ -211,13 +245,9 @@ function displayMatrixAsHTMLTable() {
                             }
                         }
 
-                        // Check if the user has entered an already existing edition number.
-                        if(flagIsUniqueValue) {
-                            this.innerHTML = userInputValue;
-                            incrementValueOfSubsequentElements(arrayEditionNumber, i, parseInt(userInputValue));
-                        } else {
-                            printToAlert(userInputValue + MESSAGE_DUPLICATE_EDITION_NUMBER);
-                        }
+                        this.innerHTML = userInputValue;
+                        incrementValueOfSubsequentElements(arrayEditionNumber, i, parseInt(userInputValue));
+
                     }
 
                 }
