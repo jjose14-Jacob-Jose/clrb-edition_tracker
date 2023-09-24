@@ -102,8 +102,8 @@
         </tr>
         <tr>
             <td><label for="textAreaUnavailableEditionsWithoutYearAdvanced">Without Year</label></td>
-            <td><label for="textAreaUnavailableEditionsWithYear">With Year</label></td>
-            <td><label for="textAreaAvailableEditionsWithYear" class="modeAdvanced" >With Year</label></td>
+            <td><label for="textAreaUnavailableEditionsWithYear">With Year*</label></td>
+            <td><label for="textAreaAvailableEditionsWithYear" class="modeAdvanced" >With Year*</label></td>
             <td><label for="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" >Without Year</label></td>
         </tr>
         <tr>
@@ -112,6 +112,9 @@
             <td><textarea id="textAreaAvailableEditionsWithYear" name="textAreaAvailableEditionsWithYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithYear}"> </textarea></td>
             <td><textarea id="textAreaAvailableEditionsWithoutYear" name="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithoutYear}"> </textarea></td>
             <td><textarea id="textAreaAvailableSummaryHoldingAdvanced" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
+        </tr>
+        <tr>
+            <td colspan="5">*Year value will that of the first issue in the edition (volume).</td>
         </tr>
 
 
