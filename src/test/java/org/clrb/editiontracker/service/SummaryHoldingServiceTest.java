@@ -253,4 +253,18 @@ class SummaryHoldingServiceTest {
         actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, true);
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    void getSummaryHoldingStandardFormat9() {
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 1, 2001));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 3, 2003));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 4, 2004));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 5, 2005));
+        listSummaryHoldings.add(new SummaryHolding("vol", "", 6, 2006));
+
+        expected = "vol.1(2001);vol.3-6(2003)-(2006);";
+
+        actual = summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldings, true);
+        Assertions.assertEquals(expected, actual);
+    }
 }

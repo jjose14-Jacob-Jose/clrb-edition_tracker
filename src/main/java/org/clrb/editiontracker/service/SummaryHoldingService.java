@@ -30,28 +30,28 @@ public class SummaryHoldingService {
                 if (showYearInformationAlso & listSummaryHoldings.size() == 1) {
 //                    If there is only 1 entry.
                     summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeStartYear + EditionConstants.DELIMITER_YEAR_END);
-                }
-
-                while (i < listSummaryHoldings.size() - 1) {
-                    SummaryHolding summaryHoldingNext = listSummaryHoldings.get(i + 1);
-                    if ( (summaryHoldingNext.getEditionIssueSummary().equalsIgnoreCase(EditionConstants.STRING_EMPTY)) & summaryHolding.getEditionDescription().equalsIgnoreCase(summaryHoldingNext.getEditionDescription()) & (summaryHoldingNext.getEditionNumber() == editionRangeEndNumber + 1)) {
-                        editionRangeEndNumber = summaryHoldingNext.getEditionNumber();
-                        editionRangeEndYear = summaryHoldingNext.getEditionYear();
-                        i++;
-                    } else {
-                        if(showYearInformationAlso & editionRangeStartNumber == editionRangeEndNumber) {
+                } else {
+                    while (i < listSummaryHoldings.size() - 1) {
+                        SummaryHolding summaryHoldingNext = listSummaryHoldings.get(i + 1);
+                        if ((summaryHoldingNext.getEditionIssueSummary().equalsIgnoreCase(EditionConstants.STRING_EMPTY)) & summaryHolding.getEditionDescription().equalsIgnoreCase(summaryHoldingNext.getEditionDescription()) & (summaryHoldingNext.getEditionNumber() == editionRangeEndNumber + 1)) {
+                            editionRangeEndNumber = summaryHoldingNext.getEditionNumber();
+                            editionRangeEndYear = summaryHoldingNext.getEditionYear();
+                            i++;
+                        } else {
+                            if (showYearInformationAlso & editionRangeStartNumber == editionRangeEndNumber) {
 //                            Adding year at end of volume.
-                            summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeStartYear + EditionConstants.DELIMITER_YEAR_END);
+                                summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeStartYear + EditionConstants.DELIMITER_YEAR_END);
+                            }
+                            break;
                         }
-                        break;
                     }
-                }
-                if (editionRangeStartNumber != editionRangeEndNumber) {
-                    summarySB.append(EditionConstants.DELIMITER_EDITION_DIGITS + editionRangeEndNumber);
-                    if (showYearInformationAlso) {
-                        summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeStartYear + EditionConstants.DELIMITER_YEAR_END);
-                        summarySB.append(EditionConstants.DELIMITER_EDITION_DIGITS);
-                        summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeEndYear + EditionConstants.DELIMITER_YEAR_END);
+                    if (editionRangeStartNumber != editionRangeEndNumber) {
+                        summarySB.append(EditionConstants.DELIMITER_EDITION_DIGITS + editionRangeEndNumber);
+                        if (showYearInformationAlso) {
+                            summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeStartYear + EditionConstants.DELIMITER_YEAR_END);
+                            summarySB.append(EditionConstants.DELIMITER_EDITION_DIGITS);
+                            summarySB.append(EditionConstants.DELIMITER_YEAR_START + editionRangeEndYear + EditionConstants.DELIMITER_YEAR_END);
+                        }
                     }
                 }
             } else {
