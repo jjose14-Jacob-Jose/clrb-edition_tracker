@@ -3,141 +3,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Jacob Jose">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GetSummaryHoldings</title>
+    <link rel="icon" href="/images/favicon-logo-pdoddi.png" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/main.js"></script>
-    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-N5DCWKQ06J"></script>
-</head>
-<body>
-    <table id="tableHeading">
-        <tr>
-            <td><h1><a href="/" class="URLLikeRegularText"> Get Summary Holdings </a></h1></td>
-            <td>Contact us: </td>
-            <td><a href="mailto:support@getsummaryholdings.com">support@getsummaryholdings.com</a></td>
-        </tr>
-        <tr>
-
-        </tr>
-    </table>
-
-
-    <table id="tableUserInput">
-        <form action="/postData" method="POST" id="formUserInput">
-            <tr>
-                <td><label id="lblTxtTextEditionsType" for="txtTextEditionsType">Edition types:</label></td>
-                <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="v" ></td>
-            </tr>
-            <tr>
-                <td><label id="lblTxtNumberYearStarting" for="txtNumberYearStarting">Starting Year:</label></td>
-                <td><input type="text" id="txtNumberYearStarting" name="yearStarting" required placeholder="Earliest edition in Alma" value="2000" ></td>
-                <td><label id="lblTxtNumberYearEnding" for="txtNumberYearEnding" class="right-align">End Year:</label></td>
-                <td><input type="text" id="txtNumberYearEnding" name="yearEnding" required placeholder="Latest edition in Alma or 2020" value="2020" ></td>
-            </tr>
-            <tr>
-                <td><label id="lblTxtNumberEditionsPerYear" for="txtNumberEditionsPerYear">Editions in a year:</label></td>
-                <td><input type="text" id="txtNumberEditionsPerYear" name="editionsPerYear" required placeholder="Number of issues in a year" value="12" ></td>
-                <td><label id="lblTxtNumberVolumeStartingYear" for="txtNumberVolumeStartingYear">Volume of starting year:</label></td>
-                <td><input type="text" id="txtNumberVolumeStartingYear" name="volumeStartingYear" required placeholder="Volume of starting year" value="1" ></td>
-            </tr>
-            <tr>
-
-            </tr>
-        <tr>
-            <td><button id="btnCreateTable">Generate Checkboxes</button></td>
-
-            <td colspan="2">
-
-                    <input type="hidden" id="arrayEditionDescription" name="arrayEditionDescription">
-                    <input type="hidden" id="arrayEditionNumber" name="arrayEditionNumber">
-                    <input type="hidden" id="arrayYear" name="arrayYear">
-                    <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
-                    <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
-                    <input type="hidden" id="arrayIssuesInTheYear" name="arrayIssuesInTheYear">
-                    <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary Holdings</button>
-        </form>
-            </td>
-        <td><button id="btnClearAll" disabled="disabled">Reset</button></td>
-
-        </tr>
-        <tr>
-            <td><label for="divRBMode" class="right-align" >Output:</label></td>
-            <td>
-                <div id="divRBMode">
-                    <label>
-                        <input type="radio" name="rbMode" id="rbModeBasic" value="modeBasic" onclick="setUserMode(this.value)" checked>
-                        Basic
-                    </label>
-                    <label>
-                        <input type="radio" name="rbMode" id="rbModeAdvanced" value="modeAdvanced" onclick="setUserMode(this.value)" >
-                        Detailed
-                    </label>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-    <table id="tableSummaryHoldingBasic" class="modeBasic">
-        <tr>
-            <td><label for="textAreaUnavailableEditionsWithoutYearAdvanced">Missing Editions</label></td>
-            <td><label for="textAreaAvailableSummaryHoldingBasic">Summary Holdings (available)</label></td>
-        </tr>
-        <tr>
-            <td><textarea id="textAreaUnavailableEditionsWithoutYearBasic" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
-            <td><textarea id="textAreaAvailableSummaryHoldingBasic" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
-        </tr>
-    </table>
-
-    <table id="tableSummaryHoldingAdvanced" class="modeAdvanced" >
-        <tr>
-            <td colspan="2" class="tableHeader">
-                Missing Editions
-            </td>
-            <td colspan="2" class="tableHeader" >
-                Available Editions
-            </td>
-            <td rowspan="2" class="tableHeader" >
-                Standard Summary Holdings
-            </td>
-        </tr>
-        <tr>
-            <td><label for="textAreaUnavailableEditionsWithoutYearAdvanced">Without Year</label></td>
-            <td><label for="textAreaUnavailableEditionsWithYear">With Year*</label></td>
-            <td><label for="textAreaAvailableEditionsWithYear" class="modeAdvanced" >With Year*</label></td>
-            <td><label for="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" >Without Year</label></td>
-        </tr>
-        <tr>
-            <td><textarea id="textAreaUnavailableEditionsWithoutYearAdvanced" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
-            <td><textarea id="textAreaUnavailableEditionsWithYear" name="textAreaUnavailableEditionsWithYear" class="modeAdvanced"  th:text="${textAreaUnavailableEditionsWithYear}"> </textarea></td>
-            <td><textarea id="textAreaAvailableEditionsWithYear" name="textAreaAvailableEditionsWithYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithYear}"> </textarea></td>
-            <td><textarea id="textAreaAvailableEditionsWithoutYear" name="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithoutYear}"> </textarea></td>
-            <td><textarea id="textAreaAvailableSummaryHoldingAdvanced" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
-        </tr>
-        <tr>
-            <td colspan="5">*Year value will that of the first issue in the edition (volume).</td>
-        </tr>
-
-
-    </table>
-    <div id="divUserInteractionArea" class="divUserInteractionArea"></div>
-    <div id="divMatrix"></div>
-
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N5DCWKQ06J"></script>
     <script>
-        main();
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-N5DCWKQ06J');
     </script>
-    <div id="divUserGuide">
-        <hr>
-        <h3>User Guide</h3>
-        <ol>
-            <li>'Generate Checkboxes to generate a new checkbox-table. This will also to clear existing data.</li>
-            <li>Double-click on 'Volume' and 'Number' to change their values.</li>
-            <li>After changing the year, press the 'Enter' or 'Return' key to update the year of subsequent rows.</li>
-            <li>Check 'Check all' to select all issues.</li>
-            <li>Press 'ALT' + digits (1 through 9) to quickly select an input element. E.g. "ALT + 1" to change 'Edition Type' description. </li>
-        </ol>
+
+</head>
+    <body>
+        <main>
+            <div class="divBodyHeader">
+                <div class="left">
+                    <h1>
+                      <a class="headingsCustom" onclick="toggleDivsInBody()"> Get Summary Holdings </a>
+                    </h1>
+                </div>
+                <div class="right">
+                    <h3>
+                        <a href="https://getSummaryHoldings.com" class="headingsCustom" target="_blank" >
+                            Latest Version
+                            <img src="/images/new_tab_logo.png" alt="Logo" class="logo-image" style="height: 12px;">
+                        </a>
+                    </h3>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <h3>
+                        <a class="headingsCustom" id="aTagAbout" onclick="toggleDivsInBody()">About</a>
+                    </h3>
+                </div>
+            </div>
+            <hr />
+<!--            GSH main interface-->
+            <div id="divBodyInterfaceSection">
+                <div class="divTablesUserInput">
+                    <table id="tableUserInput">
+                        <form action="https://editiontracker.azurewebsites.net/postData" method="POST" id="formUserInput">
+                            <tr>
+                                <td><label id="lblTxtTextEditionsType" for="txtTextEditionsType">Edition types:</label></td>
+                                <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="v" ></td>
+                            </tr>
+                            <tr>
+                                <td><label id="lblTxtNumberYearStarting" for="txtNumberYearStarting">Starting Year:</label></td>
+                                <td><input type="text" id="txtNumberYearStarting" name="yearStarting" required placeholder="Earliest edition in Alma" value="2000" ></td>
+                                <td><label id="lblTxtNumberYearEnding" for="txtNumberYearEnding" class="right-align">End Year:</label></td>
+                                <td><input type="text" id="txtNumberYearEnding" name="yearEnding" required placeholder="Latest edition in Alma or 2020" value="2002"></td>
+                            </tr>
+                            <tr>
+                                <td><label id="lblTxtNumberEditionsPerYear" for="txtNumberEditionsPerYear">Editions in a year:</label></td>
+                                <td><input type="text" id="txtNumberEditionsPerYear" name="editionsPerYear" required placeholder="Number of issues in a year" value="3" ></td>
+                                <td><label id="lblTxtNumberVolumeStartingYear" for="txtNumberVolumeStartingYear">Volume of starting year:</label></td>
+                                <td><input type="text" id="txtNumberVolumeStartingYear" name="volumeStartingYear" required placeholder="Volume of starting year" value="1" ></td>
+                            </tr>
+                            <tr>
+
+                            </tr>
+                            <tr>
+                                <td><button id="btnCreateTable">Generate Checkboxes</button></td>
+
+                                <td colspan="2">
+                                        <input type="hidden" id="arrayEditionDescription" name="arrayEditionDescription">
+                                        <input type="hidden" id="arrayEditionNumber" name="arrayEditionNumber">
+                                        <input type="hidden" id="arrayYear" name="arrayYear">
+                                        <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
+                                        <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
+                                        <input type="hidden" id="arrayIssuesInTheYear" name="arrayIssuesInTheYear">
+                                        <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary Holdings</button>
+                                </td>
+                            </form>
+
+                            <td><button id="btnClearAll" disabled="disabled">Reset</button></td>
+
+                            </tr>
+                            <tr>
+                                <td><label for="divRBMode" class="right-align" >Output:</label></td>
+                                <td>
+                                    <div id="divRBMode">
+                                        <label>
+                                            <input type="radio" name="rbMode" id="rbModeBasic" value="modeBasic" onclick="setUserMode(this.value)" checked>
+                                            Basic
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="rbMode" id="rbModeAdvanced" value="modeAdvanced" onclick="setUserMode(this.value)" >
+                                            Detailed
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                    </table>
+                    <div class="divUpdatesForUser">
+                        <ul>
+                            <li>
+                                If you found this useful, would you help us by doing a survey of this product?
+                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_AD1SA5EDaS1fqhbCyj3-ECecAAoy1-4hNURZuUpReSd7_A/viewform?usp=sf_link">Feedback Survey</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="divResults">
+                    <table id="tableSummaryHoldingBasic" class="modeBasic">
+                        <tr>
+                            <td><label for="textAreaUnavailableEditionsWithoutYearAdvanced">Missing Editions</label></td>
+                            <td><label for="textAreaAvailableSummaryHoldingBasic">Summary Holdings (available)</label></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <textarea id="textAreaUnavailableEditionsWithoutYearBasic" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea>
+                            </td>
+                            <td><textarea id="textAreaAvailableSummaryHoldingBasic" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
+                        </tr>
+                    </table>
+                    <table id="tableSummaryHoldingAdvanced" class="modeAdvanced" >
+                        <tr>
+                            <td colspan="2" class="tableHeader">
+                                Missing Editions
+                            </td>
+                            <td colspan="2" class="tableHeader" >
+                                Available Editions
+                            </td>
+                            <td rowspan="2" class="tableHeader" >
+                                Standard Summary Holdings
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="textAreaUnavailableEditionsWithoutYearAdvanced">Without Year</label></td>
+                            <td><label for="textAreaUnavailableEditionsWithYear">With Year*</label></td>
+                            <td><label for="textAreaAvailableEditionsWithYear" class="modeAdvanced" >With Year*</label></td>
+                            <td><label for="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" >Without Year</label></td>
+                        </tr>
+                        <tr>
+                            <td><textarea id="textAreaUnavailableEditionsWithoutYearAdvanced" name="textAreaUnavailableEditionsWithoutYear" th:text="${textAreaUnavailableEditionsWithoutYear}"></textarea></td>
+                            <td><textarea id="textAreaUnavailableEditionsWithYear" name="textAreaUnavailableEditionsWithYear" class="modeAdvanced"  th:text="${textAreaUnavailableEditionsWithYear}"> </textarea></td>
+                            <td><textarea id="textAreaAvailableEditionsWithYear" name="textAreaAvailableEditionsWithYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithYear}"> </textarea></td>
+                            <td><textarea id="textAreaAvailableEditionsWithoutYear" name="textAreaAvailableEditionsWithoutYear" class="modeAdvanced" th:text="${textAreaAvailableEditionsWithoutYear}"> </textarea></td>
+                            <td><textarea id="textAreaAvailableSummaryHoldingAdvanced" name="textAreaAvailableSummaryHolding" th:text="${textAreaAvailableSummaryHolding}"> </textarea></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">*Year value is the first issue of the edition/volume.</td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="divUserInteractionArea"></div>
+                <div id="divMatrix"></div>
+                    <script>
+                        main();
+                    </script>
+            </div>
+<!--            About page.-->
+            <div id="divBodyAbout">
+                <div style="text-align: right">
+                    <button onclick="toggleDivsInBody()" style="">Back</button>
+                </div>
+                <h2>Motivation</h2>
+
+                <div class="divBodyAboutSides">
+                    <div class="divBodyAboutSideLeft">
+                        <img src="/images/Checkboxes_only.jpg" alt="Photo of a paper used to track editions of multiple periodicals." style="height: 400px"  onclick="expandImage(this)">
+                    </div>
+
+                    <div class="divBodyAboutSideRight">
+                        <h3>Hey there!</h3>
+                        <p>Get Summary Holdings makes taxing calculations easier for fellow library colleagues! </p>
+                        <p>Library workers use sheets of paper with sets of sequential numbers to track records of publications. They get buried in messy, irregular data. Hundreds of years of publishing means magazines, journals, and newspapers with fluctuating frequencies and ever-changing patterns. Identifying the missing issues from an archive is a painstaking process. Pen and paper put the pain right into the palm of your hands.  </p>
+                    </div>
+                </div>
+
+                <div class="divBodyAboutSides">
+
+                    <div class="divBodyAboutSideLeft">
+                        <p>Get Summary Holdings makes a significant difference in getting the job done. Digitizing the audit lets you track missing issues and quickly summarize the findings with mouse clicks.  </p>
+                        <p>Literally, say goodbye to pen and paper!  </p>
+                        <p>As deployed on the cloud, Get Summary Holdings has the potential to flatten the learning curve for budget-constrained, hand-cramped library colleagues. </p>
+                        </div>
+
+                    <div class="divBodyAboutSideRight">
+                        <img src="/images/Multiple_Editions.jpg" alt="Photo of a paper used to track editions of multiple periodicals." style="height: 400px"  onclick="expandImage(this)">
+                    </div>
+                </div>
+
+                <p style="font-style: italic">Get Summary Holdings with an interactive UI is under development and is expected to be released soon.  </p>
+                <div class="modal" id="image-modal">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <img src="" alt="Expanded Image" id="expanded-image">
+                </div>
 
 
-    </div>
 
-</body>
+
+                <h4>Tech Stack Used</h4>
+                <ul>
+                    <li>Java Spring</li>
+                    <li>Docker</li>
+                    <li>JavaScript</li>
+                    <li>HTML</li>
+                    <li>CSS</li>
+                </ul>
+
+            </div>
+        </main>
+
+        <footer>
+            <div class="containerFooter">
+                <div id="divFooterUserGuide" class="left">
+                    <h3 onclick="toggleDivVisibility('divUserGuideText')" class="headingsCustom">User Guide</h3>
+                    <div id="divUserGuideText" class="left">
+                        <ol>
+                            <li>'Generate Checkboxes to generate a new checkbox-table. This will also clear existing data.</li>
+                            <li>Double-click on 'Volume' and 'Number' to change their values.</li>
+                            <li>After changing the year, press the 'Enter' or 'Return' key to update the year of subsequent rows.</li>
+                            <li>Check 'Check all' to select all issues.</li>
+                            <li>Press 'ALT' + digits (1 through 9) to quickly select an input element. E.g. "ALT + 1" to change 'Edition Type' description. </li>
+                        </ol>
+                    </div>
+                </div>
+                <div id="divFooterCopyRight">
+                    &copy; 2023 getsummaryholdings.com
+                </div>
+                <div id="divFooterContactUs" class="right">
+                    <p>
+                        Contact us:
+                        <a href="mailto:support@getsummaryholdings.com" class="urlLIkeNormalText">support@getsummaryholdings.com</a>
+                    </p>
+
+                </div>
+            </div>
+       </footer>
+
+    </body>
 </html>

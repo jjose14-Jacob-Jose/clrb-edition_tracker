@@ -5,15 +5,17 @@ Description: JavaScript file for 'Edition Tracker'.
 */
 
 const ID_DIV_MATRIX = "divMatrix";
+const ID_DIV_BODY_INTERFACE_SECTION = "divBodyInterfaceSection";
+const ID_DIV_BODY_ABOUT_SECTION = "divBodyAbout";
 const MATRIX_COLUMN_INDICES = {
     COLUMN_INDEX_OF_EDITION_NUMBER: 0,
     COLUMN_INDEX_OF_YEAR: 1,
     COLUMN_INDEX_OF_FLAG_AVAILABILITY: 2
 };
 const TEXT_OF_KEY_TO_CONFIRM_YEAR_UPDATE = 'Enter';
-const TEXT_LABEL_HEADER_EDITION_TYPE = "Volume";
+const TEXT_LABEL_HEADER_EDITION_TYPE = "Edition";
 const TEXT_LABEL_HEADER_EDITION_NUMBER = "Number";
-const TEXT_LABEL_HEADER_EDITION_CHECKBOX = "Check all";
+const TEXT_LABEL_HEADER_EDITION_CHECKBOX = "Select all";
 const TEXT_LABEL_HEADER_YEAR = "Year";
 const TEXT_LABEL_HEADER_ISSUES= "Issues";
 const TEXT_BUTTON_ISSUE_COUNT_INCREASE= "+";
@@ -23,7 +25,10 @@ const FLAG_ISSUES_NOT_AVAILABLE = 0;
 const FLAG_ISSUES_ALL_AVAILABLE = 1;
 const FLAG_ISSUES_SOME_AVAILABLE = 2;
 
-const URL_GENERATE_SUMMARY = "/postData";
+ // Change the URL according to the deployment.
+const URL_FOR_GITHUB_PAGES =  "https://editiontracker.azurewebsites.net/postData";
+const URL_FOR_APPLICATION = "/postData"
+const URL_GENERATE_SUMMARY = URL_FOR_APPLICATION;
 const URL_GENERATE_SUMMARY_REQUEST_TYPE = "POST";
 
 const HTML_ELEMENT_CLASS_VALUE_MODE_ADVANCED = "modeAdvanced";
@@ -31,12 +36,13 @@ const HTML_ELEMENT_CLASS_VALUE_MODE_BASIC = "modeBasic";
 const HTML_ELEMENT_VALUE_INCREASE = "+";
 const HTML_ELEMENT_VALUE_DECREASE = "-";
 const HTML_ELEMENT_NAME_MODE = "rbMode";
-
-const CSS_HTML_ELEMENT_VALUE_INCREASE = "btnIncrease";
-const CSS_HTML_ELEMENT_VALUE_DECREASE = "btnDecrease";
+const CSS_HTML_ELEMENT_TOGGLE_ROW_COLUMN_COUNT = "btnToggleRowsOrColumns";
+const CSS_HTML_ELEMENT_VALUE_INCREASE = CSS_HTML_ELEMENT_TOGGLE_ROW_COLUMN_COUNT + " " + "btnIncrease";
+const CSS_HTML_ELEMENT_VALUE_DECREASE = CSS_HTML_ELEMENT_TOGGLE_ROW_COLUMN_COUNT + " " + "btnDecrease";
 
 const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API = ';';
 const DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML = ";\n";
+const TEXT_AREA_BOTTOM_MARGIN_LINES = 1;
 
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message: ";
 const MESSAGE_INVALID_INTEGER_INPUT_SUFFIX = " is not a valid number.";
@@ -98,7 +104,7 @@ function initializeArrays() {
 function clearHTMLTable() {
     const divElement = document.getElementById('divMatrix');
     divElement.innerHTML = '';
-
+    divElement.style.minHeight = '43vh'
     clearAPIResponse();
 }
 
@@ -126,6 +132,8 @@ function displayMatrixAsHTMLTable() {
     // Remove existing table if it exists
     clearHTMLTable();
 
+    let checkboxToCheckAllCheckboxes;
+
     // Defining table header.
     const thead = document.createElement('tHead');
     {
@@ -143,8 +151,12 @@ function displayMatrixAsHTMLTable() {
         let thEditionCheckbox = document.createElement('th');
         thEditionCheckbox.textContent = TEXT_LABEL_HEADER_EDITION_CHECKBOX;
 
-        let checkboxToCheckAllCheckboxes = document.createElement('input');
+        const toggleSwitch = document.createElement('label');
+        toggleSwitch.classList.add('switch');
+
+        checkboxToCheckAllCheckboxes = document.createElement('input');
         checkboxToCheckAllCheckboxes.type = 'checkbox';
+        checkboxToCheckAllCheckboxes.id = 'checkboxToCheckAllCheckboxes';
         checkboxToCheckAllCheckboxes.addEventListener('change', function () {
 
             // Get all checkboxes in the web page.
@@ -175,7 +187,15 @@ function displayMatrixAsHTMLTable() {
 
         });
 
-        thEditionCheckbox.appendChild(checkboxToCheckAllCheckboxes);
+        // Create the slider (span) for the toggle switch
+        const slider = document.createElement('span');
+        slider.classList.add('slider');
+
+        toggleSwitch.appendChild(checkboxToCheckAllCheckboxes);
+        toggleSwitch.appendChild(slider);
+
+
+        thEditionCheckbox.appendChild(toggleSwitch);
 
         let thIssues = document.createElement('th');
         thIssues.textContent = TEXT_LABEL_HEADER_ISSUES;
@@ -268,10 +288,15 @@ function displayMatrixAsHTMLTable() {
             });
             tdYear.appendChild(textFieldYear);
 
-            // Check-box to check all issues.
             const tdCheckboxesForEntireEdition = document.createElement('td');
+            // Check-box to check all issues of the year.
+            // Create a toggle switch container (label)
+            const toggleSwitch = document.createElement('label');
+            toggleSwitch.classList.add('switch');
+
             const checkboxForEntireEdition = document.createElement('input');
             checkboxForEntireEdition.type = 'checkbox';
+            checkboxForEntireEdition.id = 'checkboxForEntireEdition' + i;
             checkboxForEntireEdition.addEventListener('change', function () {
                 const checkboxes = tr.querySelectorAll('input[type="checkbox"][id^="checkboxOfIssue"]');
                 const arrayIndividualIssues = [];
@@ -280,22 +305,39 @@ function displayMatrixAsHTMLTable() {
 
                     if (checkboxes[j].checked) {
                         arrayIndividualIssues.push(FLAG_ISSUES_ALL_AVAILABLE);
-                    }
-                    else {
+                    } else {
                         arrayIndividualIssues.push(FLAG_ISSUES_NOT_AVAILABLE);
                     }
                 }
                 arrayAvailabilityStatusIssuesOfEachYear[i] = arrayIndividualIssues;
 
-                if(checkboxForEntireEdition.checked) {
+                if (checkboxForEntireEdition.checked) {
                     arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_AVAILABLE;
-                }  else {
+                } else {
                     arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
                 }
+                toggleToggleSwitches();
 
             });
             checkboxForEntireEdition.checked = arrayAvailabilityStatusYear[i] === FLAG_ISSUES_ALL_AVAILABLE;
-            tdCheckboxesForEntireEdition.appendChild(checkboxForEntireEdition);
+
+            // Create the slider (span) for the toggle switch
+            const slider = document.createElement('span');
+            slider.classList.add('slider');
+
+            // Append the checkbox and slider to the toggle switch container
+            toggleSwitch.appendChild(checkboxForEntireEdition);
+            toggleSwitch.appendChild(slider);
+
+            const labelForCheckboxForEntireEdition = document.createElement('label');
+            labelForCheckboxForEntireEdition.setAttribute('for', 'checkboxForEntireEdition' + i);
+
+            // Add classes to the elements to style them as a toggle switch
+            checkboxForEntireEdition.classList.add('toggle-checkbox'); // Add this class
+            labelForCheckboxForEntireEdition.classList.add('toggle-label'); // Add this class
+
+            tdCheckboxesForEntireEdition.appendChild(toggleSwitch);
+
 
             // Creating individual checkbox for each edition of year.
             const tdCheckboxesForIndividualIssues = document.createElement('td');
@@ -310,15 +352,17 @@ function displayMatrixAsHTMLTable() {
                 checkbox.checked = arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition]  === FLAG_ISSUES_ALL_AVAILABLE;
 
                 // Create label for checkbox
-                const label = document.createElement('label');
-                label.textContent = `${indexOfEdition + 1 }`;
-                label.setAttribute('for', 'checkboxOfIssue' + indexOfEdition);
+                const labelForYear = document.createElement('label');
+                labelForYear.textContent = `${indexOfEdition + 1 }`;
+                labelForYear.setAttribute('for', 'checkboxOfIssue' + indexOfEdition );
+                labelForYear.classList.add('button-label');
+                labelForYear.addEventListener('click', function () {
+                    // Toggle the associated checkbox's checked state
+                    checkbox.checked = !checkbox.checked;
+                    event.preventDefault();
 
-                // Attach change event listener to checkbox
-                checkbox.addEventListener('change', function () {
-                    if (this.checked) {
+                    if (checkbox.checked) {
                         arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_ALL_AVAILABLE; // Value to 1 if checkbox is checked
-
                     } else {
                         arrayAvailabilityStatusIssuesOfEachYear[i][indexOfEdition] = FLAG_ISSUES_NOT_AVAILABLE; // Value to 0 if checkbox is not-checked.
                     }
@@ -332,24 +376,26 @@ function displayMatrixAsHTMLTable() {
                             countChecked++;
                     }
 
-                    checkboxForEntireEdition.checked = false;
+                    // Toggling checkbox for current year.
+                    {
+                        checkboxForEntireEdition.checked = false;
+                        if (countChecked === 0) {
+                            arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
+                        } else if (countChecked === checkboxesInRow.length) {
+                            checkboxForEntireEdition.checked = true;
+                            arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_AVAILABLE;
+                        } else {
+                            arrayAvailabilityStatusYear[i] = FLAG_ISSUES_SOME_AVAILABLE;
+                        }
+                    }
 
-                    if (countChecked === 0) {
-                        arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
-                    }
-                    else if (countChecked === checkboxesInRow.length) {
-                        checkboxForEntireEdition.checked = true;
-                        arrayAvailabilityStatusYear[i] = FLAG_ISSUES_ALL_AVAILABLE;
+                    toggleToggleSwitches();
 
-                    }
-                    else {
-                        arrayAvailabilityStatusYear[i] = FLAG_ISSUES_SOME_AVAILABLE;
-                    }
                 });
 
                 // Append checkbox to tdCheckboxesForIndividualIssues
                 tdCheckboxesForIndividualIssues.appendChild(checkbox);
-                tdCheckboxesForIndividualIssues.appendChild(label);
+                tdCheckboxesForIndividualIssues.appendChild(labelForYear);
             }
 
             // Creating buttons to increase or decrease number of issues per year.
@@ -360,6 +406,7 @@ function displayMatrixAsHTMLTable() {
             btnIssueCountIncrease.className = CSS_HTML_ELEMENT_VALUE_INCREASE;
             btnIssueCountIncrease.addEventListener("click", function() {
                 changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountIncrease.value);
+                toggleToggleSwitches();
             });
 
             const btnIssueCountDecrease = document.createElement('input');
@@ -369,6 +416,7 @@ function displayMatrixAsHTMLTable() {
             btnIssueCountDecrease.className = CSS_HTML_ELEMENT_VALUE_DECREASE;
             btnIssueCountDecrease.addEventListener("click", function() {
                 changeIssueCountOfCurrentAndSubsequentYear(i, btnIssueCountDecrease.value);
+                toggleToggleSwitches();
             });
 
             const tdIssueCountIncrease = document.createElement('td');
@@ -397,6 +445,7 @@ function displayMatrixAsHTMLTable() {
             btnAddEdition.className = CSS_HTML_ELEMENT_VALUE_INCREASE;
             btnAddEdition.addEventListener("click", function () {
                 matrixRowAddOrDelete(HTML_ELEMENT_VALUE_INCREASE);
+                displayMatrixAsHTMLTable();
             });
 
             const btnDeleteEdition = document.createElement('input');
@@ -464,7 +513,9 @@ function matrixRowAddOrDelete(mode) {
     }
 
     displayMatrixAsHTMLTable();
+    toggleToggleSwitches();
 }
+
 // Get last element of the array.
 function arrayGetLastElement(array) {
     return array.slice(-1)[0];
@@ -483,15 +534,27 @@ function changeIssueCountOfCurrentAndSubsequentYear(editionIndexInMatrix, change
     for (let i = editionIndexInMatrix; i < arrayAvailabilityStatusIssuesOfEachYear.length; i++) {
         if (changeMode === TEXT_BUTTON_ISSUE_COUNT_INCREASE)  {
             arrayAvailabilityStatusIssuesOfEachYear[i].push(FLAG_ISSUES_NOT_AVAILABLE);
+            arrayAvailabilityStatusYear[editionIndexInMatrix] = FLAG_ISSUES_SOME_AVAILABLE;
             arrayIssuesInTheYear[i]++;
         } else {
             arrayAvailabilityStatusIssuesOfEachYear[i].pop();
             arrayIssuesInTheYear[i]--;
+            arrayAvailabilityStatusYear[editionIndexInMatrix] = getAvailabilityOfIssuesInARow(editionIndexInMatrix);
         }
     }
     printToConsole("AFTER: arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]: " + arrayAvailabilityStatusIssuesOfEachYear[editionIndexInMatrix]);
     displayMatrixAsHTMLTable();
 
+}
+
+function getAvailabilityOfIssuesInARow(rowIndex) {
+    for (j = 0; j < arrayAvailabilityStatusIssuesOfEachYear[rowIndex].length; j++) {
+        if (arrayAvailabilityStatusIssuesOfEachYear[rowIndex][j] !== FLAG_ISSUES_ALL_AVAILABLE) {
+            // All editions are not available.
+            return FLAG_ISSUES_NOT_AVAILABLE;
+        }
+    }
+    return FLAG_ISSUES_ALL_AVAILABLE;
 }
 
 // Increment of String-cells in column below the specified row.
@@ -520,7 +583,7 @@ function displayAPIResponseInHTML(response) {
 
     stringInResponse = response['textAreaUnavailableEditionsWithoutYear'];
     numberOfLines = stringGetNumberOfCharacterOccurrences(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FROM_API);
-    maximumNumberOfLines = numberOfLines;
+    maximumNumberOfLines = numberOfLines + TEXT_AREA_BOTTOM_MARGIN_LINES;
     stringInResponse = stringReplaceAllSemiColonWithCharacter(stringInResponse, DELIMITER_SUMMARY_HOLDINGS_BETWEEN_YEARS_FOR_HTML);
     document.getElementById('textAreaUnavailableEditionsWithoutYearBasic').value = stringInResponse;
 
@@ -777,7 +840,6 @@ function initialLoadingActivities() {
     {
         ajaxForFormUserInput();
     }
-
     loadingAnimationHide();
     enableKeyboardShortCuts();
 
@@ -818,7 +880,7 @@ function stringReplaceAllSemiColonWithCharacter(string, characterReplacement) {
     return string.replace(/;/g, characterReplacement);
 }
 
- // Enable keyboard shorts.
+// Enable keyboard shorts.
 function enableKeyboardShortCuts() {
 
 
@@ -887,7 +949,93 @@ function enableKeyboardShortCuts() {
 
 }
 
+// Method to toggle visibility of 'about' and GSH interface in home page.
+function toggleDivsInBody() {
+    const divBodyInterfaceParts = document.getElementById(ID_DIV_BODY_INTERFACE_SECTION);
+    const divBodyAbout = document.getElementById(ID_DIV_BODY_ABOUT_SECTION);
+
+    if (divBodyInterfaceParts.style.display === "none" || divBodyInterfaceParts.style.display === "") {
+        divBodyInterfaceParts.style.display = "block";
+        divBodyAbout.style.display = "none";
+    } else {
+        divBodyInterfaceParts.style.display = "none";
+        divBodyAbout.style.display = "block";
+    }
+}
+
+// Method to close the expanded image by clicking anywhere on the screen.
+document.addEventListener("click", function(event) {
+    const modal = document.getElementById("image-modal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+});
+
+// Method expand images in 'About'
+function expandImage(image) {
+    const modal = document.getElementById("image-modal");
+    const expandedImage = document.getElementById("expanded-image");
+    expandedImage.src = image.src;
+    modal.style.display = "block";
+}
+
+// Method hide images in 'About'
+function closeModal() {
+    const modal = document.getElementById("image-modal");
+    modal.style.display = "none";
+}
+
+ // Toggling 'User Guide' in footer.
+function toggleDivVisibility(divId) {
+    const htmlElement = document.getElementById(divId);
+
+    if (htmlElement.style.display === "none" || htmlElement.style.display === "") {
+        htmlElement.style.display = "block";
+        window.scrollTo(0, document.body.scrollHeight);
+    } else {
+        htmlElement.style.display = "none";
+    }
+}
+
+function toggleToggleSwitches() {
+
+    // Toggle-switch for each row.
+    for (let i = 0; i < arrayAvailabilityStatusIssuesOfEachYear.length; i++) {
+        let rowAvailable = true;
+        let j = 0;
+        let checkboxForCurrentRow;
+        for (j = 0; j < arrayAvailabilityStatusIssuesOfEachYear[i].length; j++) {
+            if (arrayAvailabilityStatusIssuesOfEachYear[i][j] !== FLAG_ISSUES_ALL_AVAILABLE) {
+                rowAvailable = false;
+            }
+        }
+        if (j === 0 || j === arrayAvailabilityStatusYear[i].length) {
+            arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
+        } else if (j < arrayAvailabilityStatusIssuesOfEachYear[i].length) {
+            arrayAvailabilityStatusYear[i] = FLAG_ISSUES_SOME_AVAILABLE;
+        }
+        checkboxForCurrentRow = document.getElementById('checkboxForEntireEdition' + i);
+        checkboxForCurrentRow.checked = rowAvailable
+
+    }
+
+    // Toggle-switch for all issues.
+    let allAvailable = true;
+    for (let i = 0; i < arrayAvailabilityStatusYear.length; i++) {
+        if (arrayAvailabilityStatusYear[i] !== FLAG_ISSUES_ALL_AVAILABLE) {
+            allAvailable = false;
+            break;
+        }
+    }
+
+    let checkboxToCheckAllCheckboxes = document.getElementById('checkboxToCheckAllCheckboxes');
+    checkboxToCheckAllCheckboxes.checked = allAvailable;
+
+
+}
+
 // Function with main logic.
 function main() {
     initialLoadingActivities();
 }
+
