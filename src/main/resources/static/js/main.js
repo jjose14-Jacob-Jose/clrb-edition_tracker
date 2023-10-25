@@ -159,7 +159,6 @@ function displayMatrixAsHTMLTable() {
         checkboxToCheckAllCheckboxes.id = 'checkboxToCheckAllCheckboxes';
         checkboxToCheckAllCheckboxes.addEventListener('change', function () {
 
-            printToConsole('hi');
             // Get all checkboxes in the web page.
             const checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
@@ -317,6 +316,7 @@ function displayMatrixAsHTMLTable() {
                 } else {
                     arrayAvailabilityStatusYear[i] = FLAG_ISSUES_NOT_AVAILABLE;
                 }
+                toggleToggleSwitches();
 
             });
             checkboxForEntireEdition.checked = arrayAvailabilityStatusYear[i] === FLAG_ISSUES_ALL_AVAILABLE;
@@ -515,6 +515,7 @@ function matrixRowAddOrDelete(mode) {
     displayMatrixAsHTMLTable();
     toggleToggleSwitches();
 }
+
 // Get last element of the array.
 function arrayGetLastElement(array) {
     return array.slice(-1)[0];
