@@ -161,6 +161,7 @@ footer div {
     text-decoration: none;
     font-family: "Verdana", serif;
     font-weight: normal;
+    cursor: pointer;
 }
 
 /* Remove underline and blue color from HTML anchor-tag text. */
@@ -168,6 +169,7 @@ footer div {
     color: inherit;
     text-decoration: none;
     font-weight: normal;
+    cursor: pointer;
 }
 
 /*Style for divs that need left-justification.*/
