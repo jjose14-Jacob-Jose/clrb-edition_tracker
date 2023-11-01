@@ -7,11 +7,6 @@ Description: JavaScript file for 'Edition Tracker'.
 const ID_DIV_MATRIX = "divMatrix";
 const ID_DIV_BODY_INTERFACE_SECTION = "divBodyInterfaceSection";
 const ID_DIV_BODY_ABOUT_SECTION = "divBodyAbout";
-const MATRIX_COLUMN_INDICES = {
-    COLUMN_INDEX_OF_EDITION_NUMBER: 0,
-    COLUMN_INDEX_OF_YEAR: 1,
-    COLUMN_INDEX_OF_FLAG_AVAILABILITY: 2
-};
 const TEXT_OF_KEY_TO_CONFIRM_YEAR_UPDATE = 'Enter';
 const TEXT_LABEL_HEADER_EDITION_TYPE = "Edition";
 const TEXT_LABEL_HEADER_EDITION_NUMBER = "Number";
@@ -46,7 +41,6 @@ const TEXT_AREA_BOTTOM_MARGIN_LINES = 1;
 
 const MESSAGE_ERROR_API_RESPONSE = "Error while connecting to server. Contact customer support with following message: ";
 const MESSAGE_INVALID_INTEGER_INPUT_SUFFIX = " is not a valid number.";
-const MESSAGE_DUPLICATE_EDITION_NUMBER = " already exists. Please enter a unique value.";
 
 const STRING_VALUE_EMPTY = "";
 
@@ -686,34 +680,36 @@ function loadingAnimationHide() {
     document.getElementById('divUserInteractionArea').style.display = 'none';
 }
 
-// Ajax to call REST API and update page content dynamically.
-function ajaxForFormUserInput() {
-    $(document).ready(function() {
-        $('#formUserInput').submit(function(event) {
-            event.preventDefault();
-            let formData = $(this).serialize();
+/**
+ * Call the REST API and display the results. THis method is called by Google reCaptcha V3 button.
+ */
+function generateSummaryHoldings() {
 
-            $.ajax({
-                url: URL_GENERATE_SUMMARY,
-                type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
-                data: formData,
-                dataType: 'json',
-                success: function(response) {
-                    // Update the page content using the response data
-                    responseFromAPI = response;
-                    loadingAnimationHide();
-                    displayAPIResponseInHTML(response);
-                },
-                error: function(error) {
-                    loadingAnimationHide();
-                    printToAlert(MESSAGE_ERROR_API_RESPONSE + error);
-                }
-            });
-        });
+    let recaptchaToken = getReCaptchaToken();
+    if (recaptchaToken === MESSAGE_ERROR_API_RESPONSE) {
+        return;
+    }
+    document.querySelector('input[name="googleReCaptchaTokenClient"]').value = recaptchaToken;
+
+    let formData = $('#formUserInput').serialize();
+    $.ajax({
+        url: URL_GENERATE_SUMMARY,
+        type: URL_GENERATE_SUMMARY_REQUEST_TYPE,
+        data: formData,
+        dataType: 'json',
+        success: function(response) {
+            // Update the page content using the response data
+            responseFromAPI = response;
+            loadingAnimationHide();
+            displayAPIResponseInHTML(response);
+        },
+        error: function(error) {
+            loadingAnimationHide();
+            printToAlert(MESSAGE_ERROR_API_RESPONSE + error);
+        }
     });
-
-
 }
+
 
 // Initial-load steps.
 function initialLoadingActivities() {
@@ -829,24 +825,6 @@ function initialLoadingActivities() {
 
     }
 
-    // All input text-fields with id start 'txtNumber'.
-    // {
-    //     // Get all the text fields with type 'text'
-    //     const textFields = document.querySelectorAll('input[type="text"]');
-    //
-    //     // Apply the validation function to text fields with IDs starting with 'txtNumber'.
-    //     textFields.forEach(textField => {
-    //         if (textField.id.startsWith('txtNumber')) {
-    //             textField.addEventListener('input', restrictToNumbers);
-    //             textField.addEventListener('keydown', restrictToNumbers);
-    //         }
-    //     });
-    // }
-
-    // Showing results from Java API.
-    {
-        ajaxForFormUserInput();
-    }
     loadingAnimationHide();
     enableKeyboardShortCuts();
 
@@ -945,19 +923,27 @@ function enableKeyboardShortCuts() {
 
 }
 
-// Method to toggle visibility of 'about' and GSH interface in home page.
-function toggleDivsInBody() {
+/**
+ * Hides the interface and shows about section.
+ */
+function showDivAbout() {
     const divBodyInterfaceParts = document.getElementById(ID_DIV_BODY_INTERFACE_SECTION);
     const divBodyAbout = document.getElementById(ID_DIV_BODY_ABOUT_SECTION);
-
-    if (divBodyInterfaceParts.style.display === "none" || divBodyInterfaceParts.style.display === "") {
-        divBodyInterfaceParts.style.display = "block";
-        divBodyAbout.style.display = "none";
-    } else {
-        divBodyInterfaceParts.style.display = "none";
-        divBodyAbout.style.display = "block";
-    }
+    divBodyInterfaceParts.style.display = "none";
+    divBodyAbout.style.display = "block";
 }
+
+
+/**
+ * Hides about and shows the section.
+ */
+function hideDivAbout() {
+    const divBodyInterfaceParts = document.getElementById(ID_DIV_BODY_INTERFACE_SECTION);
+    const divBodyAbout = document.getElementById(ID_DIV_BODY_ABOUT_SECTION);
+    divBodyInterfaceParts.style.display = "block";
+    divBodyAbout.style.display = "none";
+}
+
 
 // Method to close the expanded image by clicking anywhere on the screen.
 document.addEventListener("click", function(event) {
@@ -1028,6 +1014,21 @@ function toggleToggleSwitches() {
     checkboxToCheckAllCheckboxes.checked = allAvailable;
 
 
+}
+
+/**
+ * Return Google ReCaptcha Token from Google.
+ * @param clientSecretKey Client secret key for Google reCaptcha.
+ * @returns {*|string} MSG_FAIL or String token from Google.
+ */
+function getReCaptchaToken(clientSecretKey) {
+    let recaptchaToken = grecaptcha.getResponse();
+    // Check if the token is empty
+    if (!recaptchaToken) {
+        alert("Invalid Captcha. Please refresh the page and try again");
+        return MESSAGE_ERROR_API_RESPONSE;
+    }
+    return recaptchaToken;
 }
 
 // Function with main logic.

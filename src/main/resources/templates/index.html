@@ -8,6 +8,7 @@
     <link rel="icon" href="/images/favicon-logo-pdoddi.png" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
     <script src="/js/main.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-N5DCWKQ06J"></script>
@@ -25,19 +26,18 @@
             <div class="divBodyHeader">
                 <div class="left">
                     <h1>
-                      <a class="headingsCustom" onclick="toggleDivsInBody()"> Get Summary Holdings </a>
+                      <a class="headingsCustom" href="/"> Get Summary Holdings </a>
                     </h1>
                 </div>
                 <div class="right">
                     <h3>
-                        <a href="https://getSummaryHoldings.com" class="headingsCustom" target="_blank" >
+                        <a href="https://getSummaryHoldings.com" class="headingsCustom">
                             Latest Version
-                            <img src="/images/new_tab_logo.png" alt="Logo" class="logo-image" style="height: 12px;">
                         </a>
                     </h3>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <h3>
-                        <a class="headingsCustom" id="aTagAbout" onclick="toggleDivsInBody()">About</a>
+                        <a class="headingsCustom" onclick="showDivAbout()">About</a>
                     </h3>
                 </div>
             </div>
@@ -46,7 +46,6 @@
             <div id="divBodyInterfaceSection">
                 <div class="divTablesUserInput">
                     <table id="tableUserInput">
-                        <form action="https://editiontracker.azurewebsites.net/postData" method="POST" id="formUserInput">
                             <tr>
                                 <td><label id="lblTxtTextEditionsType" for="txtTextEditionsType">Edition types:</label></td>
                                 <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="vol" ></td>
@@ -70,15 +69,24 @@
                                 <td><button id="btnCreateTable">Generate Checkboxes</button></td>
 
                                 <td colspan="2">
+                                    <form action="https://editiontracker.azurewebsites.net/postData" method="POST" id="formUserInput">
                                         <input type="hidden" id="arrayEditionDescription" name="arrayEditionDescription">
                                         <input type="hidden" id="arrayEditionNumber" name="arrayEditionNumber">
                                         <input type="hidden" id="arrayYear" name="arrayYear">
                                         <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
                                         <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
                                         <input type="hidden" id="arrayIssuesInTheYear" name="arrayIssuesInTheYear">
-                                        <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary Holdings</button>
+                                        <input type="hidden" name="googleReCaptchaTokenClient">
+                                        <button class="g-recaptcha"
+                                                data-sitekey="6LcBzNYoAAAAAEfEaqpohyGQCT3iRYO8NegFrsAY"
+                                                data-callback='generateSummaryHoldings'
+                                                data-action='submit'
+                                                disabled="disabled"
+                                                id="btnGenerateSummary"
+                                        >Generate Summary Holdings</button>
+                                    </form>
                                 </td>
-                            </form>
+
 
                             <td><button id="btnClearAll" disabled="disabled">Reset</button></td>
 
@@ -101,10 +109,10 @@
                     </table>
                     <div class="divUpdatesForUser">
                         <ul>
-                            <li>
-                                If you found this useful, would you help us by doing a survey of this product?
-                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_AD1SA5EDaS1fqhbCyj3-ECecAAoy1-4hNURZuUpReSd7_A/viewform?usp=sf_link">Feedback Survey</a>
-                            </li>
+<!--                            <li>-->
+<!--                                If you found this useful, would you help us by doing a survey of this product?-->
+<!--                                <a href="https://docs.google.com/forms/d/e/1FAIpQLSe_AD1SA5EDaS1fqhbCyj3-ECecAAoy1-4hNURZuUpReSd7_A/viewform?usp=sf_link">Feedback Survey</a>-->
+<!--                            </li>-->
                         </ul>
                     </div>
                 </div>
@@ -160,7 +168,7 @@
 <!--            About page.-->
             <div id="divBodyAbout">
                 <div style="text-align: right">
-                    <button onclick="toggleDivsInBody()" style="">Back</button>
+                    <button onclick="hideDivAbout()" style="">Back</button>
                 </div>
                 <h2>Motivation</h2>
 

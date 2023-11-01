@@ -5,6 +5,8 @@ import org.clrb.editiontracker.model.HTMLFormInformation;
 import org.clrb.editiontracker.model.SummaryHolding;
 import org.clrb.editiontracker.model.YearEdition;
 import org.clrb.editiontracker.util.EditionTrackerLogger;
+import org.clrb.editiontracker.util.RecaptchaUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -130,21 +132,41 @@ public class EditionService {
     public ResponseEntity<?> getResponseEntity(HTMLFormInformation htmlFormInformation) {
 
         EditionTrackerLogger.logInfo("EditionService - getResponseEntity( "+ htmlFormInformation.toString() + " )");
-        List<YearEdition> listYearEditions= getYearEditionList(htmlFormInformation);
-        List<SummaryHolding> listSummaryHoldingsAvailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE , EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
-        List<SummaryHolding> listSummaryHoldingsUnavailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_NOT_AVAILABLE , EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
+        try {
 
-        SummaryHoldingService summaryHoldingService = new SummaryHoldingService();
-        Map<String, Object> responseData = new HashMap<>();
+            if(htmlFormInformation == null){
+                throw new NullPointerException();
+            }
+//            Validation Google reCaptcha.
+//            Uncomment the following in production.
+            {
+                String googleReCaptchaValidationToken = htmlFormInformation.getGoogleReCaptchaTokenClient();
+                boolean googleReCaptchaValidationStatus = RecaptchaUtil.validateRecaptcha(googleReCaptchaValidationToken);
 
-        responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_MISSING_WITHOUT_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsUnavailable, false));
-        responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_MISSING_WITH_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsUnavailable, true));
-        responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITH_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsAvailable, true));
-        responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITHOUT_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsAvailable, false));
-        responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_SUMMARY_HOLDINGS, summaryHoldingService.getSummaryHoldingStandardFormat(listSummaryHoldingsAvailable));
+                if (!googleReCaptchaValidationStatus) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to validate Google reCaptcha Token()");
+                }
+            }
 
-        EditionTrackerLogger.logInfo("EditionService - getResponseEntity() - responseData("+ responseData + ")");
-        return ResponseEntity.ok(responseData);
+            List<YearEdition> listYearEditions = getYearEditionList(htmlFormInformation);
+            List<SummaryHolding> listSummaryHoldingsAvailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_ALL_AVAILABLE, EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
+            List<SummaryHolding> listSummaryHoldingsUnavailable = getSummaryHoldingsDetailed(listYearEditions, htmlFormInformation, EditionConstants.FLAG_ISSUES_NOT_AVAILABLE, EditionConstants.FLAG_ISSUES_SOME_AVAILABLE);
+
+            SummaryHoldingService summaryHoldingService = new SummaryHoldingService();
+            Map<String, Object> responseData = new HashMap<>();
+
+            responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_MISSING_WITHOUT_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsUnavailable, false));
+            responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_MISSING_WITH_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsUnavailable, true));
+            responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITH_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsAvailable, true));
+            responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITHOUT_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsAvailable, false));
+            responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_SUMMARY_HOLDINGS, summaryHoldingService.getSummaryHoldingStandardFormat(listSummaryHoldingsAvailable));
+
+            EditionTrackerLogger.logInfo("EditionService - getResponseEntity() - responseData(" + responseData + ")");
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseData);
+        } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
+        }
+
     }
 
 

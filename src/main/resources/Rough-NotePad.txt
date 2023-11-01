@@ -1,1 +1,0 @@
-A JS function is setting the value of a textarea. Is it possible to adjust the height of the textarea such that the entire text is visible?

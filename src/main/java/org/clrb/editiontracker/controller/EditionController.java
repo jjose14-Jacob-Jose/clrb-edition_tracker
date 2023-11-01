@@ -3,6 +3,7 @@ package org.clrb.editiontracker.controller;
 import org.clrb.editiontracker.model.HTMLFormInformation;
 import org.clrb.editiontracker.service.EditionService;
 import org.clrb.editiontracker.util.EditionTrackerLogger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,7 +52,7 @@ public class EditionController {
             return (editionService.getResponseEntity(htmlFormInformation));
         } catch (Exception exception) {
             EditionTrackerLogger.logError("ERROR - EditionController - @PostMapping(value = \"/postData\", produces = \"application/json\") - processData( " + htmlFormInformation.toString() + ", " + model.toString() + ")", exception);
-            return null;
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
     }
