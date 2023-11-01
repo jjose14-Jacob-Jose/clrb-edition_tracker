@@ -18,7 +18,7 @@ public class EditionService {
 //    Get summary-range of indexes that have the 'identifyingValue'.
     public List<String> getArraySummary(int [] array, int arrayIndexStart, int arrayIndexEnd, int arrayIndexOffset, int identifyingValue) {
 
-        EditionTrackerLogger.logInfo("EditionService - getArraySummary(" + Arrays.toString(array) + ", " + arrayIndexStart + ", " + arrayIndexEnd + ", " + arrayIndexOffset + ", " + identifyingValue + ")");
+        EditionTrackerLogger.logInfo("EditionService - entering getArraySummary()");
         List<String> listArraySummarized = new ArrayList<String>();
         if ((arrayIndexStart == arrayIndexEnd) & (array[arrayIndexStart] == identifyingValue)) {
                 listArraySummarized.add(String.valueOf(arrayIndexStart + arrayIndexOffset));
@@ -43,14 +43,14 @@ public class EditionService {
                 }
             }
         }
-        EditionTrackerLogger.logInfo("EditionService - getArraySummary() - listArraySummarized: " + String.join(", ", listArraySummarized));
+        EditionTrackerLogger.logInfo("EditionService - exiting getArraySummary()");
         return listArraySummarized;
     }
 
 //    Return a list of 'YearEdition' where each item represents a year.
     public List<YearEdition> getYearEditionList(HTMLFormInformation htmlFormInformation) {
 
-        EditionTrackerLogger.logInfo("EditionService - getYearEditionList(" + htmlFormInformation.toString() + ")");
+        EditionTrackerLogger.logInfo("EditionService - entering -  getYearEditionList()");
 
         List<YearEdition> listYearEditions = new ArrayList<YearEdition>();
 
@@ -80,14 +80,14 @@ public class EditionService {
             listYearEditions.add(yearEdition);
         }
 
-        EditionTrackerLogger.logInfo("EditionService - getYearEditionList() - listYearEditions: " + listYearEditions.toString());
+        EditionTrackerLogger.logInfo("EditionService - exiting -  getYearEditionList()");
         return listYearEditions;
     }
 
     //    Returns a list of SummaryHolding.
     public List<SummaryHolding> getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatusOne, int availabilityStatusTwo) {
 
-        EditionTrackerLogger.logInfo("EditionService - getSummaryHoldingsDetailed(" + listYearEditions.toString() + ", " + htmlFormInformation.toString() + ", " + availabilityStatusOne + ", " + availabilityStatusTwo +")");
+        EditionTrackerLogger.logInfo("EditionService - entering - getSummaryHoldingsDetailed()");
         List<SummaryHolding> listSummaryHoldings = new ArrayList<SummaryHolding>();
 
         for (int i = 0; i < htmlFormInformation.getArrayAvailabilityStatusYear().length; i++) {
@@ -125,13 +125,13 @@ public class EditionService {
                 listSummaryHoldings.add(summaryHolding);
             }
         }
-        EditionTrackerLogger.logInfo("EditionService - getSummaryHoldingsDetailed() - listSummaryHoldings:" +  listSummaryHoldings.toString());
+        EditionTrackerLogger.logInfo("EditionService - exiting - getSummaryHoldingsDetailed() - listSummaryHoldings:" +  listSummaryHoldings.toString());
         return listSummaryHoldings;
     }
 
     public ResponseEntity<?> getResponseEntity(HTMLFormInformation htmlFormInformation) {
 
-        EditionTrackerLogger.logInfo("EditionService - getResponseEntity( "+ htmlFormInformation.toString() + " )");
+        EditionTrackerLogger.logInfo("EditionService - entering getResponseEntity()");
         try {
 
             if(htmlFormInformation == null){
@@ -144,7 +144,9 @@ public class EditionService {
                 boolean googleReCaptchaValidationStatus = RecaptchaUtil.validateRecaptcha(googleReCaptchaValidationToken);
 
                 if (!googleReCaptchaValidationStatus) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to validate Google reCaptcha Token()");
+                    String errorMessage = "Failed to validated Google reCaptcha Token()";
+                    EditionTrackerLogger.logInfo(errorMessage);
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
                 }
             }
 
@@ -161,9 +163,10 @@ public class EditionService {
             responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_WITHOUT_YEAR, summaryHoldingService.getSummaryHoldingWithIssueDetails(listSummaryHoldingsAvailable, false));
             responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_SUMMARY_HOLDINGS, summaryHoldingService.getSummaryHoldingStandardFormat(listSummaryHoldingsAvailable));
 
-            EditionTrackerLogger.logInfo("EditionService - getResponseEntity() - responseData(" + responseData + ")");
+            EditionTrackerLogger.logInfo("EditionService - exiting - getResponseEntity() - responseData(" + responseData + ")");
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseData);
         } catch (Exception exception) {
+            EditionTrackerLogger.logError("EditionServer - exception - ", exception);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
         }
 
