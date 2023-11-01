@@ -46,7 +46,6 @@
             <div id="divBodyInterfaceSection">
                 <div class="divTablesUserInput">
                     <table id="tableUserInput">
-                        <form action="https://editiontracker.azurewebsites.net/postData" method="POST" id="formUserInput">
                             <tr>
                                 <td><label id="lblTxtTextEditionsType" for="txtTextEditionsType">Edition types:</label></td>
                                 <td><input type="text" id="txtTextEditionsType" name="editionsType" required placeholder="vol/ser/no" value="vol" ></td>
@@ -70,26 +69,24 @@
                                 <td><button id="btnCreateTable">Generate Checkboxes</button></td>
 
                                 <td colspan="2">
+                                    <form action="https://editiontracker.azurewebsites.net/postData" method="POST" id="formUserInput">
                                         <input type="hidden" id="arrayEditionDescription" name="arrayEditionDescription">
                                         <input type="hidden" id="arrayEditionNumber" name="arrayEditionNumber">
                                         <input type="hidden" id="arrayYear" name="arrayYear">
                                         <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
                                         <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
                                         <input type="hidden" id="arrayIssuesInTheYear" name="arrayIssuesInTheYear">
+                                        <input type="hidden" name="googleReCaptchaTokenClient">
                                         <button class="g-recaptcha"
                                                 data-sitekey="6LcBzNYoAAAAAEfEaqpohyGQCT3iRYO8NegFrsAY"
-                                                data-callback='onSubmit'
+                                                data-callback='generateSummaryHoldings'
                                                 data-action='submit'
                                                 disabled="disabled"
                                                 id="btnGenerateSummary"
                                         >Generate Summary Holdings</button>
-                                    <script>
-                                        function onSubmit(token) {
-                                            document.getElementById("formUserInput").submit();
-                                        }
-                                    </script>
+                                    </form>
                                 </td>
-                            </form>
+
 
                             <td><button id="btnClearAll" disabled="disabled">Reset</button></td>
 

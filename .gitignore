@@ -5,3 +5,6 @@
 
 # Class files.
 target
+
+# Configurations files specific to local machine.
+local_machine_configurations
