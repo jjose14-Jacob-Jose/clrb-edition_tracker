@@ -8,6 +8,7 @@
     <link rel="icon" href="/images/favicon-logo-pdoddi.png" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js"></script>
     <script src="/js/main.js"></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-N5DCWKQ06J"></script>
@@ -30,14 +31,13 @@
                 </div>
                 <div class="right">
                     <h3>
-                        <a href="https://getSummaryHoldings.com" class="headingsCustom" target="_blank" >
+                        <a href="https://getSummaryHoldings.com" class="headingsCustom">
                             Latest Version
-                            <img src="/images/new_tab_logo.png" alt="Logo" class="logo-image" style="height: 12px;">
                         </a>
                     </h3>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <h3>
-                        <a class="headingsCustom" onclick="toggleDivsInBody()">About</a>
+                        <a class="headingsCustom" onclick="showDivAbout()">About</a>
                     </h3>
                 </div>
             </div>
@@ -76,7 +76,18 @@
                                         <input type="hidden" id="arrayAvailabilityStatusYear" name="arrayAvailabilityStatusYear">
                                         <input type="hidden" id="arrayAvailabilityStatusIssuesOfEachYear" name="arrayAvailabilityStatusIssuesOfEachYear">
                                         <input type="hidden" id="arrayIssuesInTheYear" name="arrayIssuesInTheYear">
-                                        <button type="submit" id="btnGenerateSummary" disabled="disabled">Generate Summary Holdings</button>
+                                        <button class="g-recaptcha"
+                                                data-sitekey="6LcBzNYoAAAAAEfEaqpohyGQCT3iRYO8NegFrsAY"
+                                                data-callback='onSubmit'
+                                                data-action='submit'
+                                                disabled="disabled"
+                                                id="btnGenerateSummary"
+                                        >Generate Summary Holdings</button>
+                                    <script>
+                                        function onSubmit(token) {
+                                            document.getElementById("formUserInput").submit();
+                                        }
+                                    </script>
                                 </td>
                             </form>
 
@@ -160,7 +171,7 @@
 <!--            About page.-->
             <div id="divBodyAbout">
                 <div style="text-align: right">
-                    <button onclick="toggleDivsInBody()" style="">Back</button>
+                    <button onclick="hideDivAbout()" style="">Back</button>
                 </div>
                 <h2>Motivation</h2>
 

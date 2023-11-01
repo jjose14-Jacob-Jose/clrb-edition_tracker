@@ -121,6 +121,11 @@ main {
     clear: both;
 }
 
+/* Adjust this selector to match your Google reCaptcha tag */
+.grecaptcha-badge {
+    bottom: 100px !important;
+}
+
 footer div {
     flex: 1;
     text-align: center;

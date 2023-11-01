@@ -829,20 +829,6 @@ function initialLoadingActivities() {
 
     }
 
-    // All input text-fields with id start 'txtNumber'.
-    // {
-    //     // Get all the text fields with type 'text'
-    //     const textFields = document.querySelectorAll('input[type="text"]');
-    //
-    //     // Apply the validation function to text fields with IDs starting with 'txtNumber'.
-    //     textFields.forEach(textField => {
-    //         if (textField.id.startsWith('txtNumber')) {
-    //             textField.addEventListener('input', restrictToNumbers);
-    //             textField.addEventListener('keydown', restrictToNumbers);
-    //         }
-    //     });
-    // }
-
     // Showing results from Java API.
     {
         ajaxForFormUserInput();
@@ -945,19 +931,27 @@ function enableKeyboardShortCuts() {
 
 }
 
-// Method to toggle visibility of 'about' and GSH interface in home page.
-function toggleDivsInBody() {
+/**
+ * Hides the interface and shows about section.
+ */
+function showDivAbout() {
     const divBodyInterfaceParts = document.getElementById(ID_DIV_BODY_INTERFACE_SECTION);
     const divBodyAbout = document.getElementById(ID_DIV_BODY_ABOUT_SECTION);
-
-    if (divBodyInterfaceParts.style.display === "none" || divBodyInterfaceParts.style.display === "") {
-        divBodyInterfaceParts.style.display = "block";
-        divBodyAbout.style.display = "none";
-    } else {
-        divBodyInterfaceParts.style.display = "none";
-        divBodyAbout.style.display = "block";
-    }
+    divBodyInterfaceParts.style.display = "none";
+    divBodyAbout.style.display = "block";
 }
+
+
+/**
+ * Hides about and shows the section.
+ */
+function hideDivAbout() {
+    const divBodyInterfaceParts = document.getElementById(ID_DIV_BODY_INTERFACE_SECTION);
+    const divBodyAbout = document.getElementById(ID_DIV_BODY_ABOUT_SECTION);
+    divBodyInterfaceParts.style.display = "block";
+    divBodyAbout.style.display = "none";
+}
+
 
 // Method to close the expanded image by clicking anywhere on the screen.
 document.addEventListener("click", function(event) {
@@ -1028,6 +1022,21 @@ function toggleToggleSwitches() {
     checkboxToCheckAllCheckboxes.checked = allAvailable;
 
 
+}
+
+/**
+ * Return Google ReCaptcha Token from Google.
+ * @param clientSecretKey Client secret key for Google reCaptcha.
+ * @returns {*|string} MSG_FAIL or String token from Google.
+ */
+function getReCaptchaToken(clientSecretKey) {
+    let recaptchaToken = grecaptcha.getResponse();
+    // Check if the token is empty
+    if (!recaptchaToken) {
+        alert("Invalid Captcha. Please refresh the page and try again");
+        return MSG_FAIL;
+    }
+    return recaptchaToken;
 }
 
 // Function with main logic.
