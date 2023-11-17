@@ -1,8 +1,20 @@
-# Get Summary Holdings 
-
-Java Spring Boot project to calculate summary of editions. 
+# Get Summary Holdings (GSH)
 
 Production URL: https://editiontracker.azurewebsites.net
+
+![src/main/resources/static/images/gsh_lite_screenshot.png](src/main/resources/static/images/gsh_lite_screenshot.png)
+
+### About GSH
+* GSH can be called a calculator that allows you to get summary of periodicals in the context of a library.
+* GSH helps you to quickly get a summary the available and unavailable periodicals or publications by simply clicking buttons.
+
+## Tech Stack
+* Java Spring Boot
+* Maven
+* JavaScript
+* Docker
+* HTML
+* CSS
 
 ## Running the project with:
 ### Java.
@@ -25,7 +37,10 @@ Production URL: https://editiontracker.azurewebsites.net
 #### Prerequisites for running with Docker:
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
+### Project URLs
+* Interactive NextJS UI: https://getsummaryholdings.com/.
+* Java Spring Boot REST API: [https://editiontracker.azurewebsites.net/](https://editiontracker.azurewebsites.net/)
+* GitHub Static pages Lite UI: [https://jjose14-jacob-jose.github.io/getSummaryHoldings/](https://jjose14-jacob-jose.github.io/getSummaryHoldings/)
 
-##### Trivia
-
+### Trivia
 Edition Tracker was the original name of the project. It was later renamed to 'Get Summary Holdings'.
