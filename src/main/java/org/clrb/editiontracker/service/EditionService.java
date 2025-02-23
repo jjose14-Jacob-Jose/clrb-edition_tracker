@@ -4,6 +4,7 @@ import org.clrb.editiontracker.constants.EditionConstants;
 import org.clrb.editiontracker.model.HTMLFormInformation;
 import org.clrb.editiontracker.model.SummaryHolding;
 import org.clrb.editiontracker.model.YearEdition;
+import org.clrb.editiontracker.util.ApplicationMonitor;
 import org.clrb.editiontracker.util.EditionTrackerLogger;
 import org.clrb.editiontracker.util.RecaptchaUtil;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class EditionService {
     public List<String> getArraySummary(int [] array, int arrayIndexStart, int arrayIndexEnd, int arrayIndexOffset, int identifyingValue) {
 
         EditionTrackerLogger.logInfo("EditionService - entering getArraySummary()");
-        List<String> listArraySummarized = new ArrayList<String>();
+        List<String> listArraySummarized = new ArrayList<>();
         if ((arrayIndexStart == arrayIndexEnd) & (array[arrayIndexStart] == identifyingValue)) {
                 listArraySummarized.add(String.valueOf(arrayIndexStart + arrayIndexOffset));
         } else if (arrayIndexStart < arrayIndexEnd) {
@@ -37,7 +38,7 @@ public class EditionService {
                         if (issueRangeStart == issueRangeEnd)
                             listArraySummarized.add(String.valueOf(issueRangeStart + arrayIndexOffset));
                         else
-                            listArraySummarized.add(String.valueOf(issueRangeStart + arrayIndexOffset) + EditionConstants.DELIMITER_EDITION_DIGITS + String.valueOf(issueRangeEnd + arrayIndexOffset));
+                            listArraySummarized.add(issueRangeStart + arrayIndexOffset + EditionConstants.DELIMITER_EDITION_DIGITS + (issueRangeEnd + arrayIndexOffset));
                     }
                     issueRangeStart = issueRangeEnd = EditionConstants.INVALID_VALUE_INTEGER;
                 }
@@ -52,7 +53,7 @@ public class EditionService {
 
         EditionTrackerLogger.logInfo("EditionService - entering -  getYearEditionList()");
 
-        List<YearEdition> listYearEditions = new ArrayList<YearEdition>();
+        List<YearEdition> listYearEditions = new ArrayList<>();
 
         int arrayIndexStartContiguousArray, arrayIndexEndContiguousArray;
         arrayIndexStartContiguousArray = arrayIndexEndContiguousArray = 0;
@@ -88,7 +89,7 @@ public class EditionService {
     public List<SummaryHolding> getSummaryHoldingsDetailed(List<YearEdition> listYearEditions, HTMLFormInformation htmlFormInformation, int availabilityStatusOne, int availabilityStatusTwo) {
 
         EditionTrackerLogger.logInfo("EditionService - entering - getSummaryHoldingsDetailed()");
-        List<SummaryHolding> listSummaryHoldings = new ArrayList<SummaryHolding>();
+        List<SummaryHolding> listSummaryHoldings = new ArrayList<>();
 
         for (int i = 0; i < htmlFormInformation.getArrayAvailabilityStatusYear().length; i++) {
 
@@ -105,13 +106,13 @@ public class EditionService {
 
                 List<String> summaryOfRequestedIssues = new ArrayList<>();
 //                Issues numbers are to be added only if the some issues are available/unavailable. Checking this by checking size of other arraylist.
-                if ((availabilityStatusOne == EditionConstants.FLAG_ISSUES_ALL_AVAILABLE) & (yearEdition.getListUnavailableIssues().size() != 0)) {
+                if ((availabilityStatusOne == EditionConstants.FLAG_ISSUES_ALL_AVAILABLE) & (!yearEdition.getListUnavailableIssues().isEmpty())) {
                     summaryOfRequestedIssues = yearEdition.getListAvailableIssues();
-                } else if ((yearEdition.getListAvailableIssues().size() != 0)) {
+                } else if ((!yearEdition.getListAvailableIssues().isEmpty())) {
                     summaryOfRequestedIssues = yearEdition.getListUnavailableIssues();
                 }
 
-                StringBuilder summaryHoldingsSB = new StringBuilder("");
+                StringBuilder summaryHoldingsSB = new StringBuilder();
                 for (int j = 0; j < summaryOfRequestedIssues.size(); j++) {
                     summaryHoldingsSB.append(summaryOfRequestedIssues.get(j));
 //                    Checking to ensure a delimiter is not added after the last element.
@@ -125,7 +126,7 @@ public class EditionService {
                 listSummaryHoldings.add(summaryHolding);
             }
         }
-        EditionTrackerLogger.logInfo("EditionService - exiting - getSummaryHoldingsDetailed() - listSummaryHoldings:" +  listSummaryHoldings.toString());
+        EditionTrackerLogger.logInfo("EditionService - exiting - getSummaryHoldingsDetailed() - listSummaryHoldings:" + listSummaryHoldings);
         return listSummaryHoldings;
     }
 
@@ -164,6 +165,7 @@ public class EditionService {
             responseData.put(EditionConstants.HTML_ELEMENT_NAME_SUMMARY_AVAILABLE_SUMMARY_HOLDINGS, summaryHoldingService.getSummaryHoldingStandardFormat(listSummaryHoldingsAvailable));
 
             EditionTrackerLogger.logInfo("EditionService - exiting - getResponseEntity() - responseData(" + responseData + ")");
+            ApplicationMonitor.usageLog("Calculated summary. Response: " + responseData, "EditionTracker)");
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseData);
         } catch (Exception exception) {
             EditionTrackerLogger.logError("EditionServer - exception - ", exception);
