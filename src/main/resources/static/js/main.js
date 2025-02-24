@@ -21,7 +21,6 @@ const FLAG_ISSUES_ALL_AVAILABLE = 1;
 const FLAG_ISSUES_SOME_AVAILABLE = 2;
 
  // Change the URL according to the deployment.
-const URL_FOR_GITHUB_PAGES =  "https://editiontracker.azurewebsites.net/postData";
 const URL_FOR_APPLICATION = "/postData"
 const URL_GENERATE_SUMMARY = URL_FOR_APPLICATION;
 const URL_GENERATE_SUMMARY_REQUEST_TYPE = "POST";

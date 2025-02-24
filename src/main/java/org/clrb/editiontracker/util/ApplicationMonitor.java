@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class ApplicationMonitor {
 
-    private static final String URL_APPLICATION_MONITOR_PRODUCTION = "https://applicationmonitor.azurewebsites.net/apiCall/save";
+    private static final String URL_APPLICATION_MONITOR_PRODUCTION = "https://applicationmonitor.onrender.com/apiCall/save";
     private static final String URL_APPLICATION_MONITOR = URL_APPLICATION_MONITOR_PRODUCTION;
     private static final String URL_REQUEST_TYPE = "POST";
     private static final String JSON_KEY_CALLER_MESSAGE = "callerMessage";
