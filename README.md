@@ -2,6 +2,8 @@
 
 Production URL: https://getsummaryholdings.com/
 
+Docker Image: [getSummaryHoldings](https://hub.docker.com/r/jacobjose123/getsummaryholdings)
+
 ![src/main/resources/static/images/gsh_lite_screenshot.png](src/main/resources/static/images/gsh_lite_screenshot.png)
 
 ### About GSH
@@ -55,10 +57,15 @@ Production URL: https://getsummaryholdings.com/
 
 
 ### Docker
+#### Local Build
 1. Open command in the project directory.
-2. Build the Docker image: `docker build -t clrb-edition-tracker:latest .`
+2. Build the Docker image: `docker build -t clrb-edition-tracker:latest .` 
 3. Run the Docker image: `docker run -p 8080:8080 clrb-edition-tracker:latest`
 4. Access project in your browser at the URL: [http://localhost:8080/](http://localhost:8080/)
+
+#### From DockerHub
+1. Pull from DockerHub by running in Terminal: `docker pull jacobjose123/getsummaryholdings`
+2. [Click here](#local-build) for the steps to run.
 
 #### Prerequisites for running with Docker:
 1. [Docker Desktop](https://www.docker.com/products/docker-desktop/)
